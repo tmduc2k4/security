@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách laptop - LaptopStore</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <div class="logo">
+          <h1>💻 LaptopStore</h1>
+        </div>
+        <ul class="nav-links">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/laptops" class="active">Sản phẩm</a></li>
+          <li><a href="/about">Giới thiệu</a></li>
+          <li><a href="/contact">Liên hệ</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="products">
+      <div class="container">
+        <h2>Tất cả sản phẩm</h2>
+        <div class="product-grid">
+          <% laptops.forEach(laptop => { %>
+            <div class="product-card">
+              <img src="<%= laptop.image %>" alt="<%= laptop.name %>">
+              <h3><%= laptop.name %></h3>
+              <p class="price"><%= laptop.price.toLocaleString('vi-VN') %>đ</p>
+              <p class="description"><%= laptop.description %></p>
+              <div class="specs">
+                <p><strong>CPU:</strong> <%= laptop.specs.cpu %></p>
+                <p><strong>RAM:</strong> <%= laptop.specs.ram %></p>
+                <p><strong>SSD:</strong> <%= laptop.specs.storage %></p>
+              </div>
+              <a href="/laptop/<%= laptop.id %>" class="btn btn-small">Xem chi tiết</a>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
