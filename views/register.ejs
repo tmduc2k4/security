@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký - LaptopStore</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .auth-container {
+      max-width: 500px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .auth-container h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 2rem;
+    }
+    .error-message {
+      background-color: #fee;
+      color: #c33;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #c33;
+    }
+    .form-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .form-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #ddd;
+    }
+    .form-footer a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+    .password-requirements {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #f8f9fa;
+      border-radius: 3px;
+    }
+    .password-requirements ul {
+      margin: 0.5rem 0 0 1rem;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <div class="logo">
+          <h1>💻 LaptopStore</h1>
+        </div>
+        <ul class="nav-links">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/laptops">Sản phẩm</a></li>
+          <li><a href="/about">Giới thiệu</a></li>
+          <li><a href="/contact">Liên hệ</a></li>
+          <li><a href="/login">Đăng nhập</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="auth-container">
+      <h2>Đăng ký tài khoản</h2>
+      
+      <% if (error) { %>
+        <div class="error-message">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form action="/register" method="POST">
+        <div class="form-group">
+          <label for="username">Username *</label>
+          <input type="text" id="username" name="username" required 
+                 placeholder="Tên đăng nhập (3-30 ký tự)"
+                 minlength="3" maxlength="30"
+                 pattern="[a-zA-Z0-9_]+">
+          <small>Chỉ được chứa chữ cái, số và dấu gạch dưới</small>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required 
+                 placeholder="email@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="fullName">Họ và tên</label>
+          <input type="text" id="fullName" name="fullName" 
+                 placeholder="Nguyễn Văn A"
+                 maxlength="100">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu *</label>
+          <input type="password" id="password" name="password" required 
+                 placeholder="Mật khẩu mạnh"
+                 minlength="6">
+          <div class="password-requirements">
+            <strong>Yêu cầu mật khẩu:</strong>
+            <ul>
+              <li>Tối thiểu 6 ký tự</li>
+              <li>Ít nhất 1 chữ thường (a-z)</li>
+              <li>Ít nhất 1 chữ hoa (A-Z)</li>
+              <li>Ít nhất 1 số (0-9)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Xác nhận mật khẩu *</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" required 
+                 placeholder="Nhập lại mật khẩu"
+                 minlength="6">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Đăng ký</button>
+        </div>
+
+        <div class="form-footer">
+          <p>Đã có tài khoản? <a href="/login">Đăng nhập ngay</a></p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Client-side validation
+    const form = document.querySelector('form');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+
+    form.addEventListener('submit', (e) => {
+      if (password.value !== confirmPassword.value) {
+        e.preventDefault();
+        alert('Mật khẩu xác nhận không khớp!');
+        confirmPassword.focus();
+      }
+    });
+
+    // Real-time password match check
+    confirmPassword.addEventListener('input', () => {
+      if (confirmPassword.value && password.value !== confirmPassword.value) {
+        confirmPassword.setCustomValidity('Mật khẩu không khớp');
+      } else {
+        confirmPassword.setCustomValidity('');
+      }
+    });
+  </script>
+</body>
+</html>

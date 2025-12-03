@@ -18,6 +18,13 @@
           <li><a href="/laptops" class="active">Sản phẩm</a></li>
           <li><a href="/about">Giới thiệu</a></li>
           <li><a href="/contact">Liên hệ</a></li>
+          <% if (locals.user) { %>
+            <li><a href="/profile">👤 <%= user.username %></a></li>
+            <li><a href="/logout">Đăng xuất</a></li>
+          <% } else { %>
+            <li><a href="/login">Đăng nhập</a></li>
+            <li><a href="/register">Đăng ký</a></li>
+          <% } %>
         </ul>
       </div>
     </nav>

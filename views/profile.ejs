@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang cá nhân - LaptopStore</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .profile-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .profile-header {
+      text-align: center;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 2rem;
+    }
+    .profile-header h2 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+    .profile-header .username {
+      color: #7f8c8d;
+      font-size: 1.1rem;
+    }
+    .profile-info {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .profile-info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .profile-info-item:last-child {
+      border-bottom: none;
+    }
+    .profile-info-label {
+      font-weight: 600;
+      color: #495057;
+    }
+    .profile-info-value {
+      color: #6c757d;
+    }
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #28a745;
+    }
+    .error-message {
+      background-color: #fee;
+      color: #c33;
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      border-left: 4px solid #c33;
+    }
+    .profile-section {
+      margin-bottom: 2rem;
+    }
+    .profile-section h3 {
+      color: #2c3e50;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #3498db;
+    }
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    .btn-danger {
+      background-color: #e74c3c;
+    }
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <div class="logo">
+          <h1>💻 LaptopStore</h1>
+        </div>
+        <ul class="nav-links">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/laptops">Sản phẩm</a></li>
+          <li><a href="/about">Giới thiệu</a></li>
+          <li><a href="/contact">Liên hệ</a></li>
+          <li><a href="/profile" class="active">Tài khoản</a></li>
+          <li><a href="/logout">Đăng xuất</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="profile-container">
+      <div class="profile-header">
+        <h2>Xin chào, <%= user.fullName || user.username %>!</h2>
+        <p class="username">@<%= user.username %></p>
+      </div>
+
+      <% if (success) { %>
+        <div class="success-message">
+          <%= success %>
+        </div>
+      <% } %>
+
+      <% if (error) { %>
+        <div class="error-message">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <!-- Thông tin tài khoản -->
+      <div class="profile-section">
+        <h3>Thông tin tài khoản</h3>
+        <div class="profile-info">
+          <div class="profile-info-item">
+            <span class="profile-info-label">Username:</span>
+            <span class="profile-info-value"><%= user.username %></span>
+          </div>
+          <div class="profile-info-item">
+            <span class="profile-info-label">Email:</span>
+            <span class="profile-info-value"><%= user.email %></span>
+          </div>
+          <div class="profile-info-item">
+            <span class="profile-info-label">Họ và tên:</span>
+            <span class="profile-info-value"><%= user.fullName || 'Chưa cập nhật' %></span>
+          </div>
+          <div class="profile-info-item">
+            <span class="profile-info-label">Ngày đăng ký:</span>
+            <span class="profile-info-value"><%= new Date(user.createdAt).toLocaleDateString('vi-VN') %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form cập nhật thông tin -->
+      <div class="profile-section">
+        <h3>Cập nhật thông tin</h3>
+        <form action="/profile/update" method="POST">
+          <div class="form-group">
+            <label for="fullName">Họ và tên</label>
+            <input type="text" id="fullName" name="fullName" 
+                   value="<%= user.fullName || '' %>"
+                   placeholder="Nguyễn Văn A"
+                   maxlength="100">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" 
+                   value="<%= user.email %>"
+                   required>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Form đổi mật khẩu -->
+      <div class="profile-section">
+        <h3>Đổi mật khẩu</h3>
+        <form action="/profile/update" method="POST">
+          <div class="form-group">
+            <label for="currentPassword">Mật khẩu hiện tại</label>
+            <input type="password" id="currentPassword" name="currentPassword" 
+                   placeholder="Nhập mật khẩu hiện tại">
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">Mật khẩu mới</label>
+            <input type="password" id="newPassword" name="newPassword" 
+                   placeholder="Mật khẩu mới (tối thiểu 6 ký tự)"
+                   minlength="6">
+            <small>Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số</small>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Đổi mật khẩu</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

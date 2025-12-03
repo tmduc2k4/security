@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // Import security middleware
@@ -21,6 +22,10 @@ const {
   validateLaptopId,
   sanitizeAllInputs
 } = require('./middleware/validator');
+
+const { optionalAuth, requireAuth, requireGuest } = require('./middleware/auth');
+const authController = require('./controllers/authController');
+const { registerValidation, loginValidation, updateProfileValidation } = require('./middleware/authValidator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,12 +48,14 @@ app.use(cors({ origin: process.env.ALLOWED_ORIGINS || '*' })); // CORS protectio
 // Body parsing middleware
 app.use(express.json({ limit: '10kb' })); // Limit payload size
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(cookieParser()); // Parse cookies
 
 // Custom security middleware
 app.use(securityLogger); // Log suspicious activities
 app.use(sqlInjectionProtection); // Block SQL injection
 app.use(pathTraversalProtection); // Block path traversal
 app.use(sanitizeAllInputs); // Sanitize all inputs
+app.use(optionalAuth); // Load user info if logged in
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -135,7 +142,20 @@ const laptops = [
   }
 ];
 
-// Routes
+// Auth Routes
+app.get('/register', requireGuest, authController.showRegisterPage);
+app.post('/register', requireGuest, registerValidation, authController.register);
+app.get('/login', requireGuest, authController.showLoginPage);
+app.post('/login', requireGuest, loginValidation, authController.login);
+app.get('/logout', authController.logout);
+app.get('/profile', requireAuth, authController.showProfile);
+app.post('/profile/update', requireAuth, updateProfileValidation, authController.updateProfile);
+
+// API Auth Routes (JSON)
+app.post('/api/auth/register', registerValidation, authController.apiRegister);
+app.post('/api/auth/login', loginValidation, authController.apiLogin);
+
+// Public Routes
 app.get('/', (req, res) => {
   res.render('index', { laptops: laptops.slice(0, 6) });
 });
@@ -194,24 +214,3 @@ process.on('SIGTERM', () => {
 });
 
 module.exports = app;
-  // Log contact submission (trong production nên lưu vào database)
-  console.log('Contact form submission:', {
-    name,
-    email,
-    phone: phone || 'N/A',
-    message,
-    ip: req.ip,
-    timestamp: new Date().toISOString()
-  });
-  
-  // Trong thực tế, bạn sẽ gửi email hoặc lưu vào database
-  res.json({ 
-    success: true, 
-    message: 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.' 
-  });
-});
-
-// Khởi động server
-app.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
-});
