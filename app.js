@@ -1,17 +1,57 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
+require('dotenv').config();
+
+// Import security middleware
+const {
+  limiter,
+  strictLimiter,
+  helmetConfig,
+  hpp,
+  xss,
+  mongoSanitize,
+  securityLogger,
+  sqlInjectionProtection,
+  pathTraversalProtection
+} = require('./middleware/security');
+
+const {
+  validateContactForm,
+  validateLaptopId,
+  sanitizeAllInputs
+} = require('./middleware/validator');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// Trust proxy - Important for rate limiting behind reverse proxy
+app.set('trust proxy', 1);
 
 // Cấu hình EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Middleware
+// Security Middleware - Apply BEFORE other middleware
+app.use(helmetConfig); // WAF - Web Application Firewall
+app.use(limiter); // Rate limiting
+app.use(hpp()); // Prevent HTTP Parameter Pollution
+app.use(xss()); // Prevent XSS attacks
+app.use(mongoSanitize()); // Prevent NoSQL injection
+app.use(cors({ origin: process.env.ALLOWED_ORIGINS || '*' })); // CORS protection
+
+// Body parsing middleware
+app.use(express.json({ limit: '10kb' })); // Limit payload size
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
+// Custom security middleware
+app.use(securityLogger); // Log suspicious activities
+app.use(sqlInjectionProtection); // Block SQL injection
+app.use(pathTraversalProtection); // Block path traversal
+app.use(sanitizeAllInputs); // Sanitize all inputs
+
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Dữ liệu mẫu về laptop
 const laptops = [
@@ -104,7 +144,7 @@ app.get('/laptops', (req, res) => {
   res.render('laptops', { laptops });
 });
 
-app.get('/laptop/:id', (req, res) => {
+app.get('/laptop/:id', validateLaptopId, (req, res) => {
   const laptop = laptops.find(l => l.id === parseInt(req.params.id));
   if (laptop) {
     res.render('laptop-detail', { laptop });
@@ -119,6 +159,56 @@ app.get('/about', (req, res) => {
 
 app.get('/contact', (req, res) => {
   res.render('contact');
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Đã xảy ra lỗi, vui lòng thử lại sau' 
+      : err.message
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).render('404', { 
+    url: req.originalUrl 
+  });
+});
+
+// Khởi động server
+const server = app.listen(PORT, () => {
+  console.log(`✓ Server đang chạy tại http://localhost:${PORT}`);
+  console.log(`✓ Security features enabled`);
+  console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+  });
+});
+
+module.exports = app;
+  // Log contact submission (trong production nên lưu vào database)
+  console.log('Contact form submission:', {
+    name,
+    email,
+    phone: phone || 'N/A',
+    message,
+    ip: req.ip,
+    timestamp: new Date().toISOString()
+  });
+  
+  // Trong thực tế, bạn sẽ gửi email hoặc lưu vào database
+  res.json({ 
+    success: true, 
+    message: 'Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.' 
+  });
 });
 
 // Khởi động server

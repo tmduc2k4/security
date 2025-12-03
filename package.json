@@ -5,14 +5,25 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "security-check": "npm audit",
+    "security-fix": "npm audit fix",
+    "update-check": "npm outdated"
   },
   "keywords": ["laptop", "store", "nodejs"],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "ejs": "^3.1.9"
+    "ejs": "^3.1.9",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "hpp": "^0.2.3",
+    "xss-clean": "^0.1.4",
+    "express-mongo-sanitize": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

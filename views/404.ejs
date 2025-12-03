@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Không tìm thấy trang - LaptopStore</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .error-page {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .error-content h1 {
+      font-size: 6rem;
+      color: #e74c3c;
+      margin-bottom: 1rem;
+    }
+    .error-content h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .error-content p {
+      font-size: 1.2rem;
+      color: #7f8c8d;
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <div class="logo">
+          <h1>💻 LaptopStore</h1>
+        </div>
+        <ul class="nav-links">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/laptops">Sản phẩm</a></li>
+          <li><a href="/about">Giới thiệu</a></li>
+          <li><a href="/contact">Liên hệ</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="error-page">
+      <div class="container">
+        <div class="error-content">
+          <h1>404</h1>
+          <h2>Không tìm thấy trang</h2>
+          <p>Xin lỗi, trang "<%= url %>" không tồn tại.</p>
+          <a href="/" class="btn">Về trang chủ</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
