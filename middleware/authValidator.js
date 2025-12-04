@@ -18,8 +18,8 @@ const registerValidation = [
   
   body('password')
     .notEmpty().withMessage('Mật khẩu không được để trống')
-    .isLength({ min: 6, max: 100 }).withMessage('Mật khẩu phải từ 6-100 ký tự')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số'),
+    .isLength({ min: 12, max: 100 }).withMessage('Mật khẩu phải từ 12-100 ký tự')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])/).withMessage('Mật khẩu phải chứa ít nhất: 1 chữ thường, 1 chữ hoa, 1 số và 1 ký tự đặc biệt (!@#$%^&*...)'),
   
   body('confirmPassword')
     .notEmpty().withMessage('Vui lòng xác nhận mật khẩu')

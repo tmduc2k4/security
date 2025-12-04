@@ -23,12 +23,46 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password là bắt buộc'],
-    minlength: [6, 'Password phải có ít nhất 6 ký tự']
+    minlength: [12, 'Password phải có ít nhất 12 ký tự']
   },
   fullName: {
     type: String,
     trim: true,
     default: function() { return this.username; }
+  },
+  // Security enhancements
+  twoFactorSecret: {
+    type: String,
+    default: null
+  },
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  lastPasswordChange: {
+    type: Date,
+    default: Date.now
+  },
+  passwordHistory: [{
+    password: String,
+    changedAt: Date
+  }],
+  passwordExpiresAt: {
+    type: Date,
+    default: function() {
+      // Password expires after 90 days
+      const expiryDate = new Date();
+      expiryDate.setDate(expiryDate.getDate() + 90);
+      return expiryDate;
+    }
+  },
+  failedLoginAttempts: {
+    type: Number,
+    default: 0
+  },
+  accountLockedUntil: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true, // Tự động thêm createdAt và updatedAt
@@ -50,13 +84,74 @@ userSchema.pre('save', async function() {
     return;
   }
   
+  // Lưu password cũ vào history (nếu không phải user mới)
+  if (!this.isNew && this.password) {
+    this.passwordHistory.push({
+      password: this.password,
+      changedAt: new Date()
+    });
+    
+    // Giữ tối đa 5 password gần nhất
+    if (this.passwordHistory.length > 5) {
+      this.passwordHistory = this.passwordHistory.slice(-5);
+    }
+  }
+  
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  
+  // Cập nhật lastPasswordChange và passwordExpiresAt
+  this.lastPasswordChange = new Date();
+  const expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + 90);
+  this.passwordExpiresAt = expiryDate;
 });
 
 // Instance method: So sánh password
 userSchema.methods.comparePassword = async function(inputPassword) {
   return await bcrypt.compare(inputPassword, this.password);
+};
+
+// Instance method: Kiểm tra password đã dùng trước đó chưa
+userSchema.methods.isPasswordInHistory = async function(newPassword) {
+  for (const oldPass of this.passwordHistory) {
+    const isMatch = await bcrypt.compare(newPassword, oldPass.password);
+    if (isMatch) {
+      return true;
+    }
+  }
+  return false;
+};
+
+// Instance method: Kiểm tra password đã hết hạn chưa
+userSchema.methods.isPasswordExpired = function() {
+  return this.passwordExpiresAt && this.passwordExpiresAt < new Date();
+};
+
+// Instance method: Kiểm tra account có bị lock không
+userSchema.methods.isAccountLocked = function() {
+  return this.accountLockedUntil && this.accountLockedUntil > new Date();
+};
+
+// Instance method: Tăng failed login attempts
+userSchema.methods.incrementFailedAttempts = async function() {
+  this.failedLoginAttempts += 1;
+  
+  // Lock account sau 5 lần thất bại (30 phút)
+  if (this.failedLoginAttempts >= 5) {
+    const lockUntil = new Date();
+    lockUntil.setMinutes(lockUntil.getMinutes() + 30);
+    this.accountLockedUntil = lockUntil;
+  }
+  
+  await this.save();
+};
+
+// Instance method: Reset failed attempts sau login thành công
+userSchema.methods.resetFailedAttempts = async function() {
+  this.failedLoginAttempts = 0;
+  this.accountLockedUntil = null;
+  await this.save();
 };
 
 // Static method: Tìm user và authenticate

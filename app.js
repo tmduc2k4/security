@@ -28,6 +28,7 @@ const {
 
 const { optionalAuth, requireAuth, requireGuest } = require('./middleware/auth');
 const authController = require('./controllers/authController');
+const twoFactorController = require('./controllers/twoFactorController');
 const { registerValidation, loginValidation, updateProfileValidation } = require('./middleware/authValidator');
 
 // Kết nối MongoDB
@@ -156,6 +157,12 @@ app.post('/login', requireGuest, loginValidation, authController.login);
 app.get('/logout', authController.logout);
 app.get('/profile', requireAuth, authController.showProfile);
 app.post('/profile/update', requireAuth, updateProfileValidation, authController.updateProfile);
+
+// 2FA Routes
+app.get('/2fa/setup', requireAuth, twoFactorController.show2FASetupPage);
+app.post('/2fa/enable', requireAuth, twoFactorController.enable2FA);
+app.post('/2fa/disable', requireAuth, twoFactorController.disable2FA);
+app.post('/2fa/verify', twoFactorController.verify2FALogin);
 
 // API Auth Routes (JSON)
 app.post('/api/auth/register', registerValidation, authController.apiRegister);

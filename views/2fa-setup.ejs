@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup 2FA - LaptopStore</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .twofa-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .twofa-step {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      border: 2px solid #f0f0f0;
+      border-radius: 5px;
+    }
+    .step-number {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      background: #007bff;
+      color: white;
+      border-radius: 50%;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    .qr-code {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .qr-code img {
+      max-width: 300px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .secret-key {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 5px;
+      font-family: monospace;
+      word-break: break-all;
+      margin: 1rem 0;
+    }
+    .verify-form {
+      margin-top: 2rem;
+    }
+    .token-input {
+      font-size: 24px;
+      text-align: center;
+      letter-spacing: 10px;
+      font-family: monospace;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 5px;
+      margin: 1rem 0;
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .recommended-apps {
+      background: #fff3cd;
+      padding: 1rem;
+      border-radius: 5px;
+      margin: 1rem 0;
+    }
+    .recommended-apps ul {
+      margin: 0.5rem 0 0 1.5rem;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main>
+    <div class="container">
+      <div class="twofa-container">
+        <h2>🔒 Thiết lập xác thực hai yếu tố (2FA)</h2>
+        <p>Tăng cường bảo mật tài khoản của bạn với 2FA/MFA</p>
+
+        <% if (error) { %>
+          <div class="alert alert-error">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <div class="twofa-step">
+          <h3><span class="step-number">1</span>Tải ứng dụng Authenticator</h3>
+          <div class="recommended-apps">
+            <strong>Ứng dụng khuyên dùng:</strong>
+            <ul>
+              <li>Google Authenticator (Android/iOS)</li>
+              <li>Microsoft Authenticator (Android/iOS)</li>
+              <li>Authy (Android/iOS/Desktop)</li>
+              <li>1Password (có tích hợp TOTP)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="twofa-step">
+          <h3><span class="step-number">2</span>Quét mã QR</h3>
+          <p>Mở ứng dụng Authenticator và quét mã QR bên dưới:</p>
+          <div class="qr-code">
+            <img src="<%= qrCode %>" alt="2FA QR Code">
+          </div>
+          <p style="text-align: center; color: #666;">
+            <strong>Không quét được?</strong> Nhập mã thủ công:
+          </p>
+          <div class="secret-key">
+            <%= secret %>
+          </div>
+        </div>
+
+        <div class="twofa-step">
+          <h3><span class="step-number">3</span>Xác nhận mã 6 chữ số</h3>
+          <p>Nhập mã 6 chữ số từ ứng dụng Authenticator để hoàn tất:</p>
+          
+          <form class="verify-form" id="verify2FAForm">
+            <input type="hidden" name="secret" value="<%= secret %>">
+            <div class="form-group">
+              <input type="text" 
+                     id="token" 
+                     name="token" 
+                     class="token-input" 
+                     maxlength="6" 
+                     pattern="[0-9]{6}" 
+                     placeholder="000000"
+                     required
+                     autofocus>
+            </div>
+            <div class="form-actions" style="text-align: center;">
+              <button type="submit" class="btn btn-primary">Kích hoạt 2FA</button>
+              <a href="/profile" class="btn btn-secondary">Hủy</a>
+            </div>
+          </form>
+
+          <div id="resultMessage" style="margin-top: 1rem;"></div>
+        </div>
+
+        <div class="twofa-step" style="background: #e7f3ff;">
+          <h3>ℹ️ Lưu ý quan trọng</h3>
+          <ul>
+            <li>Lưu mã khôi phục ở nơi an toàn</li>
+            <li>Nếu mất điện thoại, bạn sẽ cần liên hệ admin để reset 2FA</li>
+            <li>Mã 2FA thay đổi mỗi 30 giây</li>
+            <li>Sau khi kích hoạt, bạn sẽ cần nhập mã 2FA mỗi khi đăng nhập</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    document.getElementById('verify2FAForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const secret = document.querySelector('input[name="secret"]').value;
+      const token = document.querySelector('input[name="token"]').value;
+      const resultDiv = document.getElementById('resultMessage');
+      
+      // Validate token format
+      if (!/^\d{6}$/.test(token)) {
+        resultDiv.innerHTML = '<div class="alert alert-error">Mã phải là 6 chữ số</div>';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/2fa/enable', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ secret, token })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          resultDiv.innerHTML = '<div class="alert alert-success">' + data.message + '</div>';
+          setTimeout(() => {
+            window.location.href = '/profile?success=' + encodeURIComponent('2FA đã được kích hoạt!');
+          }, 1500);
+        } else {
+          resultDiv.innerHTML = '<div class="alert alert-error">' + data.message + '</div>';
+        }
+      } catch (error) {
+        resultDiv.innerHTML = '<div class="alert alert-error">Lỗi kết nối. Vui lòng thử lại.</div>';
+      }
+    });
+    
+    // Auto-focus và format input
+    const tokenInput = document.getElementById('token');
+    tokenInput.addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 6);
+    });
+  </script>
+</body>
+</html>

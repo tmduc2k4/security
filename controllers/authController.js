@@ -65,19 +65,84 @@ const login = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).render('login', { 
         error: errors.array()[0].msg,
-        redirect: req.body.redirect || '/profile'
+        redirect: req.body.redirect || '/profile',
+        require2FA: false
       });
     }
 
-    const { username, password } = req.body;
+    const { username, password, twoFactorToken } = req.body;
 
-    // Xác thực user
-    const user = await User.authenticate(username, password);
+    // Tìm user
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).render('login', { 
         error: 'Tên đăng nhập hoặc mật khẩu không đúng',
-        redirect: req.body.redirect || '/profile'
+        redirect: req.body.redirect || '/profile',
+        require2FA: false
       });
+    }
+
+    // Kiểm tra account có bị lock không
+    if (user.isAccountLocked()) {
+      const minutesLeft = Math.ceil((user.accountLockedUntil - new Date()) / 60000);
+      return res.status(401).render('login', {
+        error: `Tài khoản bị khóa do đăng nhập sai quá nhiều lần. Thử lại sau ${minutesLeft} phút.`,
+        redirect: req.body.redirect || '/profile',
+        require2FA: false
+      });
+    }
+
+    // Verify password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      await user.incrementFailedAttempts();
+      return res.status(401).render('login', { 
+        error: 'Tên đăng nhập hoặc mật khẩu không đúng',
+        redirect: req.body.redirect || '/profile',
+        require2FA: false
+      });
+    }
+
+    // Kiểm tra 2FA nếu được bật
+    if (user.twoFactorEnabled) {
+      if (!twoFactorToken) {
+        // Yêu cầu nhập mã 2FA
+        return res.render('login', {
+          error: null,
+          redirect: req.body.redirect || '/profile',
+          require2FA: true,
+          userId: user._id,
+          username: user.username
+        });
+      }
+
+      // Verify 2FA token
+      const speakeasy = require('speakeasy');
+      const verified = speakeasy.totp.verify({
+        secret: user.twoFactorSecret,
+        encoding: 'base32',
+        token: twoFactorToken,
+        window: 2
+      });
+
+      if (!verified) {
+        return res.status(401).render('login', {
+          error: 'Mã 2FA không đúng',
+          redirect: req.body.redirect || '/profile',
+          require2FA: true,
+          userId: user._id,
+          username: user.username
+        });
+      }
+    }
+
+    // Reset failed attempts
+    await user.resetFailedAttempts();
+
+    // Kiểm tra password đã hết hạn chưa
+    if (user.isPasswordExpired()) {
+      return res.redirect('/profile?passwordExpired=true&message=' + 
+        encodeURIComponent('Mật khẩu của bạn đã hết hạn (90 ngày). Vui lòng đổi mật khẩu ngay!'));
     }
 
     // Tạo JWT token (sử dụng _id của MongoDB)
@@ -99,7 +164,8 @@ const login = async (req, res) => {
     console.error('Login error:', error);
     res.status(500).render('login', { 
       error: 'Đăng nhập thất bại, vui lòng thử lại',
-      redirect: req.body.redirect || '/profile'
+      redirect: req.body.redirect || '/profile',
+      require2FA: false
     });
   }
 };
@@ -158,6 +224,17 @@ const updateProfile = async (req, res) => {
           success: null
         });
       }
+      
+      // Kiểm tra password có trùng với 5 password gần nhất không
+      const isInHistory = await user.isPasswordInHistory(newPassword);
+      if (isInHistory) {
+        return res.status(400).render('profile', {
+          user: req.user,
+          error: 'Không được sử dụng lại mật khẩu đã dùng gần đây. Vui lòng chọn mật khẩu khác.',
+          success: null
+        });
+      }
+      
       updateData.password = newPassword;
     }
 

@@ -3,7 +3,15 @@
  * Chạy: node scripts/createAdmin.js
  */
 
-require('dotenv').config();
+// Load .env hoặc .env.production
+if (process.env.NODE_ENV === 'production') {
+  require('dotenv').config({ path: '.env.production' });
+  console.log('Using PRODUCTION environment (.env.production)');
+} else {
+  require('dotenv').config();
+  console.log('Using DEVELOPMENT environment (.env)');
+}
+
 const mongoose = require('mongoose');
 const User = require('../models/User');
 
@@ -11,6 +19,7 @@ const createAdmin = async () => {
   try {
     // Kết nối MongoDB
     console.log('Đang kết nối MongoDB...');
+    console.log('URI:', process.env.MONGODB_URI ? process.env.MONGODB_URI.substring(0, 30) + '...' : 'UNDEFINED');
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✓ Kết nối thành công!\n');
 
@@ -18,7 +27,7 @@ const createAdmin = async () => {
     const adminData = {
       username: 'admin',
       email: 'admin@laptopstore.com',
-      password: 'Admin@123456',
+      password: 'Admin@2025Secure!',  // Strong password: 12+ chars, special chars
       fullName: 'Administrator'
     };
 

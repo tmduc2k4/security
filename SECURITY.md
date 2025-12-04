@@ -86,10 +86,21 @@
 - [x] Error handling
 - [x] Environment variables
 - [x] Payload size limiting (10kb)
+- [x] JWT Authentication with httpOnly cookies
+- [x] Password hashing with bcrypt (10 rounds)
+- [x] Strong password policy (12+ characters, special chars required)
+- [x] Password history (prevent reuse of last 5 passwords)
+- [x] Password expiry (90 days automatic expiration)
+- [x] Two-Factor Authentication (TOTP/MFA)
+- [x] Account lockout after 5 failed login attempts (30 min lockout)
 
 ### Nên triển khai thêm (Tương lai)
 - [ ] HTTPS/SSL certificates
-- [ ] Authentication & Authorization (JWT)
+- [x] Authentication & Authorization (JWT) ✓
+- [x] Password Policy (12+ chars, special chars) ✓
+- [x] Password History & Expiry (90 days) ✓
+- [x] Two-Factor Authentication (TOTP/2FA) ✓
+- [x] Account Lockout (5 failed attempts) ✓
 - [ ] CSRF protection
 - [ ] Session management
 - [ ] Database encryption
