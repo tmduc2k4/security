@@ -8,7 +8,10 @@
     "dev": "nodemon app.js",
     "security-check": "npm audit",
     "security-fix": "npm audit fix",
-    "update-check": "npm outdated"
+    "update-check": "npm outdated",
+    "create-admin": "node scripts/createAdmin.js",
+    "list-users": "node scripts/listUsers.js",
+    "delete-user": "node scripts/deleteUser.js"
   },
   "keywords": [
     "laptop",
