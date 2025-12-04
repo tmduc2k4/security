@@ -28,8 +28,8 @@ const register = async (req, res) => {
       fullName
     });
 
-    // Tạo JWT token
-    const token = generateToken(newUser.id);
+    // Tạo JWT token (sử dụng _id của MongoDB)
+    const token = generateToken(newUser._id.toString());
 
     // Lưu token vào cookie
     res.cookie('token', token, {
@@ -80,8 +80,8 @@ const login = async (req, res) => {
       });
     }
 
-    // Tạo JWT token
-    const token = generateToken(user.id);
+    // Tạo JWT token (sử dụng _id của MongoDB)
+    const token = generateToken(user._id.toString());
 
     // Lưu token vào cookie
     res.cookie('token', token, {
@@ -149,7 +149,8 @@ const updateProfile = async (req, res) => {
     // Cập nhật password
     if (newPassword) {
       // Kiểm tra current password
-      const isValidPassword = await User.comparePassword(currentPassword, req.user.password);
+      const user = await User.findById(req.userId);
+      const isValidPassword = await user.comparePassword(currentPassword);
       if (!isValidPassword) {
         return res.status(400).render('profile', {
           user: req.user,
@@ -161,10 +162,10 @@ const updateProfile = async (req, res) => {
     }
 
     // Cập nhật user
-    await User.update(req.userId, updateData);
+    await User.updateUser(req.userId, updateData);
 
     // Lấy user mới sau khi cập nhật
-    const updatedUser = User.findById(req.userId);
+    const updatedUser = await User.findById(req.userId);
 
     res.render('profile', {
       user: updatedUser,

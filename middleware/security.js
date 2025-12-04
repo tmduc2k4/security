@@ -5,18 +5,21 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 
 // Rate limiting - Ngăn chặn tấn công brute force và DDoS
+// Có thể điều chỉnh qua .env cho development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 phút
-  max: 100, // Giới hạn 100 requests mỗi IP trong 15 phút
+  max: process.env.RATE_LIMIT_MAX || 100, // Default 100, có thể tăng lên cho dev
   message: 'Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút',
   standardHeaders: true,
   legacyHeaders: false,
+  skipSuccessfulRequests: false, // Đếm cả request thành công
+  skipFailedRequests: false, // Đếm cả request thất bại
 });
 
 // Stricter rate limit cho các endpoint nhạy cảm
 const strictLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: process.env.STRICT_RATE_LIMIT_MAX || 5,
   message: 'Quá nhiều lần thử, vui lòng thử lại sau 15 phút',
 });
 

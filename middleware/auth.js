@@ -20,40 +20,48 @@ const verifyToken = (token) => {
 };
 
 // Middleware xác thực user đã đăng nhập
-const requireAuth = (req, res, next) => {
-  // Kiểm tra token từ cookie hoặc header
-  const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
+const requireAuth = async (req, res, next) => {
+  try {
+    // Kiểm tra token từ cookie hoặc header
+    const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
 
-  if (!token) {
-    if (req.headers['content-type']?.includes('application/json')) {
-      return res.status(401).json({ error: 'Vui lòng đăng nhập để tiếp tục' });
+    if (!token) {
+      if (req.headers['content-type']?.includes('application/json')) {
+        return res.status(401).json({ error: 'Vui lòng đăng nhập để tiếp tục' });
+      }
+      return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
     }
-    return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
-  }
 
-  // Verify token
-  const decoded = verifyToken(token);
-  if (!decoded) {
-    if (req.headers['content-type']?.includes('application/json')) {
-      return res.status(401).json({ error: 'Token không hợp lệ hoặc đã hết hạn' });
+    // Verify token
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      if (req.headers['content-type']?.includes('application/json')) {
+        return res.status(401).json({ error: 'Token không hợp lệ hoặc đã hết hạn' });
+      }
+      return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
     }
-    return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
-  }
 
-  // Lấy user từ database
-  const user = User.findById(decoded.userId);
-  if (!user) {
+    // Lấy user từ database
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      if (req.headers['content-type']?.includes('application/json')) {
+        return res.status(401).json({ error: 'User không tồn tại' });
+      }
+      return res.redirect('/login');
+    }
+
+    // Gắn user vào request
+    req.user = user;
+    req.userId = user._id.toString();
+    res.locals.user = user; // Để sử dụng trong EJS templates
+    next();
+  } catch (error) {
+    console.error('Auth error:', error);
     if (req.headers['content-type']?.includes('application/json')) {
-      return res.status(401).json({ error: 'User không tồn tại' });
+      return res.status(500).json({ error: 'Lỗi xác thực' });
     }
     return res.redirect('/login');
   }
-
-  // Gắn user vào request
-  req.user = user;
-  req.userId = user.id;
-  res.locals.user = user; // Để sử dụng trong EJS templates
-  next();
 };
 
 // Middleware kiểm tra user chưa đăng nhập (cho trang login/register)
@@ -71,23 +79,29 @@ const requireGuest = (req, res, next) => {
 };
 
 // Middleware optional auth - không bắt buộc đăng nhập nhưng load user nếu có
-const optionalAuth = (req, res, next) => {
-  const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
-  
-  if (token) {
-    const decoded = verifyToken(token);
-    if (decoded) {
-      const user = User.findById(decoded.userId);
-      if (user) {
-        req.user = user;
-        req.userId = user.id;
-        res.locals.user = user;
+const optionalAuth = async (req, res, next) => {
+  try {
+    const token = req.cookies?.token || req.headers.authorization?.replace('Bearer ', '');
+    
+    if (token) {
+      const decoded = verifyToken(token);
+      if (decoded) {
+        const user = await User.findById(decoded.userId);
+        if (user) {
+          req.user = user;
+          req.userId = user._id.toString();
+          res.locals.user = user;
+        }
       }
     }
+    
+    res.locals.user = res.locals.user || null;
+    next();
+  } catch (error) {
+    console.error('Optional auth error:', error);
+    res.locals.user = null;
+    next();
   }
-  
-  res.locals.user = res.locals.user || null;
-  next();
 };
 
 module.exports = {

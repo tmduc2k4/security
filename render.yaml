@@ -1,0 +1,6 @@
+# Build command for Render
+build:
+  - npm install
+
+# Start command
+start: node app.js

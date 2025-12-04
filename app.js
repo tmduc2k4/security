@@ -4,6 +4,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
+// Import database connection
+const connectDB = require('./config/database');
+
 // Import security middleware
 const {
   limiter,
@@ -26,6 +29,9 @@ const {
 const { optionalAuth, requireAuth, requireGuest } = require('./middleware/auth');
 const authController = require('./controllers/authController');
 const { registerValidation, loginValidation, updateProfileValidation } = require('./middleware/authValidator');
+
+// Kết nối MongoDB
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 3000;

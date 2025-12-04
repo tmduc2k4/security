@@ -1,146 +1,125 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// In-memory user storage (thay bằng database trong production)
-const users = [];
-let userIdCounter = 1;
-
-class User {
-  constructor(data) {
-    this.id = data.id;
-    this.username = data.username;
-    this.email = data.email;
-    this.password = data.password; // Hashed password
-    this.fullName = data.fullName;
-    this.createdAt = data.createdAt || new Date();
-    this.updatedAt = data.updatedAt || new Date();
+// Define User Schema
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, 'Username là bắt buộc'],
+    unique: true,
+    trim: true,
+    minlength: [3, 'Username phải có ít nhất 3 ký tự'],
+    maxlength: [30, 'Username không được quá 30 ký tự'],
+    match: [/^[a-zA-Z0-9_]+$/, 'Username chỉ được chứa chữ, số và dấu gạch dưới']
+  },
+  email: {
+    type: String,
+    required: [true, 'Email là bắt buộc'],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, 'Email không hợp lệ']
+  },
+  password: {
+    type: String,
+    required: [true, 'Password là bắt buộc'],
+    minlength: [6, 'Password phải có ít nhất 6 ký tự']
+  },
+  fullName: {
+    type: String,
+    trim: true,
+    default: function() { return this.username; }
   }
+}, {
+  timestamps: true, // Tự động thêm createdAt và updatedAt
+  toJSON: {
+    transform: function(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      delete ret.password; // Không trả về password trong JSON
+      return ret;
+    }
+  }
+});
 
-  // Hash password trước khi lưu
-  static async hashPassword(password) {
+// Hash password trước khi save
+userSchema.pre('save', async function(next) {
+  // Chỉ hash nếu password được modify
+  if (!this.isModified('password')) {
+    return next();
+  }
+  
+  try {
     const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Instance method: So sánh password
+userSchema.methods.comparePassword = async function(inputPassword) {
+  return await bcrypt.compare(inputPassword, this.password);
+};
+
+// Static method: Tìm user và authenticate
+userSchema.statics.authenticate = async function(username, password) {
+  const user = await this.findOne({ username });
+  if (!user) {
+    return null;
+  }
+  
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) {
+    return null;
+  }
+  
+  return user;
+};
+
+// Static method: Lấy tất cả users (không bao gồm password)
+userSchema.statics.findAll = async function() {
+  return await this.find({}).select('-password');
+};
+
+// Static method: Update user
+userSchema.statics.updateUser = async function(id, updateData) {
+  const user = await this.findById(id);
+  if (!user) {
+    throw new Error('User không tồn tại');
   }
 
-  // So sánh password
-  static async comparePassword(inputPassword, hashedPassword) {
-    return await bcrypt.compare(inputPassword, hashedPassword);
-  }
-
-  // Tạo user mới
-  static async create(userData) {
-    // Validate dữ liệu
-    if (!userData.username || !userData.email || !userData.password) {
-      throw new Error('Thiếu thông tin bắt buộc');
-    }
-
-    // Kiểm tra username đã tồn tại
-    if (users.find(u => u.username === userData.username)) {
-      throw new Error('Username đã tồn tại');
-    }
-
-    // Kiểm tra email đã tồn tại
-    if (users.find(u => u.email === userData.email)) {
+  // Cập nhật các field được phép
+  if (updateData.fullName) user.fullName = updateData.fullName;
+  if (updateData.email) {
+    // Kiểm tra email mới không trùng với user khác
+    const existingUser = await this.findOne({ email: updateData.email, _id: { $ne: id } });
+    if (existingUser) {
       throw new Error('Email đã được sử dụng');
     }
-
-    // Hash password
-    const hashedPassword = await this.hashPassword(userData.password);
-
-    // Tạo user mới
-    const newUser = new User({
-      id: userIdCounter++,
-      username: userData.username,
-      email: userData.email,
-      password: hashedPassword,
-      fullName: userData.fullName || userData.username,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-
-    users.push(newUser);
-    return newUser;
+    user.email = updateData.email;
   }
-
-  // Tìm user theo ID
-  static findById(id) {
-    return users.find(u => u.id === parseInt(id));
+  if (updateData.password) {
+    user.password = updateData.password; // Pre-save hook sẽ tự hash
   }
+  
+  await user.save();
+  return user;
+};
 
-  // Tìm user theo username
-  static findByUsername(username) {
-    return users.find(u => u.username === username);
+// Static method: Delete user
+userSchema.statics.deleteUser = async function(id) {
+  const result = await this.findByIdAndDelete(id);
+  if (!result) {
+    throw new Error('User không tồn tại');
   }
+  return true;
+};
 
-  // Tìm user theo email
-  static findByEmail(email) {
-    return users.find(u => u.email === email);
-  }
+const User = mongoose.model('User', userSchema);
 
-  // Lấy tất cả users (không bao gồm password)
-  static findAll() {
-    return users.map(u => {
-      const { password, ...userWithoutPassword } = u;
-      return userWithoutPassword;
-    });
-  }
-
-  // Xác thực user (login)
-  static async authenticate(username, password) {
-    const user = this.findByUsername(username);
-    if (!user) {
-      return null;
-    }
-
-    const isMatch = await this.comparePassword(password, user.password);
-    if (!isMatch) {
-      return null;
-    }
-
-    // Trả về user không có password
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-  }
-
-  // Cập nhật user
-  static async update(id, updateData) {
-    const user = this.findById(id);
-    if (!user) {
-      throw new Error('User không tồn tại');
-    }
-
-    // Cập nhật các field được phép
-    if (updateData.fullName) user.fullName = updateData.fullName;
-    if (updateData.email) {
-      // Kiểm tra email mới không trùng với user khác
-      const existingUser = users.find(u => u.email === updateData.email && u.id !== id);
-      if (existingUser) {
-        throw new Error('Email đã được sử dụng');
-      }
-      user.email = updateData.email;
-    }
-    if (updateData.password) {
-      user.password = await this.hashPassword(updateData.password);
-    }
-    
-    user.updatedAt = new Date();
-    return user;
-  }
-
-  // Xóa user
-  static delete(id) {
-    const index = users.findIndex(u => u.id === parseInt(id));
-    if (index === -1) {
-      throw new Error('User không tồn tại');
-    }
-    users.splice(index, 1);
-    return true;
-  }
-
-  // Lấy user object không có password
-  toJSON() {
-    const { password, ...userWithoutPassword } = this;
-    return userWithoutPassword;
-  }
-}
+module.exports = User;
 
 module.exports = User;
