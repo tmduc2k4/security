@@ -3,23 +3,288 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LaptopStore - Cửa hàng laptop uy tín</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Security App - Xác thực và bảo mật</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
+  <style>
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 5rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: moveBackground 20s linear infinite;
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+
+    .hero .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h2 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .hero .btn {
+      background: white;
+      color: #667eea;
+      font-weight: 700;
+      padding: 1rem 2.5rem;
+    }
+
+    .hero .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Stats Section */
+    .stats {
+      background: white;
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--border-gray);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-gray);
+      font-size: 1rem;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 4rem 0;
+      background: #f9fafb;
+    }
+
+    .features h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      font-size: 2rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--text-gray);
+    }
+
+    /* Products Section */
+    .products {
+      padding: 4rem 0;
+    }
+
+    .products h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      font-size: 2rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+      border: 1px solid var(--border-gray);
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+
+    .product-info {
+      padding: 1.5rem;
+    }
+
+    .product-info h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .product-desc {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+
+    .product-specs {
+      background: #f9fafb;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.8rem;
+    }
+
+    .product-specs p {
+      margin: 0.25rem 0;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+    }
+
+    .product-card .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* CTA Section */
+    .cta {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .cta .btn {
+      background: white;
+      color: #3b82f6;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 2rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
     <nav>
       <div class="container">
         <div class="logo">
-          <h1>💻 LaptopStore</h1>
+          <h1>🔐 Security App</h1>
         </div>
         <ul class="nav-links">
           <li><a href="/" class="active">Trang chủ</a></li>
           <li><a href="/laptops">Sản phẩm</a></li>
           <li><a href="/about">Giới thiệu</a></li>
           <li><a href="/contact">Liên hệ</a></li>
-          <% if (locals.user) { %>
-            <li><a href="/profile">👤 <%= user.username %></a></li>
+          <% if (locals.currentUser) { %>
+            <li><a href="/profile">👤 <%= currentUser.username %></a></li>
+            <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+              <li><a href="/admin">⚙️ Admin</a></li>
+            <% } %>
             <li><a href="/logout">Đăng xuất</a></li>
           <% } else { %>
             <li><a href="/login">Đăng nhập</a></li>
@@ -31,23 +296,152 @@
   </header>
 
   <main>
+    <!-- Hero Section -->
     <section class="hero">
       <div class="container">
-        <h2>Chào mừng đến với LaptopStore</h2>
-        <p>Cung cấp laptop chất lượng cao với giá tốt nhất</p>
-        <a href="/laptops" class="btn">Xem sản phẩm</a>
+        <h2>🛡️ Bảo vệ tài khoản của bạn</h2>
+        <p>Hệ thống xác thực và bảo mật toàn diện với 2FA, mã hóa mật khẩu, và kiểm soát truy cập</p>
+        <% if (!locals.currentUser) { %>
+          <a href="/register" class="btn">Tạo tài khoản ngay</a>
+        <% } else { %>
+          <a href="/profile" class="btn">Xem hồ sơ của bạn</a>
+        <% } %>
       </div>
     </section>
 
+    <!-- Stats Section -->
+    <section class="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">13</div>
+            <div class="stat-label">Lớp bảo mật</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Mã hóa dữ liệu</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">2FA</div>
+            <div class="stat-label">Xác thực đa yếu tố</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">∞</div>
+            <div class="stat-label">Bảo vệ</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="container">
+        <h2>✨ Tính năng chính</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3>Xác thực 2 yếu tố</h3>
+            <p>Bảo vệ tài khoản với Google Authenticator hoặc ứng dụng TOTP</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔑</div>
+            <h3>Mật khẩu mạnh</h3>
+            <p>Tự động kiểm soát độ phức tạp (12+ ký tự, đặc biệt, hoa/thường)</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>Lịch sử mật khẩu</h3>
+            <p>Không được tái sử dụng 5 mật khẩu gần đây nhất</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⏰</div>
+            <h3>Hết hạn mật khẩu</h3>
+            <p>Yêu cầu đổi mật khẩu mỗi 90 ngày</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🚫</div>
+            <h3>Khóa tài khoản</h3>
+            <p>Tự động khóa sau 5 lần đăng nhập sai trong 30 phút</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📧</div>
+            <h3>Quên mật khẩu</h3>
+            <p>Đặt lại mật khẩu an toàn qua email xác thực</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products Section -->
     <section class="products">
       <div class="container">
-        <h2>Sản phẩm nổi bật</h2>
+        <h2>📱 Sản phẩm nổi bật</h2>
         <div class="product-grid">
           <% laptops.forEach(laptop => { %>
             <div class="product-card">
-              <img src="<%= laptop.image %>" alt="<%= laptop.name %>">
-              <h3><%= laptop.name %></h3>
-              <p class="price"><%= laptop.price.toLocaleString('vi-VN') %>đ</p>
+              <img src="<%= laptop.image %>" alt="<%= laptop.name %>" class="product-image">
+              <div class="product-info">
+                <h3><%= laptop.name %></h3>
+                <p class="product-desc"><%= laptop.description %></p>
+                <div class="product-specs">
+                  <p>🖥️ CPU: <%= laptop.specs.cpu %></p>
+                  <p>💾 RAM: <%= laptop.specs.ram %></p>
+                  <p>💿 Storage: <%= laptop.specs.storage %></p>
+                  <p>📺 Screen: <%= laptop.specs.screen %></p>
+                </div>
+                <div class="product-footer">
+                  <span class="product-price"><%= laptop.price.toLocaleString('vi-VN') %>đ</span>
+                  <a href="/laptop/<%= laptop.id %>" class="btn btn-sm btn-primary">Chi tiết</a>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <div class="container">
+        <h2>Bắt đầu bảo vệ tài khoản của bạn ngay hôm nay</h2>
+        <p>Đăng ký miễn phí và nhận tất cả các tính năng bảo mật tiên tiến</p>
+        <% if (!locals.currentUser) { %>
+          <a href="/register" class="btn">Đăng ký ngay</a>
+        <% } %>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h4>🔐 Security App</h4>
+          <p>Bảo vệ tài khoản của bạn với hệ thống xác thực toàn diện</p>
+        </div>
+        <div>
+          <h4>📚 Liên kết</h4>
+          <ul style="list-style: none;">
+            <li><a href="/about">Giới thiệu</a></li>
+            <li><a href="/contact">Liên hệ</a></li>
+            <li><a href="/laptops">Sản phẩm</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>🔒 Bảo mật</h4>
+          <ul style="list-style: none;">
+            <li><a href="/profile">Hồ sơ cá nhân</a></li>
+            <li><a href="/profile/activity">Hoạt động</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Security App. Bảo vệ tối đa cho dữ liệu của bạn.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
               <p class="description"><%= laptop.description %></p>
               <a href="/laptop/<%= laptop.id %>" class="btn btn-small">Xem chi tiết</a>
             </div>
