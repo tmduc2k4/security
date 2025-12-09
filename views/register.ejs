@@ -3,51 +3,186 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng ký - LaptopStore</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Đăng ký - Security App</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
   <style>
-    .auth-container {
-      max-width: 500px;
-      margin: 3rem auto;
-      padding: 2rem;
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem 0;
+    }
+
+    .auth-card {
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+      animation: fadeIn 0.5s ease-in-out;
     }
-    .auth-container h2 {
+
+    .auth-card h2 {
       text-align: center;
-      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    .auth-card .subtitle {
+      text-align: center;
+      color: var(--text-gray);
       margin-bottom: 2rem;
+      font-size: 0.95rem;
     }
+
     .error-message {
-      background-color: #fee;
-      color: #c33;
+      background: #fee2e2;
+      color: #7f1d1d;
       padding: 1rem;
-      border-radius: 5px;
+      border-radius: 0.5rem;
       margin-bottom: 1rem;
-      border-left: 4px solid #c33;
+      border-left: 4px solid var(--danger-red);
     }
+
+    .password-requirements {
+      background: #f0f9ff;
+      border-left: 4px solid var(--primary-blue);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .password-requirements h4 {
+      margin: 0 0 0.5rem 0;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+
+    .password-requirements ul {
+      list-style: none;
+      margin: 0;
+    }
+
+    .password-requirements li {
+      padding: 0.25rem 0;
+      color: var(--text-gray);
+    }
+
+    .password-requirements li.met {
+      color: var(--success-green);
+    }
+
     .form-actions {
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      margin-top: 1.5rem;
     }
+
     .form-footer {
       text-align: center;
-      margin-top: 1.5rem;
+      margin-top: 2rem;
       padding-top: 1.5rem;
-      border-top: 1px solid #ddd;
+      border-top: 1px solid var(--border-gray);
     }
+
     .form-footer a {
-      color: #3498db;
+      color: var(--primary-blue);
       text-decoration: none;
+      font-weight: 600;
     }
+
     .form-footer a:hover {
-      text-decoration: underline;
+      color: #2563eb;
     }
-    .password-requirements {
-      font-size: 0.85rem;
-      color: #666;
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-page {
+        padding: 1rem;
+      }
+
+      .auth-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2>📝 Đăng ký</h2>
+      <p class="subtitle">Tạo tài khoản mới</p>
+      
+      <% if (error) { %>
+        <div class="error-message">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <div class="password-requirements">
+        <h4>✓ Yêu cầu mật khẩu:</h4>
+        <ul>
+          <li>✓ Ít nhất 12 ký tự</li>
+          <li>✓ Chứa chữ hoa (A-Z)</li>
+          <li>✓ Chứa chữ thường (a-z)</li>
+          <li>✓ Chứa số (0-9)</li>
+          <li>✓ Chứa ký tự đặc biệt (!@#$%^&*)</li>
+        </ul>
+      </div>
+
+      <form action="/register" method="POST">
+        <div class="form-group">
+          <label for="username">👤 Username</label>
+          <input type="text" id="username" name="username" required 
+                 placeholder="Tên đăng nhập (3-30 ký tự)"
+                 autofocus>
+        </div>
+
+        <div class="form-group">
+          <label for="email">📧 Email</label>
+          <input type="email" id="email" name="email" required 
+                 placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="fullName">👤 Họ và tên</label>
+          <input type="text" id="fullName" name="fullName" 
+                 placeholder="Họ và tên (tùy chọn)">
+        </div>
+
+        <div class="form-group">
+          <label for="password">🔑 Mật khẩu</label>
+          <input type="password" id="password" name="password" required 
+                 placeholder="Mật khẩu mạnh">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-lg">Đăng ký</button>
+        </div>
+
+        <div class="form-footer">
+          <p>Đã có tài khoản? <a href="/login">🔐 Đăng nhập</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
       margin-top: 0.5rem;
       padding: 0.5rem;
       background: #f8f9fa;

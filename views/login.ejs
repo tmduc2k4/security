@@ -3,80 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng nhập - LaptopStore</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Đăng nhập - Security App</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
   <style>
-    .auth-container {
-      max-width: 450px;
-      margin: 3rem auto;
-      padding: 2rem;
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem 0;
+    }
+
+    .auth-card {
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 450px;
+      animation: fadeIn 0.5s ease-in-out;
     }
-    .auth-container h2 {
+
+    .auth-card h2 {
       text-align: center;
-      color: #2c3e50;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    .auth-card .subtitle {
+      text-align: center;
+      color: var(--text-gray);
       margin-bottom: 2rem;
+      font-size: 0.95rem;
     }
-    .error-message {
-      background-color: #fee;
-      color: #c33;
-      padding: 1rem;
-      border-radius: 5px;
-      margin-bottom: 1rem;
-      border-left: 4px solid #c33;
-    }
+
     .form-actions {
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      margin-top: 1.5rem;
     }
+
     .form-footer {
       text-align: center;
-      margin-top: 1.5rem;
+      margin-top: 2rem;
       padding-top: 1.5rem;
-      border-top: 1px solid #ddd;
+      border-top: 1px solid var(--border-gray);
     }
+
+    .form-footer p {
+      margin: 0.5rem 0;
+    }
+
     .form-footer a {
-      color: #3498db;
+      color: var(--primary-blue);
       text-decoration: none;
+      font-weight: 600;
+      transition: color var(--transition-fast);
     }
+
     .form-footer a:hover {
-      text-decoration: underline;
+      color: #2563eb;
     }
-    .remember-me {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 1rem 0;
+
+    .error-message {
+      background: #fee2e2;
+      color: #7f1d1d;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--danger-red);
     }
-    .remember-me input {
-      width: auto;
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-page {
+        padding: 1rem;
+      }
+
+      .auth-card {
+        padding: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <div class="container">
-        <div class="logo">
-          <h1>💻 LaptopStore</h1>
-        </div>
-        <ul class="nav-links">
-          <li><a href="/">Trang chủ</a></li>
-          <li><a href="/laptops">Sản phẩm</a></li>
-          <li><a href="/about">Giới thiệu</a></li>
-          <li><a href="/contact">Liên hệ</a></li>
-          <li><a href="/register">Đăng ký</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-
-  <main>
-    <div class="auth-container">
-      <h2>Đăng nhập</h2>
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2>🔐 Đăng nhập</h2>
+      <p class="subtitle">Truy cập tài khoản của bạn</p>
       
       <% if (error) { %>
         <div class="error-message">
@@ -88,34 +114,28 @@
         <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
         
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">👤 Username</label>
           <input type="text" id="username" name="username" required 
                  placeholder="Tên đăng nhập"
                  autofocus>
         </div>
 
         <div class="form-group">
-          <label for="password">Mật khẩu</label>
+          <label for="password">🔑 Mật khẩu</label>
           <input type="password" id="password" name="password" required 
                  placeholder="Mật khẩu">
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Đăng nhập</button>
+          <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
         </div>
 
         <div class="form-footer">
-          <p><a href="/forgot-password">Quên mật khẩu?</a></p>
-          <p>Chưa có tài khoản? <a href="/register">Đăng ký ngay</a></p>
+          <p><a href="/forgot-password">❓ Quên mật khẩu?</a></p>
+          <p>Chưa có tài khoản? <a href="/register">📝 Đăng ký ngay</a></p>
         </div>
       </form>
     </div>
-  </main>
-
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
 </body>
 </html>
