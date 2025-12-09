@@ -3,88 +3,254 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trang cá nhân - LaptopStore</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Hồ sơ cá nhân - Security App</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
   <style>
+    .page-header {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 2rem 0;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
     .profile-container {
-      max-width: 800px;
-      margin: 3rem auto;
-      padding: 2rem;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .profile-sidebar {
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      padding: 2rem;
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow-sm);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
     }
-    .profile-header {
+
+    .profile-avatar {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      margin: 0 auto 1.5rem auto;
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .profile-name {
       text-align: center;
-      padding-bottom: 2rem;
-      border-bottom: 2px solid #eee;
-      margin-bottom: 2rem;
-    }
-    .profile-header h2 {
-      color: #2c3e50;
       margin-bottom: 0.5rem;
     }
-    .profile-header .username {
-      color: #7f8c8d;
-      font-size: 1.1rem;
+
+    .profile-name h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
     }
-    .profile-info {
-      background: #f8f9fa;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-    }
-    .profile-info-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.8rem 0;
-      border-bottom: 1px solid #dee2e6;
-    }
-    .profile-info-item:last-child {
-      border-bottom: none;
-    }
-    .profile-info-label {
+
+    .profile-role {
+      text-align: center;
+      padding: 0.5rem 1rem;
+      background: #e0e7ff;
+      border-radius: 2rem;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.85rem;
       font-weight: 600;
-      color: #495057;
+      color: #3b82f6;
+      margin-bottom: 1.5rem;
     }
-    .profile-info-value {
-      color: #6c757d;
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-gray);
     }
-    .success-message {
-      background-color: #d4edda;
-      color: #155724;
-      padding: 1rem;
-      border-radius: 5px;
-      margin-bottom: 1rem;
-      border-left: 4px solid #28a745;
+
+    .stat-item {
+      text-align: center;
     }
-    .error-message {
-      background-color: #fee;
-      color: #c33;
-      padding: 1rem;
-      border-radius: 5px;
-      margin-bottom: 1rem;
-      border-left: 4px solid #c33;
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
     }
-    .profile-section {
-      margin-bottom: 2rem;
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+      margin-top: 0.25rem;
     }
-    .profile-section h3 {
-      color: #2c3e50;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #3498db;
+
+    .sidebar-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
     }
-    .form-actions {
+
+    .sidebar-links a {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      background: #f9fafb;
+      color: var(--text-dark);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-links a:hover,
+    .sidebar-links a.active {
+      background: #e0e7ff;
+      color: var(--primary-blue);
+      border-left-color: var(--primary-blue);
+    }
+
+    .sidebar-links span {
+      margin-right: 0.75rem;
+      font-size: 1.2rem;
+    }
+
+    .profile-main {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary-blue);
+      color: var(--text-dark);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-gray);
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .button-group {
       display: flex;
       gap: 1rem;
-      justify-content: flex-end;
+      margin-top: 2rem;
     }
-    .btn-danger {
-      background-color: #e74c3c;
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
     }
-    .btn-danger:hover {
-      background-color: #c0392b;
+
+    .info-item {
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      border-left: 4px solid var(--primary-blue);
+    }
+
+    .info-label {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    .alert-info {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 0.8rem;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    @media (max-width: 768px) {
+      .profile-container {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-sidebar {
+        position: static;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -93,14 +259,17 @@
     <nav>
       <div class="container">
         <div class="logo">
-          <h1>💻 LaptopStore</h1>
+          <h1>🔐 Security App</h1>
         </div>
         <ul class="nav-links">
           <li><a href="/">Trang chủ</a></li>
           <li><a href="/laptops">Sản phẩm</a></li>
           <li><a href="/about">Giới thiệu</a></li>
           <li><a href="/contact">Liên hệ</a></li>
-          <li><a href="/profile" class="active">Tài khoản</a></li>
+          <li><a href="/profile" class="active">👤 Hồ sơ</a></li>
+          <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+            <li><a href="/admin">⚙️ Admin</a></li>
+          <% } %>
           <li><a href="/logout">Đăng xuất</a></li>
         </ul>
       </div>
@@ -108,102 +277,217 @@
   </header>
 
   <main>
-    <div class="profile-container">
-      <div class="profile-header">
-        <h2>Xin chào, <%= user.fullName || user.username %>!</h2>
-        <p class="username">@<%= user.username %></p>
+    <div class="page-header">
+      <div class="container">
+        <h1>👤 Hồ sơ cá nhân</h1>
       </div>
+    </div>
 
-      <% if (success) { %>
-        <div class="success-message">
-          <%= success %>
+    <div class="container">
+      <div class="profile-container">
+        <!-- Sidebar -->
+        <div class="profile-sidebar">
+          <div class="profile-avatar">😊</div>
+          <div class="profile-name">
+            <h2><%= currentUser.username %></h2>
+            <p style="margin: 0; color: var(--text-gray); font-size: 0.85rem;"><%= currentUser.email %></p>
+          </div>
+          <div class="profile-role">
+            📌 <%= currentUser.role.toUpperCase() %>
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat-item">
+              <div class="stat-value">
+                <% const createdDate = new Date(currentUser.createdAt); %>
+                <%= Math.floor((Date.now() - createdDate) / (1000 * 60 * 60 * 24)) %>
+              </div>
+              <div class="stat-label">Ngày hoạt động</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value"><%= currentUser.twoFactorEnabled ? '✅' : '❌' %></div>
+              <div class="stat-label">2FA</div>
+            </div>
+          </div>
+
+          <div class="sidebar-links">
+            <a href="#personal" class="active"><span>📝</span> Thông tin cá nhân</a>
+            <a href="#security"><span>🔒</span> Bảo mật</a>
+            <a href="#activity"><span>📊</span> Hoạt động</a>
+          </div>
         </div>
-      <% } %>
 
-      <% if (error) { %>
-        <div class="error-message">
-          <%= error %>
+        <!-- Main Content -->
+        <div class="profile-main">
+          <!-- Personal Info Section -->
+          <div id="personal">
+            <h3 class="section-title">📝 Thông tin cá nhân</h3>
+            
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Tên đăng nhập</div>
+                <div class="info-value"><%= currentUser.username %></div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Email</div>
+                <div class="info-value">
+                  <%= currentUser.email %>
+                  <span class="badge badge-success" style="margin-left: 0.5rem;">✓ Xác thực</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Vai trò</div>
+                <div class="info-value"><%= currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) %></div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Trạng thái</div>
+                <div class="info-value">
+                  <% if (currentUser.isActive) { %>
+                    <span class="badge badge-success">🟢 Hoạt động</span>
+                  <% } else { %>
+                    <span class="badge badge-warning">🟡 Bị khóa</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>🔐 Đổi mật khẩu</label>
+              <a href="/change-password" style="display: inline-block; margin-top: 0.5rem;" class="btn btn-primary">
+                Đổi mật khẩu
+              </a>
+            </div>
+          </div>
+
+          <!-- Security Section -->
+          <div id="security" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-gray);">
+            <h3 class="section-title">🔒 Bảo mật</h3>
+            
+            <div class="alert-info">
+              <strong>💡 Thông tin:</strong> Bảo vệ tài khoản của bạn với các tính năng bảo mật nâng cao
+            </div>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Xác thực 2 yếu tố (2FA)</div>
+                <div class="info-value">
+                  <% if (currentUser.twoFactorEnabled) { %>
+                    <span class="badge badge-success">✅ Đã bật</span>
+                  <% } else { %>
+                    <span class="badge badge-warning">❌ Chưa bật</span>
+                  <% } %>
+                </div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Mật khẩu lần cuối đổi</div>
+                <div class="info-value">
+                  <% if (currentUser.passwordLastChanged) { %>
+                    <% const lastChanged = new Date(currentUser.passwordLastChanged); %>
+                    <%= lastChanged.toLocaleDateString('vi-VN') %>
+                  <% } else { %>
+                    Chưa đổi
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <a href="/setup-2fa" class="btn btn-primary" style="margin-right: 1rem;">
+                <% if (currentUser.twoFactorEnabled) { %>
+                  🔄 Cập nhật 2FA
+                <% } else { %>
+                  🔐 Bật 2FA
+                <% } %>
+              </a>
+              <a href="/change-password" class="btn btn-secondary">🔑 Đổi mật khẩu</a>
+            </div>
+          </div>
+
+          <!-- Activity Section -->
+          <div id="activity" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-gray);">
+            <h3 class="section-title">📊 Hoạt động gần đây</h3>
+            
+            <div class="alert-info">
+              <strong>📝 Ghi chú:</strong> Mỗi hoạt động đăng nhập được ghi lại để bảo vệ tài khoản
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #f9fafb; border-bottom: 2px solid var(--border-gray);">
+                  <th style="padding: 1rem; text-align: left; font-weight: 600;">📅 Thời gian</th>
+                  <th style="padding: 1rem; text-align: left; font-weight: 600;">⚡ Hành động</th>
+                  <th style="padding: 1rem; text-align: left; font-weight: 600;">🌐 IP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (locals.recentActivity && recentActivity.length > 0) { %>
+                  <% recentActivity.forEach(activity => { %>
+                    <tr style="border-bottom: 1px solid var(--border-gray);">
+                      <td style="padding: 1rem;">
+                        <% const actDate = new Date(activity.timestamp); %>
+                        <%= actDate.toLocaleDateString('vi-VN') %> <%= actDate.toLocaleTimeString('vi-VN') %>
+                      </td>
+                      <td style="padding: 1rem;">
+                        <% if (activity.action === 'login') { %>
+                          <span class="badge badge-success">✅ Đăng nhập</span>
+                        <% } else if (activity.action === 'logout') { %>
+                          <span class="badge badge-warning">⛔ Đăng xuất</span>
+                        <% } else { %>
+                          <%= activity.action %>
+                        <% } %>
+                      </td>
+                      <td style="padding: 1rem; font-family: monospace; font-size: 0.85rem;">
+                        <%= activity.ipAddress || 'N/A' %>
+                      </td>
+                    </tr>
+                  <% }); %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="3" style="padding: 1rem; text-align: center; color: var(--text-gray);">
+                      📭 Không có hoạt động gần đây
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="button-group" style="margin-top: 3rem;">
+            <button onclick="location.href='/'" class="btn btn-secondary">← Quay lại</button>
+            <a href="/logout" class="btn btn-danger">🚪 Đăng xuất</a>
+          </div>
         </div>
-      <% } %>
-
-      <!-- Thông tin tài khoản -->
-      <div class="profile-section">
-        <h3>Thông tin tài khoản</h3>
-        <div class="profile-info">
-          <div class="profile-info-item">
-            <span class="profile-info-label">Username:</span>
-            <span class="profile-info-value"><%= user.username %></span>
-          </div>
-          <div class="profile-info-item">
-            <span class="profile-info-label">Email:</span>
-            <span class="profile-info-value"><%= user.email %></span>
-          </div>
-          <div class="profile-info-item">
-            <span class="profile-info-label">Họ và tên:</span>
-            <span class="profile-info-value"><%= user.fullName || 'Chưa cập nhật' %></span>
-          </div>
-          <div class="profile-info-item">
-            <span class="profile-info-label">Ngày đăng ký:</span>
-            <span class="profile-info-value"><%= new Date(user.createdAt).toLocaleDateString('vi-VN') %></span>
-          </div>
-        </div>
       </div>
-
-      <!-- Form cập nhật thông tin -->
-      <div class="profile-section">
-        <h3>Cập nhật thông tin</h3>
-        <form action="/profile/update" method="POST">
-          <div class="form-group">
-            <label for="fullName">Họ và tên</label>
-            <input type="text" id="fullName" name="fullName" 
-                   value="<%= user.fullName || '' %>"
-                   placeholder="Nguyễn Văn A"
-                   maxlength="100">
-          </div>
-
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" 
-                   value="<%= user.email %>"
-                   required>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Form đổi mật khẩu -->
-      <div class="profile-section">
-        <h3>Đổi mật khẩu</h3>
-        <form action="/profile/update" method="POST">
-          <div class="form-group">
-            <label for="currentPassword">Mật khẩu hiện tại</label>
-            <input type="password" id="currentPassword" name="currentPassword" 
-                   placeholder="Nhập mật khẩu hiện tại">
-          </div>
-
-          <div class="form-group">
-            <label for="newPassword">Mật khẩu mới</label>
-            <input type="password" id="newPassword" name="newPassword" 
-                   placeholder="Mật khẩu mới (tối thiểu 6 ký tự)"
-                   minlength="6">
-            <small>Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số</small>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-danger">Đổi mật khẩu</button>
-          </div>
-        </form>
-      </div>
-
     </div>
   </main>
 
   <footer>
     <div class="container">
-      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h4>🔐 Security App</h4>
+          <p>Ứng dụng bán laptop với bảo mật cao</p>
+        </div>
+        <div>
+          <h4>📚 Liên kết</h4>
+          <ul style="list-style: none;">
+            <li><a href="/">Trang chủ</a></li>
+            <li><a href="/laptops">Sản phẩm</a></li>
+            <li><a href="/contact">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>🔒 Bảo mật</h4>
+          <ul style="list-style: none;">
+            <li><a href="/profile">Hồ sơ</a></li>
+            <li><a href="/setup-2fa">2FA</a></li>
+            <li><a href="/change-password">Đổi mật khẩu</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Security App. Bảo mật là ưu tiên hàng đầu.</p>
+      </div>
     </div>
   </footer>
 </body>

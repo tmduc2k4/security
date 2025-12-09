@@ -3,27 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danh sách laptop - LaptopStore</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Sản phẩm - Security App</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
+  <style>
+    .page-header {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 3rem 0;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+
+    .filters {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.75rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .filter-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border-gray);
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+      border: 1px solid var(--border-gray);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #f3f4f6;
+    }
+
+    .product-info {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    .product-desc {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .product-specs {
+      background: #f9fafb;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.75rem;
+    }
+
+    .spec-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid var(--border-gray);
+    }
+
+    .spec-item:last-child {
+      border: none;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .product-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+    }
+
+    .product-card .btn {
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .page-header h1 {
+        font-size: 1.75rem;
+      }
+
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
     <nav>
       <div class="container">
         <div class="logo">
-          <h1>💻 LaptopStore</h1>
+          <h1>🔐 Security App</h1>
         </div>
         <ul class="nav-links">
           <li><a href="/">Trang chủ</a></li>
           <li><a href="/laptops" class="active">Sản phẩm</a></li>
           <li><a href="/about">Giới thiệu</a></li>
           <li><a href="/contact">Liên hệ</a></li>
-          <% if (locals.user) { %>
-            <li><a href="/profile">👤 <%= user.username %></a></li>
+          <% if (locals.currentUser) { %>
+            <li><a href="/profile">👤 <%= currentUser.username %></a></li>
+            <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+              <li><a href="/admin">⚙️ Admin</a></li>
+            <% } %>
             <li><a href="/logout">Đăng xuất</a></li>
           <% } else { %>
             <li><a href="/login">Đăng nhập</a></li>
-            <li><a href="/register">Đăng ký</a></li>
           <% } %>
         </ul>
       </div>
@@ -31,33 +176,116 @@
   </header>
 
   <main>
-    <section class="products">
+    <div class="page-header">
       <div class="container">
-        <h2>Tất cả sản phẩm</h2>
-        <div class="product-grid">
-          <% laptops.forEach(laptop => { %>
-            <div class="product-card">
-              <img src="<%= laptop.image %>" alt="<%= laptop.name %>">
-              <h3><%= laptop.name %></h3>
-              <p class="price"><%= laptop.price.toLocaleString('vi-VN') %>đ</p>
-              <p class="description"><%= laptop.description %></p>
-              <div class="specs">
-                <p><strong>CPU:</strong> <%= laptop.specs.cpu %></p>
-                <p><strong>RAM:</strong> <%= laptop.specs.ram %></p>
-                <p><strong>SSD:</strong> <%= laptop.specs.storage %></p>
-              </div>
-              <a href="/laptop/<%= laptop.id %>" class="btn btn-small">Xem chi tiết</a>
-            </div>
-          <% }) %>
+        <h1>📱 Danh sách sản phẩm</h1>
+        <p>Khám phá các laptop chất lượng cao với giá cạnh tranh</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="filters">
+        <div class="filter-group">
+          <label>🔍 Tìm kiếm</label>
+          <input type="text" placeholder="Tên sản phẩm..." id="searchInput">
+        </div>
+        <div class="filter-group">
+          <label>💰 Giá</label>
+          <select id="priceFilter">
+            <option value="">Tất cả giá</option>
+            <option value="0-15">Dưới 15 triệu</option>
+            <option value="15-25">15-25 triệu</option>
+            <option value="25-35">25-35 triệu</option>
+            <option value="35+">Trên 35 triệu</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>⭐ Sắp xếp</label>
+          <select id="sortFilter">
+            <option value="name">Theo tên</option>
+            <option value="price-low">Giá thấp đến cao</option>
+            <option value="price-high">Giá cao đến thấp</option>
+          </select>
         </div>
       </div>
-    </section>
+
+      <h2 style="margin: 2rem 0 1.5rem 0; color: var(--text-dark);">Tất cả sản phẩm</h2>
+      <div class="product-grid">
+        <% laptops.forEach(laptop => { %>
+          <div class="product-card">
+            <img src="<%= laptop.image %>" alt="<%= laptop.name %>" class="product-image">
+            <div class="product-info">
+              <h3 class="product-name"><%= laptop.name %></h3>
+              <p class="product-desc"><%= laptop.description %></p>
+              <div class="product-specs">
+                <div class="spec-item">
+                  <span>CPU:</span>
+                  <strong><%= laptop.specs.cpu %></strong>
+                </div>
+                <div class="spec-item">
+                  <span>RAM:</span>
+                  <strong><%= laptop.specs.ram %></strong>
+                </div>
+                <div class="spec-item">
+                  <span>Storage:</span>
+                  <strong><%= laptop.specs.storage %></strong>
+                </div>
+                <div class="spec-item">
+                  <span>Màn hình:</span>
+                  <strong><%= laptop.specs.screen %></strong>
+                </div>
+              </div>
+              <div class="product-footer">
+                <span class="product-price"><%= laptop.price.toLocaleString('vi-VN') %>đ</span>
+                <a href="/laptop/<%= laptop.id %>" class="btn btn-sm btn-primary">Chi tiết</a>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
   </main>
 
   <footer>
     <div class="container">
-      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h4>🔐 Security App</h4>
+          <p>Danh sách sản phẩm laptop chất lượng cao</p>
+        </div>
+        <div>
+          <h4>📚 Liên kết</h4>
+          <ul style="list-style: none;">
+            <li><a href="/about">Giới thiệu</a></li>
+            <li><a href="/contact">Liên hệ</a></li>
+            <li><a href="/">Trang chủ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>🔒 Tài khoản</h4>
+          <ul style="list-style: none;">
+            <li><a href="/login">Đăng nhập</a></li>
+            <li><a href="/register">Đăng ký</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Security App. Danh sách sản phẩm được cập nhật liên tục.</p>
+      </div>
     </div>
   </footer>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    
+    // Simple client-side filtering
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      document.querySelectorAll('.product-card').forEach(card => {
+        const name = card.querySelector('.product-name').textContent.toLowerCase();
+        card.style.display = name.includes(query) ? 'flex' : 'none';
+      });
+    });
+  </script>
 </body>
 </html>
