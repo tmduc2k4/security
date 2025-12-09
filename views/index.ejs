@@ -3,440 +3,515 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Security App - Xác thực và bảo mật</title>
+  <title>LaptopShop - Cửa hàng laptop PC & Phụ kiện</title>
   <link rel="stylesheet" href="/css/modern-style.css">
   <style>
-    /* Hero Section */
-    .hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f5f5f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Header */
+    .header {
+      background: #1a2332;
       color: white;
-      padding: 5rem 0;
-      text-align: center;
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
+    .search-bar {
+      flex: 1;
+      display: flex;
+      max-width: 500px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 0.4rem 0 0 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .search-bar button {
+      padding: 0.6rem 1.2rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 0 0.4rem 0.4rem 0;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .header-right a,
+    .header-right button {
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cart-icon {
       position: relative;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: #ef4444;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .logout-btn {
+      background: #ef4444;
+      padding: 0.5rem 1rem;
+      border-radius: 0.4rem;
+      color: white;
+    }
+
+    /* Sidebar + Main */
+    .container-main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: white;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      height: fit-content;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .sidebar-title {
+      background: #ef4444;
+      color: white;
+      padding: 1rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sidebar-list {
+      list-style: none;
+    }
+
+    .sidebar-list li {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sidebar-list li:last-child {
+      border-bottom: none;
+    }
+
+    .sidebar-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      color: #374151;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .sidebar-list a:hover {
+      background: #f3f4f6;
+      color: #3b82f6;
+      padding-left: 1.5rem;
+    }
+
+    .sidebar-list span {
+      margin-right: auto;
+    }
+
+    /* Main Content */
+    .main-content {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       overflow: hidden;
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: moveBackground 20s linear infinite;
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1a2332 0%, #374151 100%);
+      color: white;
+      padding: 3rem 2rem;
+      border-radius: 0.5rem;
+      margin-bottom: 2rem;
     }
 
-    @keyframes moveBackground {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(50px, 50px); }
-    }
-
-    .hero .container {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero h2 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    .hero h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
     }
 
     .hero p {
-      font-size: 1.3rem;
-      margin-bottom: 2rem;
-      color: rgba(255,255,255,0.9);
-    }
-
-    .hero .btn {
-      background: white;
-      color: #667eea;
-      font-weight: 700;
-      padding: 1rem 2.5rem;
-    }
-
-    .hero .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-    }
-
-    /* Stats Section */
-    .stats {
-      background: white;
-      padding: 3rem 0;
-      border-bottom: 1px solid var(--border-gray);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-    }
-
-    .stat-card {
-      text-align: center;
-      padding: 2rem;
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      color: var(--text-gray);
       font-size: 1rem;
+      opacity: 0.9;
     }
 
-    /* Features Section */
-    .features {
-      padding: 4rem 0;
-      background: #f9fafb;
-    }
-
-    .features h2 {
-      text-align: center;
-      margin-bottom: 3rem;
-      font-size: 2rem;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-    }
-
-    .feature-card {
-      background: white;
+    /* Products */
+    .products-section {
       padding: 2rem;
-      border-radius: 0.75rem;
-      text-align: center;
-      box-shadow: var(--shadow-sm);
-      transition: all var(--transition-normal);
     }
 
-    .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #3b82f6;
     }
 
-    .feature-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+    .section-header h2 {
+      font-size: 1.3rem;
+      color: #1a2332;
     }
 
-    .feature-card h3 {
-      margin-bottom: 0.5rem;
+    .section-header a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 0.9rem;
     }
 
-    .feature-card p {
-      font-size: 0.95rem;
-      color: var(--text-gray);
-    }
-
-    /* Products Section */
-    .products {
-      padding: 4rem 0;
-    }
-
-    .products h2 {
-      text-align: center;
-      margin-bottom: 3rem;
-      font-size: 2rem;
-    }
-
-    .product-grid {
+    .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
     }
 
     .product-card {
-      background: white;
-      border-radius: 0.75rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
       overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: all var(--transition-normal);
-      border: 1px solid var(--border-gray);
+      transition: all 0.3s;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
     }
 
     .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      transform: translateY(-4px);
     }
 
     .product-image {
       width: 100%;
-      height: 200px;
+      height: 150px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
-      background: #f3f4f6;
     }
 
     .product-info {
-      padding: 1.5rem;
-    }
-
-    .product-info h3 {
-      margin-bottom: 0.5rem;
-      font-size: 1.1rem;
-    }
-
-    .product-desc {
-      font-size: 0.85rem;
-      color: var(--text-gray);
-      margin-bottom: 1rem;
-      line-height: 1.4;
-    }
-
-    .product-specs {
-      background: #f9fafb;
       padding: 1rem;
-      border-radius: 0.5rem;
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
     }
 
-    .product-specs p {
-      margin: 0.25rem 0;
-    }
-
-    .product-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .product-name {
+      font-weight: 600;
+      color: #1a2332;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      min-height: 2.4em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .product-price {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-    }
-
-    .product-card .btn {
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-    }
-
-    /* CTA Section */
-    .cta {
-      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-      color: white;
-      padding: 4rem 0;
-      text-align: center;
-    }
-
-    .cta h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .cta p {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-    }
-
-    .cta .btn {
-      background: white;
       color: #3b82f6;
       font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
     }
 
+    .add-to-cart-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .add-to-cart-btn:hover {
+      background: #dc2626;
+    }
+
+    /* Footer */
+    footer {
+      background: #1a2332;
+      color: white;
+      padding: 3rem 0 1rem;
+      margin-top: 4rem;
+    }
+
+    footer .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #374151;
+    }
+
+    footer h4 {
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    footer ul {
+      list-style: none;
+    }
+
+    footer ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    footer a {
+      color: #d1d5db;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: #3b82f6;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding: 1rem 0;
+      color: #9ca3af;
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
     @media (max-width: 768px) {
-      .hero h2 {
-        font-size: 2rem;
+      .container-main {
+        grid-template-columns: 1fr;
+      }
+
+      .header-top {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .search-bar {
+        max-width: 100%;
+      }
+
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+
+      .hero h1 {
+        font-size: 1.5rem;
       }
 
       .hero p {
-        font-size: 1rem;
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .product-grid {
-        grid-template-columns: 1fr;
+        font-size: 0.9rem;
       }
     }
   </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <div class="container">
-        <div class="logo">
-          <h1>🔐 Security App</h1>
-        </div>
-        <ul class="nav-links">
-          <li><a href="/" class="active">Trang chủ</a></li>
-          <li><a href="/laptops">Sản phẩm</a></li>
-          <li><a href="/about">Giới thiệu</a></li>
-          <li><a href="/contact">Liên hệ</a></li>
-          <% if (locals.user) { %>
-            <li><a href="/profile">👤 <%= user.username %></a></li>
-            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
-              <li><a href="/admin">⚙️ Admin</a></li>
-            <% } %>
-            <li><a href="/logout">Đăng xuất</a></li>
-          <% } else { %>
-            <li><a href="/login">Đăng nhập</a></li>
-            <li><a href="/register">Đăng ký</a></li>
-          <% } %>
-        </ul>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-top">
+      <div class="logo">🛍️ LaptopShop</div>
+      <div class="search-bar">
+        <input type="text" placeholder="Tìm sản phẩm...">
+        <button>🔍</button>
       </div>
-    </nav>
+      <div class="header-right">
+        <a href="/">Trang chủ</a>
+        <% if (locals.user) { %>
+          <a href="/profile">👤 <strong><%= user.username %></strong></a>
+          <a href="/cart" class="cart-icon">
+            🛒 Giỏ hàng
+            <span class="cart-badge">1</span>
+          </a>
+          <a href="/logout" class="logout-btn">Đăng xuất</a>
+        <% } else { %>
+          <a href="/cart" class="cart-icon">
+            🛒 Giỏ hàng
+          </a>
+          <a href="/login">Đăng nhập</a>
+        <% } %>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <h2>🛡️ Bảo vệ tài khoản của bạn</h2>
-        <p>Hệ thống xác thực và bảo mật toàn diện với 2FA, mã hóa mật khẩu, và kiểm soát truy cập</p>
-        <% if (!locals.user) { %>
-          <a href="/register" class="btn">Tạo tài khoản ngay</a>
-        <% } else { %>
-          <a href="/profile" class="btn">Xem hồ sơ của bạn</a>
-        <% } %>
+  <div class="container-main">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">
+        📦 DANH MỤC SẢN PHẨM
       </div>
-    </section>
+      <ul class="sidebar-list">
+        <li><a href="/laptops?category=laptop"><span>💻 Laptop</span> <span>›</span></a></li>
+        <li><a href="/laptops?category=pc"><span>🖥️ PC & Máy tính</span> <span>›</span></a></li>
+        <li><a href="/laptops?category=peripherals"><span>🎮 Linh kiện</span> <span>›</span></a></li>
+        <li><a href="/laptops?category=monitor"><span>🖼️ Màn hình</span> <span>›</span></a></li>
+        <li><a href="/laptops?category=keyboard"><span>⌨️ Bàn phím</span> <span>›</span></a></li>
+        <li><a href="/laptops?category=gaming"><span>🎯 Gaming Gear</span> <span>›</span></a></li>
+        <li><a href="/laptops?category=accessories"><span>🛡️ Phụ kiện</span> <span>›</span></a></li>
+      </ul>
+    </aside>
 
-    <!-- Stats Section -->
-    <section class="stats">
-      <div class="container">
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-number">13</div>
-            <div class="stat-label">Lớp bảo mật</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">100%</div>
-            <div class="stat-label">Mã hóa dữ liệu</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">2FA</div>
-            <div class="stat-label">Xác thực đa yếu tố</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">∞</div>
-            <div class="stat-label">Bảo vệ</div>
-          </div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <div class="hero">
+        <h1>Chào mừng đến LaptopShop</h1>
+        <p>Khám phá hàng ngàn sản phẩm công nghệ chất lượng cao!</p>
+      </div>
+
+      <!-- Products Section -->
+      <div class="products-section">
+        <div class="section-header">
+          <h2>🔥 Tất cả sản phẩm</h2>
+          <a href="/laptops">Xem thêm →</a>
         </div>
-      </div>
-    </section>
 
-    <!-- Features Section -->
-    <section class="features">
-      <div class="container">
-        <h2>✨ Tính năng chính</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🔐</div>
-            <h3>Xác thực 2 yếu tố</h3>
-            <p>Bảo vệ tài khoản với Google Authenticator hoặc ứng dụng TOTP</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔑</div>
-            <h3>Mật khẩu mạnh</h3>
-            <p>Tự động kiểm soát độ phức tạp (12+ ký tự, đặc biệt, hoa/thường)</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📋</div>
-            <h3>Lịch sử mật khẩu</h3>
-            <p>Không được tái sử dụng 5 mật khẩu gần đây nhất</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">⏰</div>
-            <h3>Hết hạn mật khẩu</h3>
-            <p>Yêu cầu đổi mật khẩu mỗi 90 ngày</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🚫</div>
-            <h3>Khóa tài khoản</h3>
-            <p>Tự động khóa sau 5 lần đăng nhập sai trong 30 phút</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">📧</div>
-            <h3>Quên mật khẩu</h3>
-            <p>Đặt lại mật khẩu an toàn qua email xác thực</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products">
-      <div class="container">
-        <h2>📱 Sản phẩm nổi bật</h2>
-        <div class="product-grid">
-          <% laptops.forEach(laptop => { %>
-            <div class="product-card">
-              <img src="<%= laptop.image %>" alt="<%= laptop.name %>" class="product-image">
-              <div class="product-info">
-                <h3><%= laptop.name %></h3>
-                <p class="product-desc"><%= laptop.description %></p>
-                <div class="product-specs">
-                  <p>🖥️ CPU: <%= laptop.specs.cpu %></p>
-                  <p>💾 RAM: <%= laptop.specs.ram %></p>
-                  <p>💿 Storage: <%= laptop.specs.storage %></p>
-                  <p>📺 Screen: <%= laptop.specs.screen %></p>
+        <div class="products-grid">
+          <% if (laptops && laptops.length > 0) { %>
+            <% laptops.forEach(laptop => { %>
+              <div class="product-card" onclick="location.href='/laptop/<%= laptop.id %>'">
+                <div class="product-image">
+                  <img src="<%= laptop.image || '/images/laptop-default.jpg' %>" alt="<%= laptop.name %>">
                 </div>
-                <div class="product-footer">
-                  <span class="product-price"><%= laptop.price.toLocaleString('vi-VN') %>đ</span>
-                  <a href="/laptop/<%= laptop.id %>" class="btn btn-sm btn-primary">Chi tiết</a>
+                <div class="product-info">
+                  <div class="product-name"><%= laptop.name %></div>
+                  <div class="product-price"><%= (laptop.price || 0).toLocaleString('vi-VN') %>₫</div>
+                  <button class="add-to-cart-btn" onclick="event.stopPropagation(); alert('Thêm vào giỏ: <%= laptop.name %>')">
+                    🛒 Thêm giỏ
+                  </button>
                 </div>
               </div>
+            <% }); %>
+          <% } else { %>
+            <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #9ca3af;">
+              📭 Không có sản phẩm
             </div>
-          <% }); %>
+          <% } %>
         </div>
       </div>
-    </section>
+    </main>
+  </div>
 
-    <!-- CTA Section -->
-    <section class="cta">
-      <div class="container">
-        <h2>Bắt đầu bảo vệ tài khoản của bạn ngay hôm nay</h2>
-        <p>Đăng ký miễn phí và nhận tất cả các tính năng bảo mật tiên tiến</p>
-        <% if (!locals.user) { %>
-          <a href="/register" class="btn">Đăng ký ngay</a>
-        <% } %>
-      </div>
-    </section>
-  </main>
-
+  <!-- Footer -->
   <footer>
     <div class="container">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+      <div class="footer-grid">
         <div>
-          <h4>🔐 Security App</h4>
-          <p>Bảo vệ tài khoản của bạn với hệ thống xác thực toàn diện</p>
+          <h4>🛍️ LaptopShop</h4>
+          <p style="color: #d1d5db; font-size: 0.9rem;">Cửa hàng bán laptop, PC và phụ kiện công nghệ chất lượng cao với giá cạnh tranh.</p>
         </div>
         <div>
-          <h4>📚 Liên kết</h4>
-          <ul style="list-style: none;">
+          <h4>📚 Thông tin</h4>
+          <ul>
             <li><a href="/about">Giới thiệu</a></li>
             <li><a href="/contact">Liên hệ</a></li>
-            <li><a href="/laptops">Sản phẩm</a></li>
+            <li><a href="/faq">Câu hỏi thường gặp</a></li>
+            <li><a href="/blog">Blog</a></li>
           </ul>
         </div>
         <div>
-          <h4>🔒 Bảo mật</h4>
-          <ul style="list-style: none;">
-            <li><a href="/profile">Hồ sơ cá nhân</a></li>
-            <li><a href="/profile/activity">Hoạt động</a></li>
+          <h4>🛒 Mua sắm</h4>
+          <ul>
+            <li><a href="/laptops">Sản phẩm</a></li>
+            <li><a href="/cart">Giỏ hàng</a></li>
+            <li><a href="/orders">Đơn hàng của tôi</a></li>
+            <li><a href="/wishlist">Yêu thích</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>🔒 Hỗ trợ</h4>
+          <ul>
+            <li><a href="/privacy">Chính sách bảo mật</a></li>
+            <li><a href="/terms">Điều khoản dịch vụ</a></li>
+            <li><a href="/refund">Chính sách hoàn tiền</a></li>
+            <li><a href="/shipping">Vận chuyển</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2025 Security App. Bảo vệ tối đa cho dữ liệu của bạn.</p>
+        <p>&copy; 2025 LaptopShop. Tất cả quyền được bảo lưu.</p>
       </div>
     </div>
   </footer>
