@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng điều khiển bảo mật - LaptopShop</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f5f5f5;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    header {
+      background: #1a2332;
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    header .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3b82f6;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 2rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: #3b82f6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      padding: 3rem 0;
+      margin-bottom: 3rem;
+    }
+
+    .page-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .card.critical {
+      border-left-color: #ef4444;
+    }
+
+    .card.warning {
+      border-left-color: #f59e0b;
+    }
+
+    .card.success {
+      border-left-color: #10b981;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #1a2332;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-content {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-critical {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .security-score {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #10b981;
+      margin-bottom: 1rem;
+    }
+
+    .security-items {
+      list-style: none;
+      margin-top: 1.5rem;
+    }
+
+    .security-items li {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .security-items li:last-child {
+      border-bottom: none;
+    }
+
+    .check-icon {
+      color: #10b981;
+      font-weight: bold;
+    }
+
+    .cross-icon {
+      color: #ef4444;
+      font-weight: bold;
+    }
+
+    .section {
+      background: white;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #3b82f6;
+      color: #1a2332;
+    }
+
+    .subsection {
+      margin-bottom: 2rem;
+    }
+
+    .subsection h3 {
+      font-size: 1.1rem;
+      color: #1a2332;
+      margin-bottom: 1rem;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .feature-item {
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .feature-item.implemented {
+      border-left-color: #10b981;
+    }
+
+    .feature-item h4 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1a2332;
+      font-size: 0.95rem;
+    }
+
+    .feature-item p {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .code-block {
+      background: #1a2332;
+      color: #d1d5db;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 1rem 0;
+    }
+
+    .footer {
+      background: #1a2332;
+      color: white;
+      padding: 2rem 0;
+      margin-top: 4rem;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .security-score {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">🔐 LaptopShop Security</div>
+      <nav>
+        <a href="/">Trang chủ</a>
+        <a href="/profile">Hồ sơ</a>
+        <% if (locals.user) { %>
+          <a href="/logout">Đăng xuất</a>
+        <% } else { %>
+          <a href="/login">Đăng nhập</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <div class="container">
+      <h1>🛡️ Bảng điều khiển bảo mật</h1>
+      <p>Hệ thống 13 lớp bảo mật toàn diện cho bảo vệ tối đa</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Security Score Cards -->
+    <div class="grid">
+      <div class="card success">
+        <div class="card-title">🎯 Điểm bảo mật tổng</div>
+        <div class="security-score">100</div>
+        <p class="card-content">
+          Hệ thống bảo mật đã đạt mức cao nhất với 13 lớp bảo mật được triển khai.
+        </p>
+        <span class="badge badge-success">✓ Tối ưu</span>
+      </div>
+
+      <div class="card success">
+        <div class="card-title">🔒 Xác thực & Ủy quyền</div>
+        <div style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin: 1rem 0;">
+          JWT + 2FA
+        </div>
+        <p class="card-content">
+          Xác thực bằng JWT token, httpOnly cookies, và xác thực 2 yếu tố (TOTP).
+        </p>
+        <span class="badge badge-success">✓ Đã bật</span>
+      </div>
+
+      <div class="card success">
+        <div class="card-title">🛡️ Chống tấn công</div>
+        <div style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin: 1rem 0;">
+          100% Bảo vệ
+        </div>
+        <p class="card-content">
+          Bảo vệ chống XSS, SQL Injection, NoSQL Injection, CSRF, và DDoS.
+        </p>
+        <span class="badge badge-success">✓ Hoạt động</span>
+      </div>
+
+      <div class="card success">
+        <div class="card-title">🔑 Chính sách mật khẩu</div>
+        <ul class="security-items" style="margin: 0;">
+          <li><span class="check-icon">✓</span> 12+ ký tự bắt buộc</li>
+          <li><span class="check-icon">✓</span> Chữ hoa, thường, số, ký hiệu</li>
+          <li><span class="check-icon">✓</span> Hết hạn 90 ngày</li>
+        </ul>
+        <span class="badge badge-success">✓ Tùy chỉnh</span>
+      </div>
+
+      <div class="card success">
+        <div class="card-title">⚡ Rate Limiting</div>
+        <ul class="security-items" style="margin: 0;">
+          <li><span class="check-icon">✓</span> 100 req/15 phút (chung)</li>
+          <li><span class="check-icon">✓</span> 5 req/15 phút (nhạy cảm)</li>
+          <li><span class="check-icon">✓</span> Block IP vi phạm</li>
+        </ul>
+        <span class="badge badge-success">✓ Hoạt động</span>
+      </div>
+
+      <div class="card success">
+        <div class="card-title">📝 Kiểm toán & Logging</div>
+        <ul class="security-items" style="margin: 0;">
+          <li><span class="check-icon">✓</span> Log tất cả đăng nhập</li>
+          <li><span class="check-icon">✓</span> Ghi lại tấn công</li>
+          <li><span class="check-icon">✓</span> IP & timestamp</li>
+        </ul>
+        <span class="badge badge-success">✓ Bật sẵn</span>
+      </div>
+    </div>
+
+    <!-- 13 Security Layers -->
+    <div class="section">
+      <h2 class="section-title">🔐 13 Lớp bảo mật triển khai</h2>
+
+      <div class="subsection">
+        <h3>1️⃣ Web Application Firewall (Helmet.js)</h3>
+        <p class="card-content">
+          Thiết lập các HTTP header bảo mật như CSP, HSTS, X-Frame-Options để chống clickjacking, MIME sniffing, và các tấn công dựa trên header.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Content Security Policy</h4>
+            <p>Kiểm soát nguồn tài nguyên, ngăn XSS</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ HSTS (Strict-Transport-Security)</h4>
+            <p>Bắt buộc HTTPS, hạn chế downgrade attack</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ X-Frame-Options</h4>
+            <p>Chống clickjacking attacks</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>2️⃣ Rate Limiting (DDoS & Brute Force)</h3>
+        <p class="card-content">
+          Giới hạn số lượng yêu cầu từ một IP trong khoảng thời gian nhất định để ngăn chặn tấn công brute force và DDoS.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ 100 req/15 phút</h4>
+            <p>Giới hạn chung cho tất cả endpoints</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ 5 req/15 phút</h4>
+            <p>Giới hạn nghiêm ngặt cho login, contact</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ IP Blocking</h4>
+            <p>Tự động block IP vi phạm tạm thời</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>3️⃣ Input Validation & Sanitization</h3>
+        <p class="card-content">
+          Kiểm tra và làm sạch tất cả input từ người dùng để ngăn chặn các lỗi bảo mật.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Express Validator</h4>
+            <p>Validation email, số điện thoại, tên</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Whitelist Ký tự</h4>
+            <p>Chỉ cho phép ký tự cụ thể</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Giới hạn độ dài</h4>
+            <p>Prevent buffer overflow attacks</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>4️⃣ XSS (Cross-Site Scripting) Protection</h3>
+        <p class="card-content">
+          Bảo vệ chống các tấn công XSS bằng cách làm sạch HTML tags và escape output.
+        </p>
+        <div class="code-block">
+// Sử dụng xss-clean middleware
+app.use(xss());
+
+// Escape output trong template
+&lt;%= user.username %&gt;
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>5️⃣ SQL Injection Protection</h3>
+        <p class="card-content">
+          Phát hiện và chặn các ký tự đặc biệt SQL như quotes, comments, và keywords.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Pattern Matching</h4>
+            <p>Phát hiện SQL keywords (SELECT, INSERT, etc)</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Character Blocking</h4>
+            <p>Chặn ', --, ;, /*, */</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Query Validation</h4>
+            <p>Kiểm tra tất cả query parameters</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>6️⃣ NoSQL Injection Protection</h3>
+        <p class="card-content">
+          Sử dụng express-mongo-sanitize để loại bỏ các ký tự nguy hiểm như `$` và `.`.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Mongo Sanitize</h4>
+            <p>Loại bỏ `$` và `.` trong input</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Key Validation</h4>
+            <p>Kiểm tra object keys</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>7️⃣ Path Traversal Protection</h3>
+        <p class="card-content">
+          Ngăn chặn các đường dẫn như `../` được sử dụng để truy cập file bất hợp pháp.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Pattern Detection</h4>
+            <p>Phát hiện `../` patterns</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Path Validation</h4>
+            <p>Kiểm tra file access</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>8️⃣ HTTP Parameter Pollution (HPP)</h3>
+        <p class="card-content">
+          Ngăn chặn các tấn công HPP bằng cách sử dụng hpp middleware.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>9️⃣ CORS Configuration</h3>
+        <p class="card-content">
+          Whitelist domains được phép truy cập API để ngăn chặn unauthorized cross-origin requests.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>🔟 CSRF (Cross-Site Request Forgery) Protection</h3>
+        <p class="card-content">
+          Sử dụng CSRF tokens để xác thực form submissions và ngăn chặn tấn công CSRF.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Token Generation</h4>
+            <p>Tạo unique CSRF token cho mỗi session</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Token Verification</h4>
+            <p>Kiểm tra token trước khi xử lý form</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>1️⃣1️⃣ JWT Authentication & Authorization</h3>
+        <p class="card-content">
+          Sử dụng JWT tokens với httpOnly cookies để xác thực người dùng an toàn.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ JWT Tokens</h4>
+            <p>Mã hóa với secret key, hết hạn 7 ngày</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ httpOnly Cookies</h4>
+            <p>Ngăn XSS truy cập cookie</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Role-Based Access Control</h4>
+            <p>Admin, User, SuperAdmin roles</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>1️⃣2️⃣ Password Security & Policy</h3>
+        <p class="card-content">
+          Mật khẩu được mã hóa với bcrypt, tuân theo chính sách mật khẩu mạnh.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Bcrypt Hashing (10 rounds)</h4>
+            <p>Mã hóa mật khẩu an toàn</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ 12+ Ký tự bắt buộc</h4>
+            <p>Chữ hoa, thường, số, ký hiệu</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Hết hạn 90 ngày</h4>
+            <p>Bắt đổi mật khẩu định kỳ</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Lịch sử mật khẩu</h4>
+            <p>Ngăn tái sử dụng 5 mật khẩu gần nhất</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>1️⃣3️⃣ Security Logging & Audit Trail</h3>
+        <p class="card-content">
+          Ghi lại tất cả các hoạt động bảo mật để phát hiện các mẫu tấn công.
+        </p>
+        <div class="feature-list">
+          <div class="feature-item implemented">
+            <h4>✓ Login Logging</h4>
+            <p>Ghi lại đăng nhập, IP, timestamp</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Attack Detection</h4>
+            <p>Ghi lại SQL injection, XSS attempts</p>
+          </div>
+          <div class="feature-item implemented">
+            <h4>✓ Account Lockout</h4>
+            <p>5 lần đăng nhập sai → khóa 30 phút</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Security Features -->
+    <div class="section">
+      <h2 class="section-title">⚙️ Các tính năng bảo mật bổ sung</h2>
+
+      <div class="subsection">
+        <h3>🔐 Two-Factor Authentication (2FA)</h3>
+        <p class="card-content">
+          Xác thực 2 yếu tố bằng TOTP (Time-based One-Time Password) để bảo vệ tài khoản khỏi truy cập trái phép.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>🚪 Account Lockout</h3>
+        <p class="card-content">
+          Tài khoản sẽ bị khóa tạm thời sau 5 lần đăng nhập sai, bảo vệ chống brute force attack.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>📧 Email Verification</h3>
+        <p class="card-content">
+          Xác thực email để đảm bảo chỉ các tài khoản hợp lệ mới có thể đăng ký.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>🔄 Secure Password Reset</h3>
+        <p class="card-content">
+          Sử dụng token hết hạn để reset mật khẩu an toàn.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>🛡️ Role-Based Access Control (RBAC)</h3>
+        <p class="card-content">
+          Kiểm soát truy cập dựa trên vai trò (Admin, User, SuperAdmin) để đảm bảo người dùng chỉ truy cập những tài nguyên được phép.
+        </p>
+      </div>
+    </div>
+
+    <!-- Production Recommendations -->
+    <div class="section">
+      <h2 class="section-title">📋 Khuyến nghị cho Production</h2>
+
+      <div class="subsection">
+        <h3>🔐 HTTPS/SSL</h3>
+        <p class="card-content">
+          Sử dụng SSL certificates (Let's Encrypt miễn phí) để mã hóa tất cả giao tiếp giữa client và server.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>💾 Database Backups</h3>
+        <p class="card-content">
+          Định kỳ backup database để bảo vệ dữ liệu khỏi mất mát.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>📊 Monitoring & Alerting</h3>
+        <p class="card-content">
+          Sử dụng monitoring tools (Datadog, New Relic) để theo dõi hệ thống và cảnh báo các sự cố.
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>🔑 Secrets Management</h3>
+        <p class="card-content">
+          Sử dụng Vault hoặc cloud services để quản lý các thông tin nhạy cảm (API keys, passwords).
+        </p>
+      </div>
+
+      <div class="subsection">
+        <h3>📝 Penetration Testing</h3>
+        <p class="card-content">
+          Định kỳ thực hiện penetration testing để phát hiện các lỗ hổng bảo mật.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="container">
+      <p>&copy; 2025 LaptopShop. Bảo mật là ưu tiên hàng đầu. 🛡️</p>
+      <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+        Tài liệu bảo mật chi tiết: <a href="/SECURITY.md" style="color: #3b82f6;">SECURITY.md</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

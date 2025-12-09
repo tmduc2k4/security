@@ -220,6 +220,11 @@ app.get('/', (req, res) => {
   res.render('index', { laptops: laptops.slice(0, 6) });
 });
 
+// Security Dashboard
+app.get('/security', (req, res) => {
+  res.render('security-dashboard');
+});
+
 app.get('/laptops', (req, res) => {
   res.render('laptops', { laptops });
 });
