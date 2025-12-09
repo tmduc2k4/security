@@ -13,6 +13,423 @@
       justify-content: center;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-page::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-30px); }
+    }
+
+    .auth-card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+      animation: fadeIn 0.5s ease-in-out;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-card h2 {
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+      font-size: 1.8rem;
+    }
+
+    .auth-card .subtitle {
+      text-align: center;
+      color: var(--text-gray);
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .error-message {
+      background: #fee2e2;
+      color: #7f1d1d;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #e63946;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .success-message {
+      background: #dcfce7;
+      color: #166534;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #22c55e;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+
+    .form-group label span {
+      margin-right: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-gray);
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      transition: all var(--transition-fast);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .password-requirements {
+      background: #f0fdf4;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--primary-blue);
+    }
+
+    .requirements-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .requirements-list li {
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .requirements-list li.met {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .req-check {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border-gray);
+      text-align: center;
+      line-height: 12px;
+      font-size: 0.75rem;
+    }
+
+    .req-check.met {
+      background: #22c55e;
+      border-color: #22c55e;
+      color: white;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .register-button {
+      padding: 0.75rem 1.5rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .register-button:hover:not(:disabled) {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .register-button:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--text-gray);
+      font-size: 0.9rem;
+    }
+
+    .auth-footer a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color var(--transition-fast);
+    }
+
+    .auth-footer a:hover {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 1.5rem;
+      }
+
+      .auth-card h2 {
+        font-size: 1.5rem;
+      }
+
+      .password-requirements {
+        margin-bottom: 1rem;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2>🔐 Đăng ký</h2>
+      <p class="subtitle">Tạo tài khoản bảo mật của bạn</p>
+
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error-message">
+          <span>⚠️</span>
+          <div><%= error %></div>
+        </div>
+      <% } %>
+
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="success-message">
+          <span>✅</span>
+          <div><%= success %></div>
+        </div>
+      <% } %>
+
+      <form action="/register" method="POST" id="registerForm">
+        <div class="form-group">
+          <label>
+            <span>👤</span>
+            <span>Tên đăng nhập</span>
+          </label>
+          <input 
+            type="text" 
+            name="username" 
+            placeholder="Nhập tên đăng nhập"
+            required
+            minlength="3"
+            maxlength="20"
+            value="<%= typeof username !== 'undefined' ? username : '' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>
+            <span>📧</span>
+            <span>Email</span>
+          </label>
+          <input 
+            type="email" 
+            name="email" 
+            placeholder="email@example.com"
+            required
+            value="<%= typeof email !== 'undefined' ? email : '' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>
+            <span>🔑</span>
+            <span>Mật khẩu</span>
+          </label>
+          <input 
+            type="password" 
+            name="password" 
+            id="password"
+            placeholder="Mật khẩu mạnh (12+ ký tự)"
+            required
+            minlength="12"
+          >
+        </div>
+
+        <div class="password-requirements">
+          <p style="margin: 0 0 0.5rem 0; font-weight: 600; color: var(--text-dark); font-size: 0.9rem;">
+            📋 Yêu cầu mật khẩu:
+          </p>
+          <ul class="requirements-list">
+            <li id="req-length">
+              <span class="req-check" id="check-length">○</span>
+              Tối thiểu 12 ký tự
+            </li>
+            <li id="req-uppercase">
+              <span class="req-check" id="check-uppercase">○</span>
+              Ít nhất 1 chữ hoa (A-Z)
+            </li>
+            <li id="req-lowercase">
+              <span class="req-check" id="check-lowercase">○</span>
+              Ít nhất 1 chữ thường (a-z)
+            </li>
+            <li id="req-number">
+              <span class="req-check" id="check-number">○</span>
+              Ít nhất 1 số (0-9)
+            </li>
+            <li id="req-special">
+              <span class="req-check" id="check-special">○</span>
+              Ít nhất 1 ký tự đặc biệt (!@#$%^&*)
+            </li>
+          </ul>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <span>🔐</span>
+            <span>Xác nhận mật khẩu</span>
+          </label>
+          <input 
+            type="password" 
+            name="confirmPassword" 
+            id="confirmPassword"
+            placeholder="Nhập lại mật khẩu"
+            required
+            minlength="12"
+          >
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="register-button" id="submitBtn">
+            ✅ Đăng ký ngay
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        Đã có tài khoản? <a href="/login">Đăng nhập ở đây</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const passwordInput = document.getElementById('password');
+    const confirmInput = document.getElementById('confirmPassword');
+    const submitBtn = document.getElementById('submitBtn');
+
+    const requirements = {
+      length: /^.{12,}$/,
+      uppercase: /[A-Z]/,
+      lowercase: /[a-z]/,
+      number: /[0-9]/,
+      special: /[!@#$%^&*]/
+    };
+
+    function checkPassword() {
+      const pwd = passwordInput.value;
+      let allMet = true;
+
+      Object.keys(requirements).forEach(key => {
+        const element = document.getElementById(`req-${key}`);
+        const check = document.getElementById(`check-${key}`);
+        const isMet = requirements[key].test(pwd);
+
+        if (isMet) {
+          element.classList.add('met');
+          check.classList.add('met');
+          check.textContent = '✓';
+        } else {
+          element.classList.remove('met');
+          check.classList.remove('met');
+          check.textContent = '○';
+          allMet = false;
+        }
+      });
+
+      // Check password match
+      if (confirmInput.value && pwd !== confirmInput.value) {
+        allMet = false;
+      }
+
+      submitBtn.disabled = !allMet;
+    }
+
+    function checkMatch() {
+      const pwd = passwordInput.value;
+      const confirm = confirmInput.value;
+      
+      if (confirm && pwd !== confirm) {
+        confirmInput.style.borderColor = '#e63946';
+      } else if (confirm) {
+        confirmInput.style.borderColor = '#22c55e';
+      } else {
+        confirmInput.style.borderColor = 'var(--border-gray)';
+      }
+
+      checkPassword();
+    }
+
+    passwordInput.addEventListener('input', checkPassword);
+    confirmInput.addEventListener('input', checkMatch);
+  </script>
+</body>
+</html>
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem 0;
     }
 
     .auth-card {
@@ -31,285 +448,3 @@
       color: var(--text-dark);
     }
 
-    .auth-card .subtitle {
-      text-align: center;
-      color: var(--text-gray);
-      margin-bottom: 2rem;
-      font-size: 0.95rem;
-    }
-
-    .error-message {
-      background: #fee2e2;
-      color: #7f1d1d;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      margin-bottom: 1rem;
-      border-left: 4px solid var(--danger-red);
-    }
-
-    .password-requirements {
-      background: #f0f9ff;
-      border-left: 4px solid var(--primary-blue);
-      padding: 1rem;
-      border-radius: 0.5rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.85rem;
-    }
-
-    .password-requirements h4 {
-      margin: 0 0 0.5rem 0;
-      color: var(--text-dark);
-      font-size: 0.95rem;
-    }
-
-    .password-requirements ul {
-      list-style: none;
-      margin: 0;
-    }
-
-    .password-requirements li {
-      padding: 0.25rem 0;
-      color: var(--text-gray);
-    }
-
-    .password-requirements li.met {
-      color: var(--success-green);
-    }
-
-    .form-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .form-footer {
-      text-align: center;
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border-gray);
-    }
-
-    .form-footer a {
-      color: var(--primary-blue);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .form-footer a:hover {
-      color: #2563eb;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .auth-page {
-        padding: 1rem;
-      }
-
-      .auth-card {
-        padding: 1.5rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="auth-page">
-    <div class="auth-card">
-      <h2>📝 Đăng ký</h2>
-      <p class="subtitle">Tạo tài khoản mới</p>
-      
-      <% if (error) { %>
-        <div class="error-message">
-          <%= error %>
-        </div>
-      <% } %>
-
-      <div class="password-requirements">
-        <h4>✓ Yêu cầu mật khẩu:</h4>
-        <ul>
-          <li>✓ Ít nhất 12 ký tự</li>
-          <li>✓ Chứa chữ hoa (A-Z)</li>
-          <li>✓ Chứa chữ thường (a-z)</li>
-          <li>✓ Chứa số (0-9)</li>
-          <li>✓ Chứa ký tự đặc biệt (!@#$%^&*)</li>
-        </ul>
-      </div>
-
-      <form action="/register" method="POST">
-        <div class="form-group">
-          <label for="username">👤 Username</label>
-          <input type="text" id="username" name="username" required 
-                 placeholder="Tên đăng nhập (3-30 ký tự)"
-                 autofocus>
-        </div>
-
-        <div class="form-group">
-          <label for="email">📧 Email</label>
-          <input type="email" id="email" name="email" required 
-                 placeholder="your@email.com">
-        </div>
-
-        <div class="form-group">
-          <label for="fullName">👤 Họ và tên</label>
-          <input type="text" id="fullName" name="fullName" 
-                 placeholder="Họ và tên (tùy chọn)">
-        </div>
-
-        <div class="form-group">
-          <label for="password">🔑 Mật khẩu</label>
-          <input type="password" id="password" name="password" required 
-                 placeholder="Mật khẩu mạnh">
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary btn-lg">Đăng ký</button>
-        </div>
-
-        <div class="form-footer">
-          <p>Đã có tài khoản? <a href="/login">🔐 Đăng nhập</a></p>
-        </div>
-      </form>
-    </div>
-  </div>
-</body>
-</html>
-      margin-top: 0.5rem;
-      padding: 0.5rem;
-      background: #f8f9fa;
-      border-radius: 3px;
-    }
-    .password-requirements ul {
-      margin: 0.5rem 0 0 1rem;
-      padding: 0;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <nav>
-      <div class="container">
-        <div class="logo">
-          <h1>💻 LaptopStore</h1>
-        </div>
-        <ul class="nav-links">
-          <li><a href="/">Trang chủ</a></li>
-          <li><a href="/laptops">Sản phẩm</a></li>
-          <li><a href="/about">Giới thiệu</a></li>
-          <li><a href="/contact">Liên hệ</a></li>
-          <li><a href="/login">Đăng nhập</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-
-  <main>
-    <div class="auth-container">
-      <h2>Đăng ký tài khoản</h2>
-      
-      <% if (error) { %>
-        <div class="error-message">
-          <%= error %>
-        </div>
-      <% } %>
-
-      <form action="/register" method="POST">
-        <div class="form-group">
-          <label for="username">Username *</label>
-          <input type="text" id="username" name="username" required 
-                 placeholder="Tên đăng nhập (3-30 ký tự)"
-                 minlength="3" maxlength="30"
-                 pattern="[a-zA-Z0-9_]+">
-          <small>Chỉ được chứa chữ cái, số và dấu gạch dưới</small>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email *</label>
-          <input type="email" id="email" name="email" required 
-                 placeholder="email@example.com">
-        </div>
-
-        <div class="form-group">
-          <label for="fullName">Họ và tên</label>
-          <input type="text" id="fullName" name="fullName" 
-                 placeholder="Nguyễn Văn A"
-                 maxlength="100">
-        </div>
-
-        <div class="form-group">
-          <label for="password">Mật khẩu *</label>
-          <input type="password" id="password" name="password" required 
-                 placeholder="Mật khẩu mạnh"
-                 minlength="12">
-          <div class="password-requirements">
-            <strong>Yêu cầu mật khẩu mạnh:</strong>
-            <ul>
-              <li>✔ Tối thiểu <strong>12 ký tự</strong></li>
-              <li>✔ Ít nhất 1 chữ thường (a-z)</li>
-              <li>✔ Ít nhất 1 chữ hoa (A-Z)</li>
-              <li>✔ Ít nhất 1 số (0-9)</li>
-              <li>✔ Ít nhất 1 ký tự đặc biệt (!@#$%^&*...)</li>
-              <li>⚠ Không tái sử dụng mật khẩu cũ</li>
-              <li>⏰ Thay đổi định kỳ 90 ngày một lần</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="confirmPassword">Xác nhận mật khẩu *</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" required 
-                 placeholder="Nhập lại mật khẩu"
-                 minlength="12">
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Đăng ký</button>
-        </div>
-
-        <div class="form-footer">
-          <p>Đã có tài khoản? <a href="/login">Đăng nhập ngay</a></p>
-        </div>
-      </form>
-    </div>
-  </main>
-
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 LaptopStore. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <script>
-    // Client-side validation
-    const form = document.querySelector('form');
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirmPassword');
-
-    form.addEventListener('submit', (e) => {
-      if (password.value !== confirmPassword.value) {
-        e.preventDefault();
-        alert('Mật khẩu xác nhận không khớp!');
-        confirmPassword.focus();
-      }
-    });
-
-    // Real-time password match check
-    confirmPassword.addEventListener('input', () => {
-      if (confirmPassword.value && password.value !== confirmPassword.value) {
-        confirmPassword.setCustomValidity('Mật khẩu không khớp');
-      } else {
-        confirmPassword.setCustomValidity('');
-      }
-    });
-  </script>
-</body>
-</html>
