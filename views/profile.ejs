@@ -267,7 +267,7 @@
           <li><a href="/about">Giới thiệu</a></li>
           <li><a href="/contact">Liên hệ</a></li>
           <li><a href="/profile" class="active">👤 Hồ sơ</a></li>
-          <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+          <% if (user.role === 'admin' || user.role === 'superadmin') { %>
             <li><a href="/admin">⚙️ Admin</a></li>
           <% } %>
           <li><a href="/logout">Đăng xuất</a></li>
@@ -289,23 +289,23 @@
         <div class="profile-sidebar">
           <div class="profile-avatar">😊</div>
           <div class="profile-name">
-            <h2><%= currentUser.username %></h2>
-            <p style="margin: 0; color: var(--text-gray); font-size: 0.85rem;"><%= currentUser.email %></p>
+            <h2><%= user.username %></h2>
+            <p style="margin: 0; color: var(--text-gray); font-size: 0.85rem;"><%= user.email %></p>
           </div>
           <div class="profile-role">
-            📌 <%= currentUser.role.toUpperCase() %>
+            📌 <%= user.role.toUpperCase() %>
           </div>
 
           <div class="profile-stats">
             <div class="stat-item">
               <div class="stat-value">
-                <% const createdDate = new Date(currentUser.createdAt); %>
+                <% const createdDate = new Date(user.createdAt); %>
                 <%= Math.floor((Date.now() - createdDate) / (1000 * 60 * 60 * 24)) %>
               </div>
               <div class="stat-label">Ngày hoạt động</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value"><%= currentUser.twoFactorEnabled ? '✅' : '❌' %></div>
+              <div class="stat-value"><%= user.twoFactorEnabled ? '✅' : '❌' %></div>
               <div class="stat-label">2FA</div>
             </div>
           </div>
@@ -326,23 +326,23 @@
             <div class="info-grid">
               <div class="info-item">
                 <div class="info-label">Tên đăng nhập</div>
-                <div class="info-value"><%= currentUser.username %></div>
+                <div class="info-value"><%= user.username %></div>
               </div>
               <div class="info-item">
                 <div class="info-label">Email</div>
                 <div class="info-value">
-                  <%= currentUser.email %>
+                  <%= user.email %>
                   <span class="badge badge-success" style="margin-left: 0.5rem;">✓ Xác thực</span>
                 </div>
               </div>
               <div class="info-item">
                 <div class="info-label">Vai trò</div>
-                <div class="info-value"><%= currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) %></div>
+                <div class="info-value"><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></div>
               </div>
               <div class="info-item">
                 <div class="info-label">Trạng thái</div>
                 <div class="info-value">
-                  <% if (currentUser.isActive) { %>
+                  <% if (user.isActive) { %>
                     <span class="badge badge-success">🟢 Hoạt động</span>
                   <% } else { %>
                     <span class="badge badge-warning">🟡 Bị khóa</span>
@@ -371,7 +371,7 @@
               <div class="info-item">
                 <div class="info-label">Xác thực 2 yếu tố (2FA)</div>
                 <div class="info-value">
-                  <% if (currentUser.twoFactorEnabled) { %>
+                  <% if (user.twoFactorEnabled) { %>
                     <span class="badge badge-success">✅ Đã bật</span>
                   <% } else { %>
                     <span class="badge badge-warning">❌ Chưa bật</span>
@@ -381,8 +381,8 @@
               <div class="info-item">
                 <div class="info-label">Mật khẩu lần cuối đổi</div>
                 <div class="info-value">
-                  <% if (currentUser.passwordLastChanged) { %>
-                    <% const lastChanged = new Date(currentUser.passwordLastChanged); %>
+                  <% if (user.passwordLastChanged) { %>
+                    <% const lastChanged = new Date(user.passwordLastChanged); %>
                     <%= lastChanged.toLocaleDateString('vi-VN') %>
                   <% } else { %>
                     Chưa đổi
@@ -393,7 +393,7 @@
 
             <div style="margin-top: 1.5rem;">
               <a href="/setup-2fa" class="btn btn-primary" style="margin-right: 1rem;">
-                <% if (currentUser.twoFactorEnabled) { %>
+                <% if (user.twoFactorEnabled) { %>
                   🔄 Cập nhật 2FA
                 <% } else { %>
                   🔐 Bật 2FA
