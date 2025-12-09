@@ -63,6 +63,38 @@ const userSchema = new mongoose.Schema({
   accountLockedUntil: {
     type: Date,
     default: null
+  },
+  // Password reset fields
+  passwordResetToken: {
+    type: String,
+    default: null
+  },
+  passwordResetExpiresAt: {
+    type: Date,
+    default: null
+  },
+  // Role-Based Access Control
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'superadmin'],
+    default: 'user'
+  },
+  permissions: [{
+    type: String,
+    enum: [
+      'view_profile',
+      'edit_profile',
+      'view_users',
+      'edit_users',
+      'delete_users',
+      'view_logs',
+      'manage_roles',
+      'manage_system'
+    ]
+  }],
+  isActive: {
+    type: Boolean,
+    default: true
   }
 }, {
   timestamps: true, // Tự động thêm createdAt và updatedAt

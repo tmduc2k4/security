@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const { generateToken } = require('../middleware/auth');
 const { validationResult } = require('express-validator');
+const auditService = require('../services/auditService');
 
 // Hiển thị trang đăng ký
 const showRegisterPage = (req, res) => {
@@ -75,6 +76,16 @@ const login = async (req, res) => {
     // Tìm user
     const user = await User.findOne({ username });
     if (!user) {
+      // Log failed login attempt
+      await auditService.logAction('login_failed', 'account', {
+        username: username || 'unknown',
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        description: 'Invalid username',
+        severity: 'warning',
+        success: false
+      });
+
       return res.status(401).render('login', { 
         error: 'Tên đăng nhập hoặc mật khẩu không đúng',
         redirect: req.body.redirect || '/profile',
@@ -85,6 +96,18 @@ const login = async (req, res) => {
     // Kiểm tra account có bị lock không
     if (user.isAccountLocked()) {
       const minutesLeft = Math.ceil((user.accountLockedUntil - new Date()) / 60000);
+      
+      // Log account lock attempt
+      await auditService.logAction('login_failed', 'account', {
+        userId: user._id,
+        username: user.username,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        description: `Account locked. ${minutesLeft} minutes remaining`,
+        severity: 'critical',
+        success: false
+      });
+
       return res.status(401).render('login', {
         error: `Tài khoản bị khóa do đăng nhập sai quá nhiều lần. Thử lại sau ${minutesLeft} phút.`,
         redirect: req.body.redirect || '/profile',
@@ -96,6 +119,18 @@ const login = async (req, res) => {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       await user.incrementFailedAttempts();
+      
+      // Log failed login attempt
+      await auditService.logAction('login_failed', 'account', {
+        userId: user._id,
+        username: user.username,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        description: 'Invalid password',
+        severity: 'warning',
+        success: false
+      });
+
       return res.status(401).render('login', { 
         error: 'Tên đăng nhập hoặc mật khẩu không đúng',
         redirect: req.body.redirect || '/profile',
@@ -156,6 +191,16 @@ const login = async (req, res) => {
       sameSite: 'strict'
     });
 
+    // Log successful login
+    await auditService.logAction('login_success', 'account', {
+      userId: user._id,
+      username: user.username,
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+      statusCode: 200,
+      severity: 'info'
+    });
+
     // Redirect về trang trước đó hoặc profile
     const redirectUrl = req.body.redirect || '/profile';
     res.redirect(redirectUrl);
@@ -171,10 +216,27 @@ const login = async (req, res) => {
 };
 
 // Đăng xuất
-const logout = (req, res) => {
-  // Xóa cookie token
-  res.clearCookie('token');
-  res.redirect('/?message=' + encodeURIComponent('Đã đăng xuất thành công'));
+const logout = async (req, res) => {
+  try {
+    // Log logout
+    if (req.user) {
+      await auditService.logAction('logout', 'account', {
+        userId: req.user._id,
+        username: req.user.username,
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        severity: 'info'
+      });
+    }
+
+    // Xóa cookie token
+    res.clearCookie('token');
+    res.redirect('/?message=' + encodeURIComponent('Đã đăng xuất thành công'));
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.clearCookie('token');
+    res.redirect('/');
+  }
 };
 
 // Hiển thị trang profile

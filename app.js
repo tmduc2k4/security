@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
 require('dotenv').config();
 
 // Import database connection
@@ -27,8 +28,12 @@ const {
 } = require('./middleware/validator');
 
 const { optionalAuth, requireAuth, requireGuest } = require('./middleware/auth');
+const { requireRole, setDefaultPermissions } = require('./middleware/rbac');
+const { generateCSRFToken, verifyCsrfToken } = require('./middleware/csrf');
+
 const authController = require('./controllers/authController');
 const twoFactorController = require('./controllers/twoFactorController');
+const passwordController = require('./controllers/passwordController');
 const { registerValidation, loginValidation, updateProfileValidation } = require('./middleware/authValidator');
 
 // Kết nối MongoDB
@@ -57,12 +62,27 @@ app.use(express.json({ limit: '10kb' })); // Limit payload size
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser()); // Parse cookies
 
+// Session configuration for CSRF and user tracking
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-session-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
 // Custom security middleware
 app.use(securityLogger); // Log suspicious activities
 app.use(sqlInjectionProtection); // Block SQL injection
 app.use(pathTraversalProtection); // Block path traversal
 app.use(sanitizeAllInputs); // Sanitize all inputs
 app.use(optionalAuth); // Load user info if logged in
+app.use(setDefaultPermissions); // Set default permissions based on role
+app.use(generateCSRFToken); // Generate CSRF token
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -158,6 +178,12 @@ app.get('/logout', authController.logout);
 app.get('/profile', requireAuth, authController.showProfile);
 app.post('/profile/update', requireAuth, updateProfileValidation, authController.updateProfile);
 
+// Password Reset Routes
+app.get('/forgot-password', passwordController.showForgotPasswordPage);
+app.post('/forgot-password', passwordController.forgotPassword);
+app.get('/reset-password', passwordController.showResetPasswordPage);
+app.post('/reset-password', passwordController.resetPassword);
+
 // 2FA Routes
 app.get('/2fa/setup', requireAuth, twoFactorController.show2FASetupPage);
 app.post('/2fa/enable', requireAuth, twoFactorController.enable2FA);
@@ -167,6 +193,27 @@ app.post('/2fa/verify', twoFactorController.verify2FALogin);
 // API Auth Routes (JSON)
 app.post('/api/auth/register', registerValidation, authController.apiRegister);
 app.post('/api/auth/login', loginValidation, authController.apiLogin);
+
+// Admin Routes (Role-based)
+app.get('/admin', requireAuth, requireRole('admin'), (req, res) => {
+  res.render('admin/dashboard', { currentUser: req.user });
+});
+
+app.get('/admin/users', requireAuth, requireRole('admin'), (req, res) => {
+  // TODO: Fetch users from database
+  res.render('admin/users', { currentUser: req.user });
+});
+
+app.get('/admin/audit-logs', requireAuth, requireRole('admin'), (req, res) => {
+  // TODO: Fetch audit logs from database
+  res.render('admin/audit-logs', { currentUser: req.user });
+});
+
+// User activity logs
+app.get('/profile/activity', requireAuth, (req, res) => {
+  // TODO: Fetch user's audit logs
+  res.render('profile/activity', { currentUser: req.user });
+});
 
 // Public Routes
 app.get('/', (req, res) => {
