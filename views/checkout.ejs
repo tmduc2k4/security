@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh toán - Security App</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
+  <style>
+    .checkout-container {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .checkout-form {
+      background: white;
+      border-radius: 1rem;
+      border: 1px solid var(--border-gray);
+      padding: 2rem;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary-blue);
+      color: var(--text-dark);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 0.75rem;
+      border: 1px solid var(--border-gray);
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all var(--transition-fast);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .payment-option {
+      padding: 1rem;
+      border: 2px solid var(--border-gray);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition-fast);
+    }
+
+    .payment-option:hover {
+      border-color: var(--primary-blue);
+      background: #eff6ff;
+    }
+
+    .payment-option.selected {
+      border-color: var(--primary-blue);
+      background: #eff6ff;
+    }
+
+    .payment-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .payment-name {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+      color: var(--text-gray);
+      font-weight: 400;
+    }
+
+    .order-summary {
+      background: white;
+      border-radius: 1rem;
+      border: 1px solid var(--border-gray);
+      padding: 1.5rem;
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .summary-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text-dark);
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--primary-blue);
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-gray);
+    }
+
+    .item-name {
+      flex: 1;
+      color: var(--text-gray);
+    }
+
+    .item-price {
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    .summary-row.total {
+      border-top: 1px solid var(--border-gray);
+      padding-top: 1rem;
+      color: var(--text-dark);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .place-order-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: all var(--transition-fast);
+    }
+
+    .place-order-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: #dcfce7;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .breadcrumb {
+      background: #f9fafb;
+      padding: 1rem 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-gray);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .step {
+      text-align: center;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      border: 2px solid var(--border-gray);
+      color: var(--text-gray);
+    }
+
+    .step.active {
+      background: #eff6ff;
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    .step-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+      }
+
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .order-summary {
+        position: static;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <div class="logo">
+          <h1>🔐 Security App</h1>
+        </div>
+        <ul class="nav-links">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/laptops">Sản phẩm</a></li>
+          <li><a href="/cart">🛒 Giỏ hàng</a></li>
+          <% if (locals.currentUser) { %>
+            <li><a href="/profile">👤 <%= currentUser.username %></a></li>
+            <li><a href="/logout">Đăng xuất</a></li>
+          <% } else { %>
+            <li><a href="/login">Đăng nhập</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/" style="color: var(--primary-blue); text-decoration: none;">Trang chủ</a> / 
+        <a href="/cart" style="color: var(--primary-blue); text-decoration: none;">Giỏ hàng</a> / 
+        <strong>💳 Thanh toán</strong>
+      </div>
+
+      <h1 style="margin-bottom: 1rem; color: var(--text-dark);">💳 Thanh toán</h1>
+
+      <!-- Progress Steps -->
+      <div class="steps">
+        <div class="step">
+          <div class="step-icon">📦</div>
+          <div>Giỏ hàng</div>
+        </div>
+        <div class="step active">
+          <div class="step-icon">💳</div>
+          <div>Thanh toán</div>
+        </div>
+        <div class="step">
+          <div class="step-icon">✅</div>
+          <div>Xác nhận</div>
+        </div>
+      </div>
+
+      <div class="checkout-container">
+        <!-- Checkout Form -->
+        <form class="checkout-form" id="checkoutForm">
+          <!-- Shipping Information -->
+          <div class="form-section">
+            <h2 class="form-section-title">📍 Thông tin giao hàng</h2>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Họ và tên *</label>
+                <input type="text" name="fullName" required placeholder="Nguyễn Văn A">
+              </div>
+              <div class="form-group">
+                <label>Số điện thoại *</label>
+                <input type="tel" name="phone" required placeholder="0123456789">
+              </div>
+            </div>
+
+            <div class="form-group form-row full">
+              <label>Email *</label>
+              <input type="email" name="email" required placeholder="email@example.com">
+            </div>
+
+            <div class="form-group form-row full">
+              <label>Địa chỉ giao hàng *</label>
+              <input type="text" name="address" required placeholder="Số nhà, tên đường">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tỉnh/Thành phố *</label>
+                <select name="province" required>
+                  <option>Chọn tỉnh/thành phố</option>
+                  <option>Hà Nội</option>
+                  <option>TP. Hồ Chí Minh</option>
+                  <option>Đà Nẵng</option>
+                  <option>Khác</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Quận/Huyện *</label>
+                <input type="text" name="district" required placeholder="Quận/Huyện">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Mã bưu chính *</label>
+              <input type="text" name="zipcode" required placeholder="Mã bưu chính">
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="sameAddress">
+              <label for="sameAddress">Địa chỉ hóa đơn cùng với địa chỉ giao hàng</label>
+            </div>
+          </div>
+
+          <!-- Payment Information -->
+          <div class="form-section">
+            <h2 class="form-section-title">💰 Phương thức thanh toán</h2>
+            
+            <div class="payment-methods">
+              <div class="payment-option selected" onclick="selectPayment(this)">
+                <div class="payment-icon">💳</div>
+                <div class="payment-name">Thẻ tín dụng</div>
+              </div>
+              <div class="payment-option" onclick="selectPayment(this)">
+                <div class="payment-icon">🏦</div>
+                <div class="payment-name">Chuyển khoản</div>
+              </div>
+              <div class="payment-option" onclick="selectPayment(this)">
+                <div class="payment-icon">📱</div>
+                <div class="payment-name">Ví điện tử</div>
+              </div>
+              <div class="payment-option" onclick="selectPayment(this)">
+                <div class="payment-icon">🚚</div>
+                <div class="payment-name">Thanh toán khi nhận</div>
+              </div>
+            </div>
+
+            <!-- Card Details (shown when credit card selected) -->
+            <div id="cardDetails" style="display: block;">
+              <div class="form-row full">
+                <div class="form-group">
+                  <label>Tên chủ thẻ *</label>
+                  <input type="text" placeholder="Tên như trên thẻ">
+                </div>
+              </div>
+
+              <div class="form-row full">
+                <div class="form-group">
+                  <label>Số thẻ *</label>
+                  <input type="text" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Ngày hết hạn *</label>
+                  <input type="text" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="form-group">
+                  <label>CVV *</label>
+                  <input type="text" placeholder="123" maxlength="3">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Notes -->
+          <div class="form-section">
+            <h2 class="form-section-title">📝 Ghi chú đơn hàng</h2>
+            
+            <div class="form-group form-row full">
+              <label>Ghi chú (tùy chọn)</label>
+              <textarea name="notes" rows="3" placeholder="Nhập ghi chú về đơn hàng..." style="padding: 0.75rem; border: 1px solid var(--border-gray); border-radius: 0.5rem; font-family: inherit;"></textarea>
+            </div>
+          </div>
+
+          <!-- Terms -->
+          <div class="checkbox-group">
+            <input type="checkbox" id="terms" required>
+            <label for="terms">Tôi đồng ý với <a href="/terms" style="color: var(--primary-blue);">điều khoản và điều kiện</a></label>
+          </div>
+        </form>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <div class="summary-title">📦 Tóm tắt đơn hàng</div>
+          
+          <div class="summary-item">
+            <span class="item-name">MacBook Pro 16" - M3 Pro</span>
+            <span class="item-price">45,000,000đ</span>
+          </div>
+
+          <div class="summary-item">
+            <span class="item-name">Dell XPS 13</span>
+            <span class="item-price">25,000,000đ</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Tạm tính:</span>
+            <span>70,000,000đ</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Phí vận chuyển:</span>
+            <span style="color: #22c55e;">Miễn phí</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Thuế (10%):</span>
+            <span>7,000,000đ</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Tổng cộng:</span>
+            <span>77,000,000đ</span>
+          </div>
+
+          <button type="submit" form="checkoutForm" class="place-order-btn">
+            ✅ Đặt hàng
+          </button>
+
+          <div class="security-badge">
+            🔒 Thanh toán an toàn - Bảo mật 13 lớp
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h4>🔐 Security App</h4>
+          <p>Mua laptop an toàn với bảo mật cao</p>
+        </div>
+        <div>
+          <h4>📚 Hỗ trợ</h4>
+          <ul style="list-style: none;">
+            <li><a href="/faq">Câu hỏi thường gặp</a></li>
+            <li><a href="/contact">Liên hệ</a></li>
+            <li><a href="/privacy">Chính sách bảo mật</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>🛒 Mua sắm</h4>
+          <ul style="list-style: none;">
+            <li><a href="/laptops">Sản phẩm</a></li>
+            <li><a href="/cart">Giỏ hàng</a></li>
+            <li><a href="/orders">Đơn hàng</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Security App. Bảo mật thanh toán được đảm bảo.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function selectPayment(element) {
+      document.querySelectorAll('.payment-option').forEach(el => {
+        el.classList.remove('selected');
+      });
+      element.classList.add('selected');
+    }
+
+    document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('✅ Đặt hàng thành công! Cảm ơn bạn đã mua hàng.');
+      // TODO: Implement real checkout logic
+    });
+  </script>
+</body>
+</html>

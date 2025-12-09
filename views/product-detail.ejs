@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= product.name %> - Security App</title>
+  <link rel="stylesheet" href="/css/modern-style.css">
+  <style>
+    .breadcrumb {
+      background: #f9fafb;
+      padding: 1rem 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border-gray);
+    }
+
+    .breadcrumb a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .product-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .product-gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .main-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 1rem;
+      background: #f9fafb;
+      border: 1px solid var(--border-gray);
+    }
+
+    .product-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .product-header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .stars {
+      color: #fbbf24;
+      font-size: 1.1rem;
+    }
+
+    .rating-count {
+      color: var(--text-gray);
+      font-size: 0.9rem;
+    }
+
+    .price-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .current-price {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .original-price {
+      font-size: 1.2rem;
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .discount-badge {
+      background: #ef4444;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .spec-label {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .spec-value {
+      font-size: 1rem;
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .qty-label {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .qty-input {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border-gray);
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .qty-btn {
+      background: #f9fafb;
+      border: none;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary-blue);
+      transition: all var(--transition-fast);
+    }
+
+    .qty-btn:hover {
+      background: var(--primary-blue);
+      color: white;
+    }
+
+    .qty-display {
+      width: 50px;
+      text-align: center;
+      border: none;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .btn-cart {
+      padding: 0.75rem 1.5rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-cart:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-wishlist {
+      padding: 0.75rem 1.5rem;
+      background: white;
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-wishlist:hover {
+      background: #eff6ff;
+    }
+
+    .availability {
+      padding: 1rem;
+      background: #dcfce7;
+      border-left: 4px solid #22c55e;
+      border-radius: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .availability.unavailable {
+      background: #fee2e2;
+      border-left-color: #ef4444;
+    }
+
+    .description-section {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      margin-bottom: 3rem;
+      border: 1px solid var(--border-gray);
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--primary-blue);
+    }
+
+    .description-text {
+      line-height: 1.8;
+      color: var(--text-gray);
+      margin-bottom: 1rem;
+    }
+
+    .features-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .features-list li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--text-gray);
+    }
+
+    .features-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--primary-blue);
+      font-weight: 700;
+    }
+
+    .related-products {
+      background: #f9fafb;
+      padding: 3rem 0;
+      margin-top: 3rem;
+    }
+
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .related-card {
+      background: white;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid var(--border-gray);
+      transition: all var(--transition-normal);
+    }
+
+    .related-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    @media (max-width: 768px) {
+      .product-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .price-section {
+        padding: 1.5rem;
+      }
+
+      .specs-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .main-image {
+        height: 300px;
+      }
+
+      .current-price {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <div class="logo">
+          <h1>🔐 Security App</h1>
+        </div>
+        <ul class="nav-links">
+          <li><a href="/">Trang chủ</a></li>
+          <li><a href="/laptops" class="active">Sản phẩm</a></li>
+          <li><a href="/about">Giới thiệu</a></li>
+          <li><a href="/contact">Liên hệ</a></li>
+          <% if (locals.currentUser) { %>
+            <li><a href="/profile">👤 <%= currentUser.username %></a></li>
+            <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+              <li><a href="/admin">⚙️ Admin</a></li>
+            <% } %>
+            <li><a href="/logout">Đăng xuất</a></li>
+          <% } else { %>
+            <li><a href="/login">Đăng nhập</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/">Trang chủ</a> / <a href="/laptops">Sản phẩm</a> / 
+        <strong><%= product.name %></strong>
+      </div>
+
+      <!-- Product Hero -->
+      <div class="product-hero">
+        <!-- Gallery -->
+        <div class="product-gallery">
+          <img src="<%= product.image %>" alt="<%= product.name %>" class="main-image">
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+          <div class="product-header">
+            <h1><%= product.name %></h1>
+            <div class="product-rating">
+              <div class="stars">⭐⭐⭐⭐⭐</div>
+              <div class="rating-count">(125 đánh giá)</div>
+            </div>
+          </div>
+
+          <!-- Price Section -->
+          <div class="price-section">
+            <div class="price-display">
+              <div class="current-price"><%= product.price.toLocaleString('vi-VN') %>đ</div>
+              <div class="original-price">Giá gốc: <%= (product.price * 1.1).toLocaleString('vi-VN') %>đ</div>
+              <div class="discount-badge">-10%</div>
+            </div>
+            <div style="font-size: 0.9rem; opacity: 0.9;">Giá đã bao gồm thuế VAT</div>
+          </div>
+
+          <!-- Specifications -->
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">🖥️ Processor (CPU)</span>
+              <span class="spec-value"><%= product.specs.cpu %></span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">💾 Memory (RAM)</span>
+              <span class="spec-value"><%= product.specs.ram %></span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">💿 Storage (SSD)</span>
+              <span class="spec-value"><%= product.specs.storage %></span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">📺 Display</span>
+              <span class="spec-value"><%= product.specs.screen %></span>
+            </div>
+          </div>
+
+          <!-- Availability -->
+          <div class="availability">
+            ✅ <strong>Còn hàng:</strong> 15 sản phẩm sẵn sàng giao hàng
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="quantity-selector">
+            <span class="qty-label">Số lượng:</span>
+            <div class="qty-input">
+              <button class="qty-btn" onclick="decreaseQty()">−</button>
+              <input type="number" class="qty-display" id="quantity" value="1" min="1" max="10">
+              <button class="qty-btn" onclick="increaseQty()">+</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn-cart" onclick="addToCart()">
+              🛒 Thêm vào giỏ hàng
+            </button>
+            <button class="btn-wishlist" onclick="addToWishlist()">
+              ❤️ Yêu thích
+            </button>
+          </div>
+
+          <!-- Additional Info -->
+          <div style="color: var(--text-gray); font-size: 0.9rem; line-height: 1.6;">
+            <p>✓ Bảo hành chính hãng 12 tháng</p>
+            <p>✓ Miễn phí giao hàng toàn quốc</p>
+            <p>✓ Hỗ trợ trả góp 0%</p>
+            <p>✓ Đổi trả miễn phí trong 30 ngày</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
+      <div class="description-section">
+        <h2 class="section-title">📝 Mô tả sản phẩm</h2>
+        <p class="description-text">
+          <%= product.description %>
+        </p>
+        
+        <h3 style="font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem;">Những ưu điểm nổi bật:</h3>
+        <ul class="features-list">
+          <li>Hiệu suất mạnh mẽ với bộ xử lý <%= product.specs.cpu %></li>
+          <li>Bộ nhớ <%= product.specs.ram %> cho đa nhiệm mượt mà</li>
+          <li>Ổ cứng SSD <%= product.specs.storage %> để lưu trữ nhanh chóng</li>
+          <li>Màn hình <%= product.specs.screen %> sắc nét</li>
+          <li>Thiết kế hiện đại, nhẹ gọn, dễ mang theo</li>
+          <li>Tuổi thọ pin dài, tối ưu năng lượng</li>
+        </ul>
+      </div>
+
+      <!-- Related Products -->
+      <div class="related-products">
+        <div class="container">
+          <h2 class="section-title">📱 Sản phẩm liên quan</h2>
+          <div class="related-grid">
+            <% if (relatedProducts && relatedProducts.length > 0) { %>
+              <% relatedProducts.forEach(related => { %>
+                <div class="related-card">
+                  <img src="<%= related.image %>" alt="<%= related.name %>" style="width: 100%; height: 180px; object-fit: cover;">
+                  <div style="padding: 1rem;">
+                    <h4 style="margin-bottom: 0.5rem; color: var(--text-dark);"><%= related.name %></h4>
+                    <p style="color: var(--primary-blue); font-weight: 700; margin-bottom: 0.75rem;">
+                      <%= related.price.toLocaleString('vi-VN') %>đ
+                    </p>
+                    <a href="/laptop/<%= related.id %>" style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">
+                      Xem chi tiết →
+                    </a>
+                  </div>
+                </div>
+              <% }); %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <div>
+          <h4>🔐 Security App</h4>
+          <p>Laptop chất lượng cao với giá cạnh tranh</p>
+        </div>
+        <div>
+          <h4>📚 Liên kết</h4>
+          <ul style="list-style: none;">
+            <li><a href="/about">Giới thiệu</a></li>
+            <li><a href="/contact">Liên hệ</a></li>
+            <li><a href="/laptops">Sản phẩm</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>🛒 Mua sắm</h4>
+          <ul style="list-style: none;">
+            <li><a href="/cart">Giỏ hàng</a></li>
+            <li><a href="/orders">Đơn hàng</a></li>
+            <li><a href="/track">Theo dõi</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Security App. Bán laptop an toàn, uy tín.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function increaseQty() {
+      const input = document.getElementById('quantity');
+      if (parseInt(input.value) < 10) {
+        input.value = parseInt(input.value) + 1;
+      }
+    }
+
+    function decreaseQty() {
+      const input = document.getElementById('quantity');
+      if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+      }
+    }
+
+    function addToCart() {
+      const qty = document.getElementById('quantity').value;
+      alert(`✅ Đã thêm ${qty} sản phẩm vào giỏ hàng`);
+      // TODO: Implement add to cart functionality
+    }
+
+    function addToWishlist() {
+      alert('❤️ Đã thêm sản phẩm vào yêu thích');
+      // TODO: Implement wishlist functionality
+    }
+  </script>
+</body>
+</html>
