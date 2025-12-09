@@ -348,9 +348,9 @@
           <li><a href="/laptops" class="active">Sản phẩm</a></li>
           <li><a href="/about">Giới thiệu</a></li>
           <li><a href="/contact">Liên hệ</a></li>
-          <% if (locals.currentUser) { %>
-            <li><a href="/profile">👤 <%= currentUser.username %></a></li>
-            <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+          <% if (locals.user) { %>
+            <li><a href="/profile">👤 <%= user.username %></a></li>
+            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
               <li><a href="/admin">⚙️ Admin</a></li>
             <% } %>
             <li><a href="/logout">Đăng xuất</a></li>

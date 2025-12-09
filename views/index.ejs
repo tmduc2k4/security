@@ -280,9 +280,9 @@
           <li><a href="/laptops">Sản phẩm</a></li>
           <li><a href="/about">Giới thiệu</a></li>
           <li><a href="/contact">Liên hệ</a></li>
-          <% if (locals.currentUser) { %>
-            <li><a href="/profile">👤 <%= currentUser.username %></a></li>
-            <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+          <% if (locals.user) { %>
+            <li><a href="/profile">👤 <%= user.username %></a></li>
+            <% if (user.role === 'admin' || user.role === 'superadmin') { %>
               <li><a href="/admin">⚙️ Admin</a></li>
             <% } %>
             <li><a href="/logout">Đăng xuất</a></li>
@@ -301,7 +301,7 @@
       <div class="container">
         <h2>🛡️ Bảo vệ tài khoản của bạn</h2>
         <p>Hệ thống xác thực và bảo mật toàn diện với 2FA, mã hóa mật khẩu, và kiểm soát truy cập</p>
-        <% if (!locals.currentUser) { %>
+        <% if (!locals.user) { %>
           <a href="/register" class="btn">Tạo tài khoản ngay</a>
         <% } else { %>
           <a href="/profile" class="btn">Xem hồ sơ của bạn</a>
@@ -405,7 +405,7 @@
       <div class="container">
         <h2>Bắt đầu bảo vệ tài khoản của bạn ngay hôm nay</h2>
         <p>Đăng ký miễn phí và nhận tất cả các tính năng bảo mật tiên tiến</p>
-        <% if (!locals.currentUser) { %>
+        <% if (!locals.user) { %>
           <a href="/register" class="btn">Đăng ký ngay</a>
         <% } %>
       </div>
