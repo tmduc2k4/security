@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng nhập - Security App</title>
   <link rel="stylesheet" href="/css/modern-style.css">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     .auth-page {
       min-height: 100vh;
@@ -76,6 +77,27 @@
       border-left: 4px solid var(--danger-red);
     }
 
+    .warning-message {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #f59e0b;
+      font-size: 0.9rem;
+    }
+
+    .captcha-container {
+      margin: 1.5rem 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .g-recaptcha {
+      transform: scale(0.9);
+      transform-origin: 0 0;
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -95,6 +117,10 @@
       .auth-card {
         padding: 1.5rem;
       }
+
+      .g-recaptcha {
+        transform: scale(0.8);
+      }
     }
   </style>
 </head>
@@ -110,13 +136,22 @@
         </div>
       <% } %>
 
-      <form action="/login" method="POST">
+      <% if (failedAttempts && failedAttempts >= 5 && failedAttempts < 10) { %>
+        <div class="warning-message">
+          ⚠️ Đã đăng nhập sai <strong><%= failedAttempts %>/10</strong> lần.<br>
+          Vui lòng hoàn thành xác thực để tiếp tục.
+        </div>
+      <% } %>
+
+      <form action="/login" method="POST" id="loginForm">
         <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
+        <input type="hidden" name="username" id="usernameHidden" value="<%= username || '' %>">
         
         <div class="form-group">
           <label for="username">👤 Username</label>
           <input type="text" id="username" name="username" required 
                  placeholder="Tên đăng nhập"
+                 value="<%= username || '' %>"
                  autofocus>
         </div>
 
@@ -125,6 +160,14 @@
           <input type="password" id="password" name="password" required 
                  placeholder="Mật khẩu">
         </div>
+
+        <% if (requireCaptcha) { %>
+          <div class="captcha-container">
+            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+          </div>
+        <% } %>
+
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
 
         <div class="form-actions">
           <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
@@ -137,5 +180,93 @@
       </form>
     </div>
   </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      const requireCaptcha = document.querySelector('.captcha-container');
+      if (requireCaptcha) {
+        const response = grecaptcha.getResponse();
+        if (!response) {
+          e.preventDefault();
+          alert('Vui lòng hoàn thành xác thực CAPTCHA');
+          return false;
+        }
+        document.getElementById('g-recaptcha-response').value = response;
+      }
+    });
+  </script>
+</body>
+</html>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <h2>🔐 Đăng nhập</h2>
+      <p class="subtitle">Truy cập tài khoản của bạn</p>
+      
+      <% if (error) { %>
+        <div class="error-message">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <% if (failedAttempts && failedAttempts >= 5 && failedAttempts < 10) { %>
+        <div class="warning-message">
+          ⚠️ Đã đăng nhập sai <strong><%= failedAttempts %>/10</strong> lần.<br>
+          Vui lòng hoàn thành xác thực để tiếp tục.
+        </div>
+      <% } %>
+
+      <form action="/login" method="POST" id="loginForm">
+        <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
+        <input type="hidden" name="username" id="usernameHidden" value="<%= username || '' %>">
+        
+        <div class="form-group">
+          <label for="username">👤 Username</label>
+          <input type="text" id="username" name="username" required 
+                 placeholder="Tên đăng nhập"
+                 value="<%= username || '' %>"
+                 autofocus>
+        </div>
+
+        <div class="form-group">
+          <label for="password">🔑 Mật khẩu</label>
+          <input type="password" id="password" name="password" required 
+                 placeholder="Mật khẩu">
+        </div>
+
+        <% if (requireCaptcha) { %>
+          <div class="captcha-container">
+            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+          </div>
+        <% } %>
+
+        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
+        </div>
+
+        <div class="form-footer">
+          <p><a href="/forgot-password">❓ Quên mật khẩu?</a></p>
+          <p>Chưa có tài khoản? <a href="/register">📝 Đăng ký ngay</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      const requireCaptcha = document.querySelector('.captcha-container');
+      if (requireCaptcha) {
+        const response = grecaptcha.getResponse();
+        if (!response) {
+          e.preventDefault();
+          alert('Vui lòng hoàn thành xác thực CAPTCHA');
+          return false;
+        }
+        document.getElementById('g-recaptcha-response').value = response;
+      }
+    });
+  </script>
 </body>
 </html>

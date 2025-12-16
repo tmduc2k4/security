@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  requiresCaptcha: {
+    type: Boolean,
+    default: false
+  },
   // Password reset fields
   passwordResetToken: {
     type: String,
@@ -169,10 +173,15 @@ userSchema.methods.isAccountLocked = function() {
 userSchema.methods.incrementFailedAttempts = async function() {
   this.failedLoginAttempts += 1;
   
-  // Lock account sau 5 lần thất bại (30 phút)
-  if (this.failedLoginAttempts >= 5) {
+  // Yêu cầu CAPTCHA sau 5 lần thất bại
+  if (this.failedLoginAttempts === 5) {
+    this.requiresCaptcha = true;
+  }
+  
+  // Lock account sau 10 lần thất bại (10 phút)
+  if (this.failedLoginAttempts >= 10) {
     const lockUntil = new Date();
-    lockUntil.setMinutes(lockUntil.getMinutes() + 30);
+    lockUntil.setMinutes(lockUntil.getMinutes() + 10);
     this.accountLockedUntil = lockUntil;
   }
   
@@ -183,6 +192,7 @@ userSchema.methods.incrementFailedAttempts = async function() {
 userSchema.methods.resetFailedAttempts = async function() {
   this.failedLoginAttempts = 0;
   this.accountLockedUntil = null;
+  this.requiresCaptcha = false;
   await this.save();
 };
 

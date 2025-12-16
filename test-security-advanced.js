@@ -9,7 +9,7 @@
 const http = require('http');
 const https = require('https');
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://tmd1907.id.vn/';
 
 // Colors for console output
 const colors = {
@@ -41,7 +41,8 @@ function makeRequest(path, method = 'GET', data = null, customHeaders = {}) {
         'Content-Type': 'application/json',
         'User-Agent': 'Security-Test-Script',
         ...customHeaders
-      }
+      },
+      rejectUnauthorized: false // Allow self-signed certificates
     };
 
     if (data) {
@@ -450,7 +451,10 @@ async function runAllTests() {
 }
 
 // Check if server is running
-http.get(BASE_URL, () => {
+const url = new URL(BASE_URL);
+const protocol = url.protocol === 'https:' ? https : http;
+
+protocol.get(BASE_URL, { rejectUnauthorized: false }, () => {
   runAllTests().catch(error => {
     log(colors.red, `Fatal error: ${error.message}`);
     process.exit(1);

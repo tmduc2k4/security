@@ -55,7 +55,14 @@ const register = async (req, res) => {
 // Hiển thị trang đăng nhập
 const showLoginPage = (req, res) => {
   const redirect = req.query.redirect || '/profile';
-  res.render('login', { error: null, redirect });
+  res.render('login', { 
+    error: null, 
+    redirect,
+    require2FA: false,
+    requireCaptcha: false,
+    failedAttempts: 0,
+    username: ''
+  });
 };
 
 // Xử lý đăng nhập
@@ -126,15 +133,29 @@ const login = async (req, res) => {
         username: user.username,
         ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
-        description: 'Invalid password',
+        description: `Invalid password (attempt ${user.failedLoginAttempts})`,
         severity: 'warning',
         success: false
       });
 
+      // Hiển thị thông báo khác nhau theo số lần sai
+      let errorMsg = 'Tên đăng nhập hoặc mật khẩu không đúng';
+      let showCaptcha = false;
+      
+      if (user.failedLoginAttempts >= 5 && user.failedLoginAttempts < 10) {
+        errorMsg = `Sai ${user.failedLoginAttempts} lần. Vui lòng hoàn thành CAPTCHA.`;
+        showCaptcha = true;
+      } else if (user.failedLoginAttempts >= 10) {
+        errorMsg = `Tài khoản bị cấm đăng nhập trong 10 phút do đăng nhập sai quá nhiều lần.`;
+      }
+
       return res.status(401).render('login', { 
-        error: 'Tên đăng nhập hoặc mật khẩu không đúng',
+        error: errorMsg,
         redirect: req.body.redirect || '/profile',
-        require2FA: false
+        require2FA: false,
+        requireCaptcha: showCaptcha,
+        failedAttempts: user.failedLoginAttempts,
+        username: username
       });
     }
 
