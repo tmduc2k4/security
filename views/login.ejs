@@ -211,8 +211,21 @@
 
           <% if (requireCaptcha) { %>
             <div style="margin: 1.5rem 0; padding: 1rem; background: #f0f4ff; border-radius: 0.5rem; border-left: 4px solid #3b82f6;">
-              <p style="color: #1e40af; font-weight: 600; margin-bottom: 1rem;">🤖 Xác thực reCAPTCHA:</p>
-              <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+              <p style="color: #1e40af; font-weight: 600; margin-bottom: 1rem;">🤖 Xác thực:</p>
+              
+              <!-- ReCAPTCHA -->
+              <div id="recaptchaContainer">
+                <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+              </div>
+              
+              <!-- Fallback: Simple CAPTCHA nếu ReCAPTCHA không load -->
+              <div id="fallbackCaptcha" style="display:none; text-align: center;">
+                <p style="color: #1e40af; font-weight: 500; margin-bottom: 1rem;">
+                  Nhập 2 chữ số sau để xác thực:
+                </p>
+                <div style="background: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 2rem; font-weight: bold; letter-spacing: 0.5rem; color: #3b82f6;" id="captchaCode"></div>
+                <input type="text" id="captchaInput" placeholder="Nhập mã xác thực" maxlength="2" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; text-align: center; font-size: 1.2rem;" />
+              </div>
             </div>
           <% } %>
 
@@ -282,18 +295,59 @@
 
     const form = document.getElementById('loginForm');
     if (form) {
+      // Khởi tạo fallback CAPTCHA nếu ReCAPTCHA không load
+      initializeFallbackCaptcha();
+      
       form.addEventListener('submit', function(e) {
-        const requireCaptcha = document.querySelector('.captcha-container');
-        if (requireCaptcha) {
+        // Kiểm tra ReCAPTCHA
+        if (window.grecaptcha) {
           const response = grecaptcha.getResponse();
           if (!response) {
-            e.preventDefault();
-            alert('Vui lòng hoàn thành xác thực CAPTCHA');
-            return false;
+            // Thử fallback CAPTCHA
+            const fallbackInput = document.getElementById('captchaInput');
+            if (fallbackInput && fallbackInput.style.display !== 'none') {
+              const captchaCode = document.getElementById('captchaCode').innerText;
+              if (fallbackInput.value !== captchaCode) {
+                e.preventDefault();
+                alert('Mã xác thực không đúng!');
+                return false;
+              }
+            } else {
+              e.preventDefault();
+              alert('Vui lòng hoàn thành xác thực CAPTCHA');
+              return false;
+            }
           }
-          document.getElementById('g-recaptcha-response').value = response;
+          if (response) {
+            document.getElementById('g-recaptcha-response').value = response;
+          }
         }
       });
+    }
+
+    // Fallback CAPTCHA nếu ReCAPTCHA không load
+    function initializeFallbackCaptcha() {
+      setTimeout(function() {
+        const recaptchaContainer = document.getElementById('recaptchaContainer');
+        const fallbackCaptcha = document.getElementById('fallbackCaptcha');
+        
+        // Nếu ReCAPTCHA không render (không có iframe), dùng fallback
+        if (recaptchaContainer && !recaptchaContainer.querySelector('iframe')) {
+          recaptchaContainer.style.display = 'none';
+          fallbackCaptcha.style.display = 'block';
+          
+          // Tạo mã CAPTCHA random (2 chữ số)
+          const captchaCode = String(Math.floor(Math.random() * 100)).padStart(2, '0');
+          document.getElementById('captchaCode').innerText = captchaCode;
+          
+          // Lưu vào hidden field
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.name = 'captcha_answer';
+          hiddenInput.value = captchaCode;
+          document.getElementById('loginForm').appendChild(hiddenInput);
+        }
+      }, 2000); // Chờ 2 giây để ReCAPTCHA load
     }
   </script>
 </body>
