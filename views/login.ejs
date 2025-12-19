@@ -127,8 +127,24 @@
 
     .captcha-container {
       margin: 1.5rem 0;
+      padding: 1rem;
+      background: #f0f4ff;
+      border-radius: 0.5rem;
+      border-left: 4px solid #3b82f6;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .captcha-container p {
+      color: #1e40af;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .g-recaptcha {
+      margin: 0 auto;
     }
 
     @keyframes fadeIn {
@@ -194,7 +210,8 @@
           </div>
 
           <% if (requireCaptcha) { %>
-            <div class="captcha-container">
+            <div style="margin: 1.5rem 0; padding: 1rem; background: #f0f4ff; border-radius: 0.5rem; border-left: 4px solid #3b82f6;">
+              <p style="color: #1e40af; font-weight: 600; margin-bottom: 1rem;">🤖 Xác thực reCAPTCHA:</p>
               <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
             </div>
           <% } %>
