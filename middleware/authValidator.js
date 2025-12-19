@@ -39,11 +39,10 @@ const registerValidation = [
 
 // Validation cho đăng nhập
 const loginValidation = [
-  body('email')
+  body('username')
     .trim()
-    .notEmpty().withMessage('Email không được để trống')
-    .isEmail().withMessage('Email không hợp lệ')
-    .normalizeEmail(),
+    .notEmpty().withMessage('Tên đăng nhập không được để trống')
+    .isLength({ min: 3, max: 30 }).withMessage('Tên đăng nhập phải từ 3-30 ký tự'),
   
   body('password')
     .notEmpty().withMessage('Mật khẩu không được để trống')

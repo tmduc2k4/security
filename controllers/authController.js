@@ -61,7 +61,7 @@ const showLoginPage = (req, res) => {
     require2FA: false,
     requireCaptcha: false,
     failedAttempts: 0,
-    email: '',
+    username: '',
     csrfToken: req.session?.csrfToken || ''
   });
 };
@@ -76,19 +76,19 @@ const login = async (req, res) => {
         error: errors.array()[0].msg,
         redirect: req.body.redirect || '/profile',
         require2FA: false,
-        email: req.body.email || '',
+        username: req.body.username || '',
         csrfToken: req.session?.csrfToken || ''
       });
     }
 
-    const { email, password, twoFactorToken } = req.body;
+    const { username, password, twoFactorToken } = req.body;
 
-    // Tìm user qua email
-    const user = await User.findOne({ email });
+    // Tìm user qua username
+    const user = await User.findOne({ username });
     if (!user) {
       // Log failed login attempt
       await auditService.logAction('login_failed', 'account', {
-        email: email || 'unknown',
+        username: username || 'unknown',
         ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
         description: 'Invalid username',
@@ -100,7 +100,7 @@ const login = async (req, res) => {
         error: 'Tên đăng nhập hoặc mật khẩu không đúng',
         redirect: req.body.redirect || '/profile',
         require2FA: false,
-        email: email || '',
+        username: username || '',
         csrfToken: req.session?.csrfToken || ''
       });
     }
@@ -124,7 +124,7 @@ const login = async (req, res) => {
         error: `Tài khoản bị khóa do đăng nhập sai quá nhiều lần. Thử lại sau ${minutesLeft} phút.`,
         redirect: req.body.redirect || '/profile',
         require2FA: false,
-        email: email || '',
+        username: username || '',
         csrfToken: req.session?.csrfToken || ''
       });
     }
@@ -258,7 +258,7 @@ const login = async (req, res) => {
       error: errorMessage,
       redirect: req.body.redirect || '/profile',
       require2FA: false,
-      email: req.body.email || '',
+      username: req.body.username || '',
       csrfToken: req.session?.csrfToken || ''
     });
   }
