@@ -271,7 +271,8 @@
 
   <script>
     // Hiển thị popup alert khi tải trang nếu có failed attempts
-    const failedAttempts = <%= failedAttempts || 0 %>;
+    // eslint-disable-next-line no-undef
+    const failedAttempts = <%- JSON.stringify(failedAttempts || 0) %>;
     
     window.addEventListener('load', function() {
       if (failedAttempts && failedAttempts > 0) {
