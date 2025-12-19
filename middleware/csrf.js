@@ -36,10 +36,15 @@ const verifyCsrfToken = (req, res, next) => {
 
   // Kiểm tra session
   if (!req.session || !req.session.csrfToken) {
-    return res.status(403).render('error', {
-      message: 'CSRF token không hợp lệ. Vui lòng thử lại.',
-      currentUser: req.user
-    });
+    console.warn('CSRF token missing from session');
+    
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.status(403).json({ 
+        error: 'CSRF token không hợp lệ. Vui lòng load lại trang.' 
+      });
+    }
+    
+    return res.status(403).redirect('/login?error=CSRF%20token%20hết%20hạn');
   }
 
   // Lấy token từ request (3 cách)
@@ -48,10 +53,16 @@ const verifyCsrfToken = (req, res, next) => {
   // So sánh token
   if (!token || token !== req.session.csrfToken) {
     console.warn(`CSRF token mismatch for user ${req.user ? req.user.username : 'unknown'}`);
-    return res.status(403).render('error', {
-      message: 'CSRF token không hợp lệ. Yêu cầu bị từ chối.',
-      currentUser: req.user
-    });
+    
+    // Xử lý CSRF token mismatch
+    if (req.headers['content-type']?.includes('application/json')) {
+      return res.status(403).json({ 
+        error: 'CSRF token không hợp lệ' 
+      });
+    }
+    
+    // Redirect về login với message
+    return res.status(403).redirect('/login?error=CSRF%20token%20không%20hợp%20lệ');
   }
 
   next();

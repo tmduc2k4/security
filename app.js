@@ -64,7 +64,8 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser()); // Parse cookies
 
 // Session configuration for CSRF and user tracking
-app.use(session({
+// Note: Using MemoryStore for development only. For production, use MongoDB session store
+const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'your-session-secret',
   resave: false,
   saveUninitialized: false,
@@ -74,7 +75,14 @@ app.use(session({
     sameSite: 'strict',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
-}));
+};
+
+// For production, consider using express-session-mongodb or similar
+if (process.env.NODE_ENV === 'production') {
+  console.warn('⚠️ Warning: Using MemoryStore for sessions. Consider using MongoDB session store for production.');
+}
+
+app.use(session(sessionConfig));
 
 // Custom security middleware
 app.use(securityLogger); // Log suspicious activities
