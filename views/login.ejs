@@ -271,26 +271,28 @@
 
   <script>
     // Hiển thị popup alert khi tải trang nếu có failed attempts
+    const failedAttempts = <%= failedAttempts || 0 %>;
+    
     window.addEventListener('load', function() {
-      <% if (failedAttempts && failedAttempts > 0) { %>
-        <% if (failedAttempts >= 10) { %>
+      if (failedAttempts && failedAttempts > 0) {
+        if (failedAttempts >= 10) {
           alert('🔒 TÀI KHOẢN BỊ KHÓA!\n\n' +
                 'Bạn đã nhập sai mật khẩu 10 lần.\n' +
                 'Tài khoản sẽ mở khóa sau 10 phút.\n\n' +
                 'Vui lòng thử lại sau.');
-        <% } else if (failedAttempts >= 5) { %>
+        } else if (failedAttempts >= 5) {
           alert('⚠️ CẢNH BÁO!\n\n' +
-                'Bạn đã nhập sai mật khẩu <%= failedAttempts %> lần.\n' +
-                'Còn <%= 10 - failedAttempts %> lần để thử.\n\n' +
+                'Bạn đã nhập sai mật khẩu ' + failedAttempts + ' lần.\n' +
+                'Còn ' + (10 - failedAttempts) + ' lần để thử.\n\n' +
                 'Nếu nhập sai 10 lần, tài khoản sẽ bị khóa 10 phút!\n' +
                 'Vui lòng hoàn thành CAPTCHA để tiếp tục.');
-        <% } else { %>
+        } else {
           alert('⚠️ CẢNH BÁO!\n\n' +
-                'Bạn đã nhập sai mật khẩu <%= failedAttempts %> lần.\n' +
-                'Còn <%= 10 - failedAttempts %> lần để thử.\n\n' +
+                'Bạn đã nhập sai mật khẩu ' + failedAttempts + ' lần.\n' +
+                'Còn ' + (10 - failedAttempts) + ' lần để thử.\n\n' +
                 'Tối đa 10 lần nhập sai, sau đó tài khoản sẽ bị khóa 10 phút!');
-        <% } %>
-      <% } %>
+        }
+      }
     });
 
     const form = document.getElementById('loginForm');
