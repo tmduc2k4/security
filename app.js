@@ -173,9 +173,9 @@ const laptops = [
 
 // Auth Routes
 app.get('/register', requireGuest, authController.showRegisterPage);
-app.post('/register', requireGuest, registerValidation, authController.register);
+app.post('/register', requireGuest, generateCSRFToken, registerValidation, verifyCsrfToken, authController.register);
 app.get('/login', requireGuest, authController.showLoginPage);
-app.post('/login', requireGuest, loginValidation, authController.login);
+app.post('/login', requireGuest, generateCSRFToken, loginValidation, verifyCsrfToken, authController.login);
 app.get('/logout', authController.logout);
 app.get('/profile', requireAuth, authController.showProfile);
 app.post('/profile/update', requireAuth, updateProfileValidation, authController.updateProfile);

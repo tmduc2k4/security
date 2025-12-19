@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSRF Attack Demo - Tấn công giả mạo yêu cầu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+        
+        .warning h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .warning p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .demo-section h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-attack {
+            background: #dc3545;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .btn-attack:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+        
+        .btn-reset {
+            background: #6c757d;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .btn-reset:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+            display: block;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #f5c6cb;
+            display: block;
+        }
+        
+        .form-demo {
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        
+        .form-demo label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .form-demo input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .info-box strong {
+            color: #0c5aa0;
+        }
+        
+        .info-box p {
+            color: #0c5aa0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .attack-name {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning">
+            <h3>⚠️ Cảnh báo - Chỉ dùng cho mục đích học tập</h3>
+            <p>
+                Đây là demo giáo dục để hiểu về <strong>CSRF (Cross-Site Request Forgery)</strong> attacks.
+                <strong>KHÔNG</strong> sử dụng để tấn công các hệ thống thực tế.
+            </p>
+        </div>
+
+        <h1>🔐 CSRF Attack Demo</h1>
+
+        <!-- Demo 1: Form CSRF không có token -->
+        <div class="demo-section">
+            <h2>📌 Demo 1: Form CSRF (Không có CSRF Token)</h2>
+            <p class="description">
+                <span class="attack-name">TẤN CÔNG CSRF</span>
+                Attacker tạo form giả mạo và gửi request đến server mà <strong>không có CSRF token</strong>.
+                Server sẽ reject vì CSRF token không hợp lệ.
+            </p>
+            
+            <div class="info-box">
+                <strong>🎯 Mục đích:</strong>
+                <p>
+                    Giả mạo yêu cầu của người dùng để đăng nhập hoặc thay đổi thông tin.
+                </p>
+            </div>
+            
+            <div class="form-demo">
+                <label>Mô phỏng: Form Login CSRF (Thiếu CSRF Token)</label>
+                <input type="text" value="Username: admin" readonly>
+                <input type="text" value="Password: hacked123" readonly>
+                <input type="text" value="_csrf: (MISSING)" readonly style="color: red;">
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-attack" onclick="submitCSRFForm()">
+                    🚀 Gửi CSRF Attack
+                </button>
+                <button class="btn-reset" onclick="resetDemo()">
+                    🔄 Reset
+                </button>
+            </div>
+            
+            <div id="result1" class="result"></div>
+        </div>
+
+        <!-- Demo 2: Auto-submit Form -->
+        <div class="demo-section">
+            <h2>📌 Demo 2: Auto-Submit CSRF Form</h2>
+            <p class="description">
+                Attacker có thể auto-submit form khi người dùng truy cập trang giả mạo.
+                Người dùng không cần click button - form tự động gửi.
+            </p>
+            
+            <div class="info-box">
+                <strong>🎯 Kịch bản:</strong>
+                <p>
+                    Người dùng click vào link lạ → Trang giả mạo tự động gửi request → Server reject (CSRF token thiếu)
+                </p>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-attack" onclick="autoSubmitCSRFForm()">
+                    🚀 Auto-Submit CSRF Form
+                </button>
+                <button class="btn-reset" onclick="resetDemo()">
+                    🔄 Reset
+                </button>
+            </div>
+            
+            <div id="result2" class="result"></div>
+        </div>
+
+        <!-- Demo 3: Thông tin CSRF Protection -->
+        <div class="demo-section">
+            <h2>📌 Cơ chế phòng chống CSRF</h2>
+            <p class="description">
+                Server tạo <strong>CSRF token</strong> duy nhất cho mỗi session.
+                Request hợp lệ phải có token này, nếu thiếu hoặc sai → Request bị reject.
+            </p>
+            
+            <div class="code-block">
+// Middleware csrf.js - Generate token
+if (!req.session.csrfToken) {
+  req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+}
+
+// Verify token on POST request
+if (!token || token !== req.session.csrfToken) {
+  return res.status(403).render('error', {
+    message: 'CSRF token không hợp lệ'
+  });
+}
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden CSRF Form (không có token) -->
+    <form id="csrfForm" method="POST" action="http://localhost:3000/login" style="display:none;">
+        <input type="hidden" name="username" value="admin">
+        <input type="hidden" name="password" value="hacked123">
+        <!-- ❌ Thiếu CSRF token -->
+    </form>
+
+    <script>
+        /**
+         * Gửi CSRF attack bằng cách submit form
+         */
+        async function submitCSRFForm() {
+            const resultDiv = document.getElementById('result1');
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = '⏳ Đang gửi request...';
+            
+            try {
+                // Tạo FormData từ form
+                const formData = new FormData(document.getElementById('csrfForm'));
+                
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include' // Gửi cookies
+                });
+                
+                if (response.status === 403) {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <strong>✅ CSRF Attack Blocked!</strong><br>
+                        Status: ${response.status} Forbidden<br>
+                        Message: CSRF token không hợp lệ<br>
+                        <br>
+                        <strong>Giải thích:</strong> Request bị reject vì thiếu CSRF token hợp lệ.
+                    `;
+                } else if (response.status === 429) {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Rate Limited!</strong><br>
+                        Status: ${response.status}<br>
+                        Message: Quá nhiều yêu cầu<br>
+                        <br>
+                        <strong>Giải thích:</strong> Request bị chặn bởi rate limiting.
+                    `;
+                } else if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>❌ Attack might be successful!</strong><br>
+                        Status: ${response.status}
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Attack Blocked!</strong><br>
+                        Status: ${response.status}<br>
+                        <br>
+                        <strong>Giải thích:</strong> Server từ chối request.
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <strong>⚠️ Error (expected for CORS/local testing):</strong><br>
+                    ${error.message}<br>
+                    <br>
+                    <strong>Giải thích:</strong> Điều này bình thường nếu server ở localhost khác.
+                    Khi test thực tế, server sẽ reject vì CSRF token thiếu.
+                `;
+            }
+        }
+
+        /**
+         * Auto-submit CSRF form
+         */
+        async function autoSubmitCSRFForm() {
+            const resultDiv = document.getElementById('result2');
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = '⏳ Đang auto-submit form trong 3 giây...';
+            
+            setTimeout(() => {
+                resultDiv.className = 'result';
+                resultDiv.innerHTML = '⏳ Đang gửi form...';
+                
+                // Submit form
+                document.getElementById('csrfForm').submit();
+                
+                setTimeout(() => {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <strong>✅ Form đã được gửi!</strong><br>
+                        <br>
+                        <strong>Kết quả mong đợi:</strong><br>
+                        - Server sẽ reject vì thiếu CSRF token<br>
+                        - Error 403 Forbidden<br>
+                        - Message: "CSRF token không hợp lệ"<br>
+                        <br>
+                        <strong>Kết luận:</strong> CSRF Protection hoạt động! 🛡️
+                    `;
+                }, 500);
+            }, 3000);
+        }
+
+        /**
+         * Reset demo
+         */
+        function resetDemo() {
+            document.getElementById('result1').innerHTML = '';
+            document.getElementById('result1').className = 'result';
+            document.getElementById('result2').innerHTML = '';
+            document.getElementById('result2').className = 'result';
+        }
+
+        // Hiển thị hướng dẫn khi load trang
+        window.addEventListener('load', () => {
+            console.log('🔐 CSRF Attack Demo Loaded');
+            console.log('📖 Hướng dẫn: Bấm button "Gửi CSRF Attack" để test');
+        });
+    </script>
+</body>
+</html>

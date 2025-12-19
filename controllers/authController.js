@@ -125,7 +125,11 @@ const login = async (req, res) => {
     // Verify password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      await user.incrementFailedAttempts();
+      try {
+        await user.incrementFailedAttempts();
+      } catch (lockError) {
+        console.error('Error incrementing failed attempts:', lockError);
+      }
       
       // Log failed login attempt
       await auditService.logAction('login_failed', 'account', {
@@ -227,11 +231,24 @@ const login = async (req, res) => {
     res.redirect(redirectUrl);
 
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ Login error:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Request body:', { username: req.body.username, csrfToken: req.body._csrf ? '***' : 'missing' });
+    
+    // Kiểm tra loại lỗi
+    let errorMessage = 'Đăng nhập thất bại, vui lòng thử lại';
+    if (error.message.includes('CSRF')) {
+      errorMessage = 'CSRF token không hợp lệ. Vui lòng load lại trang.';
+      console.error('⚠️ CSRF Error detected');
+    } else if (error.message.includes('validation')) {
+      errorMessage = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+    }
+    
     res.status(500).render('login', { 
-      error: 'Đăng nhập thất bại, vui lòng thử lại',
+      error: errorMessage,
       redirect: req.body.redirect || '/profile',
-      require2FA: false
+      require2FA: false,
+      username: req.body.username || ''
     });
   }
 };
