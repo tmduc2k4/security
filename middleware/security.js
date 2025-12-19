@@ -29,13 +29,13 @@ const helmetConfig = helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://www.google.com/recaptcha/", "https://www.gstatic.com/recaptcha/"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'"],
+      connectSrc: ["'self'", "https://www.google.com/recaptcha/", "https://www.gstatic.com/"],
+      fontSrc: ["'self'", "https://www.gstatic.com/"],
+      frameSrc: ["'self'", "https://www.google.com/recaptcha/", "https://recaptcha.google.com/"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
-      frameSrc: ["'none'"],
     },
   },
   hsts: {
