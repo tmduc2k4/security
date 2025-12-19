@@ -21,9 +21,10 @@ const AuditLog = require('../models/AuditLog');
  */
 async function logAction(action, resourceType, options = {}) {
   try {
+    // userId is optional - for anonymous/failed login attempts
     const log = new AuditLog({
-      userId: options.userId,
-      username: options.username,
+      userId: options.userId || null,  // Allow null for anonymous actions
+      username: options.username || 'unknown',
       action,
       resourceType,
       resourceId: options.resourceId,

