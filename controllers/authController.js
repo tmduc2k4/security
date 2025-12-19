@@ -78,14 +78,14 @@ const login = async (req, res) => {
       });
     }
 
-    const { username, password, twoFactorToken } = req.body;
+    const { email, password, twoFactorToken } = req.body;
 
-    // Tìm user
-    const user = await User.findOne({ username });
+    // Tìm user qua email
+    const user = await User.findOne({ email });
     if (!user) {
       // Log failed login attempt
       await auditService.logAction('login_failed', 'account', {
-        username: username || 'unknown',
+        email: email || 'unknown',
         ipAddress: req.ip,
         userAgent: req.headers['user-agent'],
         description: 'Invalid username',
@@ -159,7 +159,7 @@ const login = async (req, res) => {
         require2FA: false,
         requireCaptcha: showCaptcha,
         failedAttempts: user.failedLoginAttempts,
-        username: username
+        email: email
       });
     }
 

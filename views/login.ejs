@@ -39,6 +39,25 @@
       font-size: 0.95rem;
     }
 
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
     .form-actions {
       display: flex;
       flex-direction: column;
@@ -61,7 +80,6 @@
       color: var(--primary-blue);
       text-decoration: none;
       font-weight: 600;
-      transition: color var(--transition-fast);
     }
 
     .form-footer a:hover {
@@ -74,7 +92,7 @@
       padding: 1rem;
       border-radius: 0.5rem;
       margin-bottom: 1rem;
-      border-left: 4px solid var(--danger-red);
+      border-left: 4px solid #dc2626;
     }
 
     .warning-message {
@@ -84,18 +102,12 @@
       border-radius: 0.5rem;
       margin-bottom: 1rem;
       border-left: 4px solid #f59e0b;
-      font-size: 0.9rem;
     }
 
     .captcha-container {
       margin: 1.5rem 0;
       display: flex;
       justify-content: center;
-    }
-
-    .g-recaptcha {
-      transform: scale(0.9);
-      transform-origin: 0 0;
     }
 
     @keyframes fadeIn {
@@ -106,20 +118,6 @@
       to {
         opacity: 1;
         transform: translateY(0);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .auth-page {
-        padding: 1rem;
-      }
-
-      .auth-card {
-        padding: 1.5rem;
-      }
-
-      .g-recaptcha {
-        transform: scale(0.8);
       }
     }
   </style>
@@ -143,130 +141,88 @@
         </div>
       <% } %>
 
-      <form action="/login" method="POST" id="loginForm">
-        <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
-        <input type="hidden" name="username" id="usernameHidden" value="<%= username || '' %>">
-        
-        <div class="form-group">
-          <label for="username">👤 Username</label>
-          <input type="text" id="username" name="username" required 
-                 placeholder="Tên đăng nhập"
-                 value="<%= username || '' %>"
-                 autofocus>
-        </div>
-
-        <div class="form-group">
-          <label for="password">🔑 Mật khẩu</label>
-          <input type="password" id="password" name="password" required 
-                 placeholder="Mật khẩu">
-        </div>
-
-        <% if (requireCaptcha) { %>
-          <div class="captcha-container">
-            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+      <!-- Login Form -->
+      <% if (!require2FA) { %>
+        <form action="/login" method="POST" id="loginForm">
+          <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>">
+          
+          <div class="form-group">
+            <label for="email">📧 Email</label>
+            <input type="email" id="email" name="email" required 
+                   placeholder="Nhập email của bạn"
+                   value="<%= email || '' %>"
+                   autofocus>
           </div>
-        <% } %>
 
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+          <div class="form-group">
+            <label for="password">🔑 Mật khẩu</label>
+            <input type="password" id="password" name="password" required 
+                   placeholder="Mật khẩu">
+          </div>
 
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
-        </div>
+          <% if (requireCaptcha) { %>
+            <div class="captcha-container">
+              <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+            </div>
+          <% } %>
 
-        <div class="form-footer">
-          <p><a href="/forgot-password">❓ Quên mật khẩu?</a></p>
-          <p>Chưa có tài khoản? <a href="/register">📝 Đăng ký ngay</a></p>
-        </div>
-      </form>
+          <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
+          </div>
+
+          <div class="form-footer">
+            <p><a href="/forgot-password">❓ Quên mật khẩu?</a></p>
+            <p>Chưa có tài khoản? <a href="/register">📝 Đăng ký ngay</a></p>
+          </div>
+        </form>
+      <% } else { %>
+        <!-- 2FA Form -->
+        <form action="/login" method="POST" id="2faForm">
+          <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>">
+          <input type="hidden" name="userId" value="<%= userId || '' %>">
+          <input type="hidden" name="email" value="<%= email || '' %>">
+          
+          <div class="form-group">
+            <label for="twoFactorToken">🔐 Mã xác thực 2FA</label>
+            <input type="text" id="twoFactorToken" name="twoFactorToken" required 
+                   placeholder="Nhập mã 6 chữ số"
+                   maxlength="6"
+                   pattern="[0-9]{6}"
+                   autofocus>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">Xác thực</button>
+          </div>
+
+          <div class="form-footer">
+            <p><a href="/login">← Quay lại đăng nhập</a></p>
+          </div>
+        </form>
+      <% } %>
     </div>
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      const requireCaptcha = document.querySelector('.captcha-container');
-      if (requireCaptcha) {
-        const response = grecaptcha.getResponse();
-        if (!response) {
-          e.preventDefault();
-          alert('Vui lòng hoàn thành xác thực CAPTCHA');
-          return false;
+    const form = document.getElementById('loginForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const requireCaptcha = document.querySelector('.captcha-container');
+        if (requireCaptcha) {
+          const response = grecaptcha.getResponse();
+          if (!response) {
+            e.preventDefault();
+            alert('Vui lòng hoàn thành xác thực CAPTCHA');
+            return false;
+          }
+          document.getElementById('g-recaptcha-response').value = response;
         }
-        document.getElementById('g-recaptcha-response').value = response;
-      }
-    });
-  </script>
-</body>
-</html>
-<body>
-  <div class="auth-page">
-    <div class="auth-card">
-      <h2>🔐 Đăng nhập</h2>
-      <p class="subtitle">Truy cập tài khoản của bạn</p>
-      
-      <% if (error) { %>
-        <div class="error-message">
-          <%= error %>
-        </div>
-      <% } %>
-
-      <% if (failedAttempts && failedAttempts >= 5 && failedAttempts < 10) { %>
-        <div class="warning-message">
-          ⚠️ Đã đăng nhập sai <strong><%= failedAttempts %>/10</strong> lần.<br>
-          Vui lòng hoàn thành xác thực để tiếp tục.
-        </div>
-      <% } %>
-
-      <form action="/login" method="POST" id="loginForm">
-        <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
-        <input type="hidden" name="username" id="usernameHidden" value="<%= username || '' %>">
-        
-        <div class="form-group">
-          <label for="username">👤 Username</label>
-          <input type="text" id="username" name="username" required 
-                 placeholder="Tên đăng nhập"
-                 value="<%= username || '' %>"
-                 autofocus>
-        </div>
-
-        <div class="form-group">
-          <label for="password">🔑 Mật khẩu</label>
-          <input type="password" id="password" name="password" required 
-                 placeholder="Mật khẩu">
-        </div>
-
-        <% if (requireCaptcha) { %>
-          <div class="captcha-container">
-            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
-          </div>
-        <% } %>
-
-        <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
-        </div>
-
-        <div class="form-footer">
-          <p><a href="/forgot-password">❓ Quên mật khẩu?</a></p>
-          <p>Chưa có tài khoản? <a href="/register">📝 Đăng ký ngay</a></p>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      const requireCaptcha = document.querySelector('.captcha-container');
-      if (requireCaptcha) {
-        const response = grecaptcha.getResponse();
-        if (!response) {
-          e.preventDefault();
-          alert('Vui lòng hoàn thành xác thực CAPTCHA');
-          return false;
-        }
-        document.getElementById('g-recaptcha-response').value = response;
-      }
-    });
+      });
+    }
   </script>
 </body>
 </html>
