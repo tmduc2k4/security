@@ -61,7 +61,8 @@ const showLoginPage = (req, res) => {
     require2FA: false,
     requireCaptcha: false,
     failedAttempts: 0,
-    username: ''
+    email: '',
+    csrfToken: req.session?.csrfToken || ''
   });
 };
 
@@ -74,7 +75,9 @@ const login = async (req, res) => {
       return res.status(400).render('login', { 
         error: errors.array()[0].msg,
         redirect: req.body.redirect || '/profile',
-        require2FA: false
+        require2FA: false,
+        email: req.body.email || '',
+        csrfToken: req.session?.csrfToken || ''
       });
     }
 
@@ -96,7 +99,9 @@ const login = async (req, res) => {
       return res.status(401).render('login', { 
         error: 'Tên đăng nhập hoặc mật khẩu không đúng',
         redirect: req.body.redirect || '/profile',
-        require2FA: false
+        require2FA: false,
+        email: email || '',
+        csrfToken: req.session?.csrfToken || ''
       });
     }
 
@@ -118,7 +123,9 @@ const login = async (req, res) => {
       return res.status(401).render('login', {
         error: `Tài khoản bị khóa do đăng nhập sai quá nhiều lần. Thử lại sau ${minutesLeft} phút.`,
         redirect: req.body.redirect || '/profile',
-        require2FA: false
+        require2FA: false,
+        email: email || '',
+        csrfToken: req.session?.csrfToken || ''
       });
     }
 
@@ -159,7 +166,8 @@ const login = async (req, res) => {
         require2FA: false,
         requireCaptcha: showCaptcha,
         failedAttempts: user.failedLoginAttempts,
-        email: email
+        email: email,
+        csrfToken: req.session?.csrfToken || ''
       });
     }
 
@@ -172,7 +180,8 @@ const login = async (req, res) => {
           redirect: req.body.redirect || '/profile',
           require2FA: true,
           userId: user._id,
-          username: user.username
+          email: user.email,
+          csrfToken: req.session?.csrfToken || ''
         });
       }
 
@@ -191,7 +200,8 @@ const login = async (req, res) => {
           redirect: req.body.redirect || '/profile',
           require2FA: true,
           userId: user._id,
-          username: user.username
+          email: user.email,
+          csrfToken: req.session?.csrfToken || ''
         });
       }
     }
@@ -248,7 +258,8 @@ const login = async (req, res) => {
       error: errorMessage,
       redirect: req.body.redirect || '/profile',
       require2FA: false,
-      username: req.body.username || ''
+      email: req.body.email || '',
+      csrfToken: req.session?.csrfToken || ''
     });
   }
 };
