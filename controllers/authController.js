@@ -140,6 +140,48 @@ const login = async (req, res) => {
       });
     }
 
+    // ✅ NEW: Kiểm tra CAPTCHA requirement TRƯỚC validate password
+    if (user.requiresCaptcha && user.failedLoginAttempts >= 5) {
+      const { 'g-recaptcha-response': captchaResponse } = req.body;
+      
+      if (!captchaResponse) {
+        return res.status(400).render('login', {
+          error: `Đã nhập sai ${user.failedLoginAttempts} lần. Vui lòng hoàn thành xác thực CAPTCHA.`,
+          redirect: req.body.redirect || '/profile',
+          require2FA: false,
+          requireCaptcha: true,
+          failedAttempts: user.failedLoginAttempts,
+          username: username || '',
+          csrfToken: req.session?.csrfToken || ''
+        });
+      }
+
+      // Verify CAPTCHA token
+      try {
+        const { verifyCaptcha } = require('../middleware/captchaValidator');
+        const result = await verifyCaptcha(captchaResponse);
+        
+        // In production, check: result.success && result.score > 0.5
+        if (process.env.NODE_ENV === 'production' && !result.success) {
+          return res.status(400).render('login', {
+            error: 'Xác thực CAPTCHA thất bại. Vui lòng thử lại.',
+            redirect: req.body.redirect || '/profile',
+            require2FA: false,
+            requireCaptcha: true,
+            failedAttempts: user.failedLoginAttempts,
+            username: username || '',
+            csrfToken: req.session?.csrfToken || ''
+          });
+        }
+      } catch (captchaError) {
+        console.error('CAPTCHA verification error:', captchaError);
+        if (process.env.NODE_ENV === 'production') {
+          return res.status(500).json({ error: 'Lỗi xác thực CAPTCHA' });
+        }
+        // In development, allow to continue
+      }
+    }
+
     // Verify password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {

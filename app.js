@@ -30,7 +30,6 @@ const {
 const { optionalAuth, requireAuth, requireGuest } = require('./middleware/auth');
 const { requireRole, setDefaultPermissions } = require('./middleware/rbac');
 const { generateCSRFToken, verifyCsrfToken } = require('./middleware/csrf');
-const { validateCaptcha } = require('./middleware/captchaValidator');
 
 const authController = require('./controllers/authController');
 const twoFactorController = require('./controllers/twoFactorController');
@@ -86,7 +85,7 @@ app.use(session(sessionConfig));
 
 // Custom security middleware
 app.use(securityLogger); // Log suspicious activities
-app.use(validateCaptcha); // Validate CAPTCHA if required
+// CAPTCHA validation moved to authController.login for proper order
 app.use(sqlInjectionProtection); // Block SQL injection
 app.use(pathTraversalProtection); // Block path traversal
 app.use(sanitizeAllInputs); // Sanitize all inputs
