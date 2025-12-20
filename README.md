@@ -19,18 +19,6 @@
 - **Audit & Logging:** Ghi lại tất cả các hoạt động đăng nhập
 - **Thiết Kế Responsive:** Hỗ trợ tất cả các thiết bị
 
-
----
-
-## 👥 Danh Sách Thành Viên & Phân Chia Công Việc
-
-| STT | Tên Thành Viên | Vai Trò | Công Việc |
-|-----|---|---|---|
-| 1 | Trương Minh Đức | **Trưởng Nhóm** | • Thiết kế kiến trúc ứng dụng<br>• Cài đặt hệ thống xác thực (JWT, bcrypt)<br>• Triển khai bảo mật (Helmet, Rate Limit, Input Validation)<br>• Tích hợp MongoDB<br>• Code review & testing |
-| 2 | Thành Viên 2 | Lập Trình Viên | • Phát triển giao diện (EJS templates)<br>• Xây dựng các trang sản phẩm<br>• Thiết kế CSS responsive<br>• Tích hợp CAPTCHA & 2FA |
-| 3 | Thành Viên 3 | Lập Trình Viên | • Phát triển các API endpoints<br>• Xây dựng chức năng quên mật khẩu<br>• Tích hợp email verification<br>• Testing & bug fixing |
-| 4 | Thành Viên 4 | Tester / Ops | • Kiểm thử bảo mật<br>• Đánh giá vulnerabilities<br>• Cấu hình môi trường & deployment<br>• Viết tài liệu |
-
 ---
 
 ## 🚀 Hướng Dẫn Sử Dụng
