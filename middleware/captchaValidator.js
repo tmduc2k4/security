@@ -69,7 +69,8 @@ const validateCaptcha = async (req, res, next) => {
           require2FA: false,
           requireCaptcha: true,
           failedAttempts: user.failedLoginAttempts,
-          username: username
+          username: username,
+          csrfToken: res.locals.csrfToken || ''
         });
       }
 
@@ -85,7 +86,8 @@ const validateCaptcha = async (req, res, next) => {
             require2FA: false,
             requireCaptcha: true,
             failedAttempts: user.failedLoginAttempts,
-            username: username
+            username: username,
+            csrfToken: res.locals.csrfToken || ''
           });
         }
       } catch (error) {
