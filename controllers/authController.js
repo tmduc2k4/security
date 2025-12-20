@@ -168,7 +168,7 @@ const login = async (req, res) => {
         require2FA: false,
         requireCaptcha: showCaptcha,
         failedAttempts: user.failedLoginAttempts,
-        email: email,
+        username: username || '',
         csrfToken: req.session?.csrfToken || ''
       });
     }
