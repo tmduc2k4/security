@@ -16,10 +16,9 @@ const generateCSRFToken = (req, res, next) => {
   // Tạo token mới nếu chưa có
   if (!req.session.csrfToken) {
     req.session.csrfToken = crypto.randomBytes(32).toString('hex');
-    console.log(`[CSRF] ✅ Token created for session: ${req.session.id}`);
-    console.log(`[CSRF] Token: ${req.session.csrfToken.substring(0, 20)}...`);
+    console.log(`[CSRF] ✅ Token created - Session: ${req.session?.id || 'unknown'}`);
   } else {
-    console.log(`[CSRF] ♻️  Token already exists for session: ${req.session.id}`);
+    console.log(`[CSRF] ♻️  Token already exists - Session: ${req.session?.id || 'unknown'}`);
   }
 
   // Lưu token vào local variable để dùng trong template

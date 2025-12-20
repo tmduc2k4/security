@@ -259,16 +259,13 @@
                 // Tài khoản đã mở khóa
                 const lockedSection = document.querySelector('[style*="fee2e2"]');
                 if (lockedSection) {
-                  lockedSection.innerHTML = `
-                    <div style="text-align: center; padding: 2rem;">
-                      <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                      <h3 style="color: #059669; margin: 0 0 1rem 0;">Tài khoản đã mở khóa</h3>
-                      <p style="color: #047857;">Bạn có thể đăng nhập lại bây giờ</p>
-                      <button onclick="location.reload()" style="background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; margin-top: 1rem;">
-                        ↻ Tải lại trang
-                      </button>
-                    </div>
-                  `;
+                  const html = '<div style="text-align: center; padding: 2rem;">' +
+                    '<div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>' +
+                    '<h3 style="color: #059669; margin: 0 0 1rem 0;">Tài khoản đã mở khóa</h3>' +
+                    '<p style="color: #047857;">Bạn có thể đăng nhập lại bây giờ</p>' +
+                    '<button onclick="location.reload()" style="background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; margin-top: 1rem;">' +
+                    '↻ Tải lại trang</button></div>';
+                  lockedSection.innerHTML = html;
                 }
               }
               
