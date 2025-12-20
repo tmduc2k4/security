@@ -35,169 +35,83 @@
 
 ## 🚀 Hướng Dẫn Sử Dụng
 
-### 1️⃣ Thiết Lập Môi Trường
-
-#### Prerequisites
-- **Node.js** v14+ ([Download](https://nodejs.org/))
-- **MongoDB** ([Local](https://www.mongodb.com/try/download/community) hoặc [Atlas Cloud](https://www.mongodb.com/cloud/atlas))
-- **Git** ([Download](https://git-scm.com/))
-
-#### Bước 1: Clone Repository
-```bash
-git clone https://github.com/tmduc2k4/security.git
-cd security
+### 🌐 Truy Cập Web Đã Deploy
+```
+URL: https://tmd1907.id.vn
 ```
 
-#### Bước 2: Cài Đặt Dependencies
-```bash
-npm install
-```
-
-#### Bước 3: Cấu Hình MongoDB
-
-**Cách 1: Dùng MongoDB Atlas (Cloud - Khuyến Nghị)**
-1. Truy cập [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Tạo cluster miễn phí (Free tier)
-3. Lấy connection string từ "Connect" → "Drivers"
-
-**Cách 2: MongoDB Local**
-
-**Windows:**
-```bash
-# Tải từ https://www.mongodb.com/try/download/community
-# Sau khi cài, MongoDB tự động chạy
-# Hoặc chạy thủ công: "C:\Program Files\MongoDB\Server\7.0\bin\mongod.exe"
-```
-
-**Mac:**
-```bash
-brew tap mongodb/brew
-brew install mongodb-community
-brew services start mongodb-community
-```
-
-**Linux (Ubuntu):**
-```bash
-sudo apt-get install -y mongodb
-sudo systemctl start mongod
-```
-
-#### Bước 4: Cấu Hình File `.env`
-```bash
-cp .env.example .env
-```
-
-Chỉnh sửa `.env`:
-```env
-PORT=3000
-NODE_ENV=development
-
-# MongoDB Connection
-MONGODB_URI=mongodb://localhost:27017/security
-# Hoặc MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/security
-
-# JWT Configuration
-JWT_SECRET=your-secret-key-change-in-production
-JWT_EXPIRES_IN=7d
-
-# Session
-SESSION_SECRET=your-session-secret-change-in-production
-
-# Rate Limiting
-RATE_LIMIT_MAX=100
-STRICT_RATE_LIMIT_MAX=5
-```
-
-#### Bước 5: Chạy Ứng Dụng
-
-**Development (với auto-reload):**
-```bash
-npm run dev
-```
-
-**Production:**
-```bash
-npm start
-```
-
-**Kiểm tra:** Mở http://localhost:3000 trong trình duyệt
+**Các chức năng chính:**
+1. **Xem sản phẩm:** Trang chủ & danh sách laptop
+2. **Đăng ký / Đăng nhập:** Tạo tài khoản hoặc đăng nhập
+3. **Quên mật khẩu:** Nhập email để reset
+4. **Bảo mật tài khoản:** 2FA, account lockout, CAPTCHA
+5. **Dashboard bảo mật:** Xem các feature bảo mật
 
 ---
 
-### 2️⃣ Cập Nhật Cơ Sở Dữ Liệu
+### 1️⃣ Đăng Ký Tài Khoản Mới
 
-#### Reset Database (Development)
-```bash
-# Xóa tất cả users
-mongosh mongodb://localhost:27017/security
-> use security
-> db.users.deleteMany({})
-> db.exit()
-```
-
-#### Kiểm Tra Kết Nối
-```bash
-# Dùng MongoDB Compass (GUI)
-# Download: https://www.mongodb.com/products/compass
-# Connect to: mongodb://localhost:27017
-
-# Hoặc dùng mongosh (CLI)
-mongosh mongodb://localhost:27017/security
-```
-
----
-
-### 3️⃣ Tài Khoản Demo
-
-#### Cách Tạo Tài Khoản Demo
-
-**Phương Pháp 1: Đăng ký qua giao diện**
-1. Truy cập http://localhost:3000/register
+1. Truy cập: https://tmd1907.id.vn/register
 2. Nhập thông tin:
-   - **Username:** demo_user
-   - **Email:** demo@example.com
-   - **Password:** Demo123 (phải có chữ hoa, thường, số)
-   - **Họ tên:** Demo User
+   - **Tên đăng nhập:** demo_user (3-30 ký tự, [a-zA-Z0-9_])
+   - **Email:** your-email@example.com
+   - **Mật khẩu:** Demo123 (phải có chữ hoa, chữ thường, số)
+   - **Họ tên:** Tên của bạn
 3. Click "Đăng ký"
-4. Tự động đăng nhập và chuyển đến trang profile
-
-**Phương Pháp 2: Tạo qua script (Nếu có)**
-```bash
-# Tạo admin account
-node scripts/createAdmin.js
-```
-
-#### Đăng Nhập Demo
-- **Email:** demo@example.com
-- **Password:** Demo123
-
-#### Kiểm Tra Security Features
-1. **Quên mật khẩu:** Truy cập `/forgot-password`
-2. **Account Lockout:** Sai mật khẩu 10 lần → bị khóa 10 phút
-3. **CAPTCHA:** Bắt buộc sau 5 lần sai
-4. **2FA:** Tích cực ở trang profile
+4. Email xác thực sẽ được gửi
+5. Click link trong email để xác minh
+6. Đăng nhập và dùng bình thường
 
 ---
 
-### 4️⃣ Kết Quả Chụp Màn Hình
+### 2️⃣ Đăng Nhập
 
-#### 🏠 Trang Chủ
-```
-┌─────────────────────────────────────────┐
-│ 🏪 LaptopStore                  [👤Login]│
-├─────────────────────────────────────────┤
-│                                         │
-│  Sản phẩm nổi bật:                      │
-│  ┌──────┐  ┌──────┐  ┌──────┐         │
-│  │Laptop│  │Laptop│  │Laptop│         │
-│  │Price │  │Price │  │Price │         │
-│  └──────┘  └──────┘  └──────┘         │
-│                                         │
-└─────────────────────────────────────────┘
-```
+1. Truy cập: https://tmd1907.id.vn/login
+2. Nhập username/email và mật khẩu
+3. Nếu bật 2FA → nhập mã 6 số từ authenticator app
+4. Chuyển tới trang dashboard
 
-#### 📝 Trang Đăng Ký
+**⚠️ Account Lockout:**
+- Sai mật khẩu 5 lần → yêu cầu CAPTCHA
+- Sai mật khẩu 10 lần → tài khoản khóa 10 phút
+
+---
+
+### 3️⃣ Quên Mật Khẩu
+
+1. Truy cập: https://tmd1907.id.vn/forgot-password
+2. Nhập email tài khoản
+3. Nhận email reset password
+4. Click link, đặt mật khẩu mới
+5. Đăng nhập lại
+
+---
+
+### 4️⃣ Bảo Mật Tài Khoản (2FA)
+
+1. Truy cập: https://tmd1907.id.vn/profile
+2. Click "Thiết lập 2FA"
+3. Scan QR code bằng Google Authenticator / Authy
+4. Nhập mã 6 số để xác thực
+5. Lần sau đăng nhập sẽ yêu cầu mã 2FA
+
+---
+
+### 5️⃣ Xem Dashboard Bảo Mật
+
+Truy cập: https://tmd1907.id.vn/security-dashboard
+
+Xem các feature được triển khai:
+- ✅ Rate Limiting (DDoS & Brute Force)
+- ✅ Password Hashing (bcrypt)
+- ✅ CSRF Protection
+- ✅ Account Lockout
+- ✅ CAPTCHA
+- ✅ 2FA (2-Factor Authentication)
+- ✅ Email Verification
+- ✅ Audit Logging
+- ✅ Input Validation
+- ✅ SQL/NoSQL Injection Prevention
 ```
 ┌─────────────────────────────────────┐
 │     🔐 Đăng Ký Tài Khoản            │
