@@ -254,12 +254,20 @@ const login = async (req, res) => {
       console.error('⚠️ CSRF Error detected');
     } else if (error.message.includes('validation')) {
       errorMessage = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+    } else if (error.message.includes('connection') || error.message.includes('database')) {
+      errorMessage = 'Lỗi kết nối cơ sở dữ liệu. Vui lòng thử lại sau.';
+      console.error('⚠️ Database Error detected');
+    } else if (error.message.includes('compare')) {
+      errorMessage = 'Lỗi xác minh mật khẩu. Vui lòng thử lại.';
+      console.error('⚠️ Password comparison error');
     }
     
-    res.status(500).render('login', { 
+    return res.status(500).render('login', { 
       error: errorMessage,
       redirect: req.body.redirect || '/profile',
       require2FA: false,
+      requireCaptcha: false,
+      failedAttempts: 0,
       username: req.body.username || '',
       csrfToken: req.session?.csrfToken || ''
     });

@@ -145,7 +145,18 @@ userSchema.pre('save', async function() {
 
 // Instance method: So sánh password
 userSchema.methods.comparePassword = async function(inputPassword) {
-  return await bcrypt.compare(inputPassword, this.password);
+  try {
+    if (!inputPassword) {
+      throw new Error('Password không được để trống');
+    }
+    if (!this.password) {
+      throw new Error('User không có mật khẩu');
+    }
+    return await bcrypt.compare(inputPassword, this.password);
+  } catch (error) {
+    console.error('Error in comparePassword:', error);
+    throw new Error(`Lỗi xác minh mật khẩu: ${error.message}`);
+  }
 };
 
 // Instance method: Kiểm tra password đã dùng trước đó chưa

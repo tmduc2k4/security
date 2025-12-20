@@ -258,7 +258,33 @@ app.get('/contact', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  console.error('❌ Error:', err);
+  console.error('Error stack:', err.stack);
+  
+  // Nếu là request HTML form (login/register), render lại trang với error
+  if (req.path === '/login' || req.path === '/register') {
+    if (req.path === '/login') {
+      return res.status(500).render('login', {
+        error: process.env.NODE_ENV === 'production' 
+          ? 'Đã xảy ra lỗi, vui lòng thử lại sau' 
+          : `Lỗi: ${err.message}`,
+        redirect: req.body?.redirect || '/profile',
+        require2FA: false,
+        requireCaptcha: false,
+        failedAttempts: 0,
+        username: req.body?.username || '',
+        csrfToken: req.session?.csrfToken || ''
+      });
+    } else if (req.path === '/register') {
+      return res.status(500).render('register', {
+        error: process.env.NODE_ENV === 'production' 
+          ? 'Đã xảy ra lỗi, vui lòng thử lại sau' 
+          : `Lỗi: ${err.message}`
+      });
+    }
+  }
+  
+  // Nếu là API request, trả về JSON
   res.status(err.status || 500).json({
     error: process.env.NODE_ENV === 'production' 
       ? 'Đã xảy ra lỗi, vui lòng thử lại sau' 
