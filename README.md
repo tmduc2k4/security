@@ -1,150 +1,117 @@
-# LaptopStore - Website bán laptop với hệ thống xác thực
+# LaptopStore - Website Bán Laptop Với Hệ Thống Xác Thực Bảo Mật
 
-Website bán laptop được xây dựng bằng Node.js, Express và EJS với tính năng đăng nhập/đăng ký đầy đủ.
+## 📋 Tổng Quan Đề Tài
 
-## Tính năng
+**LaptopStore** là một ứng dụng web bán laptop được xây dựng với **Node.js**, **Express.js** và **MongoDB**, tập trung vào việc cung cấp hệ thống xác thực và bảo mật hiện đại.
 
-### Chức năng chính
-- ✅ Trang chủ với sản phẩm nổi bật
-- ✅ Danh sách tất cả sản phẩm laptop
-- ✅ Trang chi tiết sản phẩm với thông số kỹ thuật
-- ✅ Trang giới thiệu
-- ✅ Trang liên hệ
-- ✅ Thiết kế responsive
+### Mục Tiêu Dự Án
+- ✅ Cung cấp nền tảng e-commerce bán laptop an toàn
+- ✅ Triển khai hệ thống xác thực (Authentication) & Ủy quyền (Authorization) toàn diện
+- ✅ Áp dụng các best practices về bảo mật web
+- ✅ Bảo vệ chống lại các cuộc tấn công OWASP Top 10
+- ✅ Cung cấp giao diện người dùng thân thiện
 
-### Hệ thống xác thực (MỚI)
-- ✅ **Đăng ký tài khoản** với validation mạnh
-  - Username (3-30 ký tự, chỉ chữ, số, gạch dưới)
-  - Email hợp lệ
-  - Password mạnh (tối thiểu 6 ký tự, có chữ hoa, chữ thường, số)
-- ✅ **Đăng nhập** với JWT token
-- ✅ **Trang cá nhân** (Profile)
-  - Xem thông tin tài khoản
-  - Cập nhật thông tin cá nhân
-  - Đổi mật khẩu
-- ✅ **Bảo mật**
-  - JWT authentication với cookie httpOnly
-  - Password hashing với bcrypt
-  - Protected routes
-  - Token expires sau 7 ngày
+### Tính Năng Chính
+- **E-Commerce:** Danh sách sản phẩm, chi tiết sản phẩm, giỏ hàng, thanh toán
+- **Xác Thực:** Đăng ký, đăng nhập, đăng xuất, JWT tokens
+- **Bảo Mật:** Password hashing, CSRF protection, account lockout, rate limiting, CAPTCHA
+- **Quản Lý Tài Khoản:** Profile cá nhân, đổi mật khẩu, quên mật khẩu, 2FA
+- **Audit & Logging:** Ghi lại tất cả các hoạt động đăng nhập
+- **Thiết Kế Responsive:** Hỗ trợ tất cả các thiết bị
 
-### Bảo mật
-- 🛡️ Web Application Firewall (Helmet.js)
-- 🛡️ Rate Limiting (chống DDoS)
-- 🛡️ Input validation & sanitization
-- 🛡️ XSS protection
-- 🛡️ SQL/NoSQL injection protection
-- 🛡️ Path traversal protection
-- 🛡️ HPP protection
-- 🛡️ CORS configuration
 
-## Cài đặt
+---
 
-### Prerequisites
-- Node.js (v14+)
-- MongoDB (local hoặc cloud - xem phần "Setup MongoDB" bên dưới)
-- npm hoặc yarn
+## 👥 Danh Sách Thành Viên & Phân Chia Công Việc
 
-### Bước 1: Clone repository
+| STT | Tên Thành Viên | Vai Trò | Công Việc |
+|-----|---|---|---|
+| 1 | Trương Minh Đức | **Trưởng Nhóm** | • Thiết kế kiến trúc ứng dụng<br>• Cài đặt hệ thống xác thực (JWT, bcrypt)<br>• Triển khai bảo mật (Helmet, Rate Limit, Input Validation)<br>• Tích hợp MongoDB<br>• Code review & testing |
+| 2 | Thành Viên 2 | Lập Trình Viên | • Phát triển giao diện (EJS templates)<br>• Xây dựng các trang sản phẩm<br>• Thiết kế CSS responsive<br>• Tích hợp CAPTCHA & 2FA |
+| 3 | Thành Viên 3 | Lập Trình Viên | • Phát triển các API endpoints<br>• Xây dựng chức năng quên mật khẩu<br>• Tích hợp email verification<br>• Testing & bug fixing |
+| 4 | Thành Viên 4 | Tester / Ops | • Kiểm thử bảo mật<br>• Đánh giá vulnerabilities<br>• Cấu hình môi trường & deployment<br>• Viết tài liệu |
+
+---
+
+## 🚀 Hướng Dẫn Sử Dụng
+
+### 1️⃣ Thiết Lập Môi Trường
+
+#### Prerequisites
+- **Node.js** v14+ ([Download](https://nodejs.org/))
+- **MongoDB** ([Local](https://www.mongodb.com/try/download/community) hoặc [Atlas Cloud](https://www.mongodb.com/cloud/atlas))
+- **Git** ([Download](https://git-scm.com/))
+
+#### Bước 1: Clone Repository
 ```bash
 git clone https://github.com/tmduc2k4/security.git
 cd security
 ```
 
-### Bước 2: Cài đặt dependencies
+#### Bước 2: Cài Đặt Dependencies
 ```bash
 npm install
 ```
 
-### Bước 3: Setup MongoDB
+#### Bước 3: Cấu Hình MongoDB
 
-#### Cách 1: Dùng MongoDB Atlas (Cloud - Khuyến nghị cho Production)
-
+**Cách 1: Dùng MongoDB Atlas (Cloud - Khuyến Nghị)**
 1. Truy cập [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Tạo tài khoản và đăng nhập
-3. Tạo cluster mới (Free tier đủ dùng)
-4. Lấy connection string:
-   - Click "Connect" → "Drivers" → Copy connection string
-   - String sẽ như: `mongodb+srv://username:password@cluster.mongodb.net/dbname?retryWrites=true&w=majority`
+2. Tạo cluster miễn phí (Free tier)
+3. Lấy connection string từ "Connect" → "Drivers"
 
-5. Cập nhật file `.env`:
-```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/security?retryWrites=true&w=majority
-```
-
-#### Cách 2: Dùng MongoDB Local (Development)
+**Cách 2: MongoDB Local**
 
 **Windows:**
 ```bash
-# Tải MongoDB Community Edition từ https://www.mongodb.com/try/download/community
-# Sau khi cài đặt, MongoDB sẽ chạy tự động
-
-# Hoặc chạy mongod thủ công:
-"C:\Program Files\MongoDB\Server\7.0\bin\mongod.exe"
+# Tải từ https://www.mongodb.com/try/download/community
+# Sau khi cài, MongoDB tự động chạy
+# Hoặc chạy thủ công: "C:\Program Files\MongoDB\Server\7.0\bin\mongod.exe"
 ```
 
 **Mac:**
 ```bash
-# Cài MongoDB qua Homebrew
 brew tap mongodb/brew
 brew install mongodb-community
-
-# Start MongoDB service
 brew services start mongodb-community
 ```
 
 **Linux (Ubuntu):**
 ```bash
-# Cài MongoDB
-wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | sudo apt-key add -
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-
-# Start MongoDB service
+sudo apt-get install -y mongodb
 sudo systemctl start mongod
 ```
 
-### Bước 4: Tạo file `.env`
+#### Bước 4: Cấu Hình File `.env`
 ```bash
 cp .env.example .env
 ```
 
-Cập nhật file `.env`:
+Chỉnh sửa `.env`:
 ```env
 PORT=3000
 NODE_ENV=development
 
 # MongoDB Connection
 MONGODB_URI=mongodb://localhost:27017/security
+# Hoặc MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/security
 
 # JWT Configuration
-JWT_SECRET=your-super-secret-key-here-change-in-production
+JWT_SECRET=your-secret-key-change-in-production
 JWT_EXPIRES_IN=7d
 
 # Session
-SESSION_SECRET=your-session-secret-here
-
-# CORS
-ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-
-# Email (Optional - cấu hình cho forgot password)
-EMAIL_SERVICE=gmail
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASSWORD=your-app-password
+SESSION_SECRET=your-session-secret-change-in-production
 
 # Rate Limiting
 RATE_LIMIT_MAX=100
 STRICT_RATE_LIMIT_MAX=5
-
-# Captcha (Optional)
-RECAPTCHA_SITE_KEY=your-site-key
-RECAPTCHA_SECRET_KEY=your-secret-key
 ```
 
-### Bước 5: Chạy server
+#### Bước 5: Chạy Ứng Dụng
 
-**Development:**
+**Development (với auto-reload):**
 ```bash
 npm run dev
 ```
@@ -154,301 +121,292 @@ npm run dev
 npm start
 ```
 
-### Bước 6: Xác minh setup
-- Mở http://localhost:3000 trong trình duyệt
-- Kiểm tra console để thấy:
-  - ✓ Server đang chạy tại http://localhost:3000
-  - ✓ MongoDB Connected: [connection-string]
-
-Nếu thấy lỗi MongoDB, đảm bảo MongoDB service đang chạy!
+**Kiểm tra:** Mở http://localhost:3000 trong trình duyệt
 
 ---
 
-### Kiểm tra trạng thái MongoDB
+### 2️⃣ Cập Nhật Cơ Sở Dữ Liệu
 
-**Windows:**
+#### Reset Database (Development)
 ```bash
-# Kiểm tra MongoDB service
-Get-Service MongoDB
+# Xóa tất cả users
+mongosh mongodb://localhost:27017/security
+> use security
+> db.users.deleteMany({})
+> db.exit()
 ```
 
-**Mac/Linux:**
+#### Kiểm Tra Kết Nối
 ```bash
-# Kiểm tra MongoDB service
-sudo systemctl status mongod
-```
+# Dùng MongoDB Compass (GUI)
+# Download: https://www.mongodb.com/products/compass
+# Connect to: mongodb://localhost:27017
 
-**Sử dụng MongoDB Compass (GUI):**
-- Tải từ [mongodb.com/products/compass](https://www.mongodb.com/products/compass)
-- Connect tới `mongodb://localhost:27017`
-- Xem databases và collections
-
-## Sử dụng
-
-### Đăng ký tài khoản
-1. Truy cập `/register`
-2. Nhập thông tin (username, email, password)
-3. Password phải có ít nhất:
-   - 6 ký tự
-   - 1 chữ thường (a-z)
-   - 1 chữ hoa (A-Z)
-   - 1 số (0-9)
-4. Sau khi đăng ký thành công, bạn sẽ được tự động đăng nhập
-
-### Đăng nhập
-1. Truy cập `/login`
-2. Nhập **email** và password
-3. Token sẽ được lưu trong cookie (7 ngày)
-
-### Quản lý Profile
-1. Sau khi đăng nhập, click vào username trên navbar
-2. Xem thông tin tài khoản
-3. Cập nhật họ tên, email
-4. Đổi mật khẩu (yêu cầu mật khẩu hiện tại)
-
-## API Endpoints
-
-### Public Routes
-- `GET /` - Trang chủ
-- `GET /laptops` - Danh sách sản phẩm
-- `GET /laptop/:id` - Chi tiết sản phẩm
-- `GET /about` - Giới thiệu
-- `GET /contact` - Liên hệ
-
-### Auth Routes (Web)
-- `GET /register` - Trang đăng ký
-- `POST /register` - Xử lý đăng ký
-- `GET /login` - Trang đăng nhập
-- `POST /login` - Xử lý đăng nhập
-- `GET /logout` - Đăng xuất
-- `GET /profile` - Trang cá nhân (yêu cầu đăng nhập)
-- `POST /profile/update` - Cập nhật profile (yêu cầu đăng nhập)
-
-### Auth API Routes (JSON)
-- `POST /api/auth/register` - Đăng ký (JSON response)
-- `POST /api/auth/login` - Đăng nhập (JSON response)
-
-## Cấu trúc dự án
-
-```
-├── app.js                    # File server chính
-├── package.json              # Dependencies
-├── .env                      # Environment variables (không commit)
-├── .env.example              # Template cho .env
-├── models/
-│   └── User.js              # User model với authentication
-├── middleware/
-│   ├── auth.js              # JWT authentication middleware
-│   ├── authValidator.js     # Validation rules cho auth
-│   ├── security.js          # WAF và security middleware
-│   └── validator.js         # Input validation
-├── controllers/
-│   └── authController.js    # Auth logic (login, register, profile)
-├── views/                   # EJS templates
-│   ├── index.ejs           # Trang chủ
-│   ├── laptops.ejs         # Danh sách sản phẩm
-│   ├── laptop-detail.ejs   # Chi tiết sản phẩm
-│   ├── about.ejs           # Giới thiệu
-│   ├── contact.ejs         # Liên hệ
-│   ├── login.ejs           # Đăng nhập
-│   ├── register.ejs        # Đăng ký
-│   ├── profile.ejs         # Trang cá nhân
-│   └── 404.ejs             # Error page
-└── public/                 # Static files
-    └── css/
-        └── style.css       # CSS styling
-```
-
-## Công nghệ sử dụng
-
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **EJS** - Template engine
-
-### Authentication
-- **bcryptjs** - Password hashing
-- **jsonwebtoken** - JWT tokens
-- **cookie-parser** - Cookie management
-
-### Security
-- **helmet** - HTTP headers security
-- **express-rate-limit** - Rate limiting
-- **express-validator** - Input validation
-- **hpp** - HTTP Parameter Pollution protection
-- **xss-clean** - XSS protection
-- **express-mongo-sanitize** - NoSQL injection protection
-- **cors** - CORS configuration
-- **dotenv** - Environment variables
-
-## Database Configuration
-
-### Connection String
-- **Local:** `mongodb://localhost:27017/security`
-- **Atlas:** `mongodb+srv://username:password@cluster.mongodb.net/security`
-
-### Kiểm tra connection
-
-```bash
-# Dùng MongoDB Compass
-# Connect to mongodb://localhost:27017
-
-# Hoặc dùng mongosh CLI
+# Hoặc dùng mongosh (CLI)
 mongosh mongodb://localhost:27017/security
 ```
 
-### Reset Database (Development only)
+---
 
+### 3️⃣ Tài Khoản Demo
+
+#### Cách Tạo Tài Khoản Demo
+
+**Phương Pháp 1: Đăng ký qua giao diện**
+1. Truy cập http://localhost:3000/register
+2. Nhập thông tin:
+   - **Username:** demo_user
+   - **Email:** demo@example.com
+   - **Password:** Demo123 (phải có chữ hoa, thường, số)
+   - **Họ tên:** Demo User
+3. Click "Đăng ký"
+4. Tự động đăng nhập và chuyển đến trang profile
+
+**Phương Pháp 2: Tạo qua script (Nếu có)**
 ```bash
-# Xóa database
-db.dropDatabase()
+# Tạo admin account
+node scripts/createAdmin.js
+```
 
-# Hoặc xóa từ code
-use security
-db.users.deleteMany({})
+#### Đăng Nhập Demo
+- **Email:** demo@example.com
+- **Password:** Demo123
+
+#### Kiểm Tra Security Features
+1. **Quên mật khẩu:** Truy cập `/forgot-password`
+2. **Account Lockout:** Sai mật khẩu 10 lần → bị khóa 10 phút
+3. **CAPTCHA:** Bắt buộc sau 5 lần sai
+4. **2FA:** Tích cực ở trang profile
+
+---
+
+### 4️⃣ Kết Quả Chụp Màn Hình
+
+#### 🏠 Trang Chủ
+```
+┌─────────────────────────────────────────┐
+│ 🏪 LaptopStore                  [👤Login]│
+├─────────────────────────────────────────┤
+│                                         │
+│  Sản phẩm nổi bật:                      │
+│  ┌──────┐  ┌──────┐  ┌──────┐         │
+│  │Laptop│  │Laptop│  │Laptop│         │
+│  │Price │  │Price │  │Price │         │
+│  └──────┘  └──────┘  └──────┘         │
+│                                         │
+└─────────────────────────────────────────┘
+```
+
+#### 📝 Trang Đăng Ký
+```
+┌─────────────────────────────────────┐
+│     🔐 Đăng Ký Tài Khoản            │
+├─────────────────────────────────────┤
+│                                     │
+│  👤 Tên đăng nhập: [______________] │
+│  📧 Email:         [______________] │
+│  🔑 Mật khẩu:      [______________] │
+│  📋 Họ tên:        [______________] │
+│                                     │
+│             [    Đăng Ký    ]       │
+│                                     │
+│  Đã có tài khoản? Đăng nhập →      │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+#### 🔑 Trang Đăng Nhập (Thành Công)
+```
+┌─────────────────────────────────────┐
+│       🔐 Đăng Nhập                  │
+├─────────────────────────────────────┤
+│                                     │
+│  📧 Email:    [______________]      │
+│  🔑 Mật khẩu: [______________]      │
+│                                     │
+│             [    Đăng Nhập    ]     │
+│                                     │
+│  Quên mật khẩu?                     │
+│  Chưa có tài khoản? Đăng ký →      │
+│                                     │
+└─────────────────────────────────────┘
+
+Kết quả: ✅ Đăng nhập thành công
+         Chuyển đến trang /profile
+         Cookie lưu JWT token 7 ngày
+```
+
+#### 🔒 Account Lockout (10 lần sai)
+```
+┌─────────────────────────────────────┐
+│        🔐 Đăng Nhập                 │
+├─────────────────────────────────────┤
+│                                     │
+│           🔒 Tài khoản bị khóa     │
+│                                     │
+│  Bạn đã nhập sai mật khẩu 10 lần   │
+│                                     │
+│  Tài khoản sẽ mở khóa sau:          │
+│  ┌─────────────────────────────┐   │
+│  │      10:00 (phút : giây)    │   │
+│  └─────────────────────────────┘   │
+│                                     │
+│  ℹ️ Thông tin:                       │
+│  • Bảo vệ khỏi truy cập trái phép   │
+│  • 10 phút kể từ lần sai thứ 10     │
+│  • Hãy nhớ mật khẩu chính xác       │
+│                                     │
+│  [❓ Quên mật khẩu?]                │
+│                                     │
+│  📝 Đầu vào bị vô hiệu hóa         │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+#### 🤖 CAPTCHA (Sau 5 lần sai)
+```
+┌─────────────────────────────────────┐
+│       🔐 Đăng Nhập                  │
+├─────────────────────────────────────┤
+│                                     │
+│  ⚠️ Cảnh báo - CAPTCHA yêu cầu!     │
+│  Bạn đã nhập sai 5 lần              │
+│  Còn 5 lần để thử                   │
+│                                     │
+│  📧 Email:    [______________]      │
+│  🔑 Mật khẩu: [______________]      │
+│                                     │
+│  🤖 Xác thực:                        │
+│  ┌─────────────────────────────┐   │
+│  │   [Tích vào reCAPTCHA ☐]   │   │
+│  │   "I'm not a robot"         │   │
+│  └─────────────────────────────┘   │
+│                                     │
+│             [    Đăng Nhập    ]     │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+#### 👤 Trang Profile (Đã Đăng Nhập)
+```
+┌──────────────────────────────────────┐
+│ 🏪 LaptopStore      👤 demo_user [🚪]│
+├──────────────────────────────────────┤
+│                                      │
+│        📋 Thông Tin Tài Khoản        │
+│                                      │
+│  👤 Username:  demo_user             │
+│  📧 Email:     demo@example.com      │
+│  📝 Họ tên:    Demo User             │
+│  📅 Tham gia:  20/12/2025            │
+│  ✅ Trạng thái: Hoạt động            │
+│                                      │
+│  [✏️ Cập Nhật Thông Tin]             │
+│  [🔐 Đổi Mật Khẩu]                  │
+│  [🔑 Bật 2FA]                        │
+│  [📜 Lịch Sử Đăng Nhập]              │
+│                                      │
+└──────────────────────────────────────┘
+```
+
+#### 🔐 Đổi Mật Khẩu
+```
+┌─────────────────────────────────────┐
+│      🔑 Đổi Mật Khẩu                │
+├─────────────────────────────────────┤
+│                                     │
+│  🔑 Mật khẩu hiện tại:              │
+│     [__________________________]    │
+│                                     │
+│  🔑 Mật khẩu mới:                   │
+│     [__________________________]    │
+│                                     │
+│  🔑 Xác nhận mật khẩu:              │
+│     [__________________________]    │
+│                                     │
+│  ✅ Yêu cầu:                         │
+│  ☑ Tối thiểu 6 ký tự                │
+│  ☑ Có chữ hoa (A-Z)                 │
+│  ☑ Có chữ thường (a-z)              │
+│  ☑ Có số (0-9)                      │
+│                                     │
+│      [    Cập Nhật Mật Khẩu    ]    │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+#### 📊 Lịch Sử Đăng Nhập
+```
+┌──────────────────────────────────────────┐
+│      📜 Lịch Sử Đăng Nhập               │
+├──────────────────────────────────────────┤
+│                                          │
+│  Thời gian          │ Trạng thái │ IP   │
+│  ─────────────────────────────────────── │
+│  20/12/2025 10:30   │ ✅ Thành công│ ...│
+│  20/12/2025 10:25   │ ❌ Sai mật khẩu  │
+│  20/12/2025 10:20   │ ❌ Sai mật khẩu  │
+│  19/12/2025 15:45   │ ✅ Thành công│ ...│
+│  19/12/2025 14:20   │ ✅ Thành công│ ...│
+│                                          │
+│  [<  Trang trước ] [ Trang tiếp theo >] │
+│                                          │
+└──────────────────────────────────────────┘
 ```
 
 ---
 
-
-
-### Đã triển khai
-- ✅ Password hashing với bcrypt (10 rounds)
-- ✅ JWT với httpOnly cookies
-- ✅ Input validation và sanitization
-- ✅ Rate limiting (100 req/15min)
-- ✅ XSS protection
-- ✅ SQL/NoSQL injection protection
-- ✅ Secure HTTP headers (Helmet)
-- ✅ Environment variables cho secrets
-
-### Khuyến nghị cho production
-- [ ] Sử dụng HTTPS/SSL
-- [ ] Lưu users vào database (MongoDB/PostgreSQL)
-- [ ] Email verification
-- [ ] Password reset functionality
-- [ ] Two-factor authentication (2FA)
-- [ ] Session management với Redis
-- [ ] Logging và monitoring
-- [ ] CSRF protection
-
-## Scripts
+## 🛠️ Scripts Hữu Ích
 
 ```bash
-npm start              # Chạy server
-npm run dev            # Chạy với nodemon (auto-reload)
-npm run security-check # Kiểm tra vulnerabilities
-npm run security-fix   # Tự động fix vulnerabilities
-npm run update-check   # Kiểm tra outdated packages
+# Chạy ứng dụng
+npm start                 # Production
+npm run dev               # Development (auto-reload)
+
+# Kiểm tra bảo mật
+npm run security-check    # Quét vulnerabilities
+npm run security-fix      # Tự động fix vulnerabilities
+
+# Quản lý
+npm run update-check      # Kiểm tra packages cũ
 ```
 
-## Testing
+---
 
-### Test đăng ký
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "testuser",
-    "email": "test@example.com",
-    "password": "Test123",
-    "fullName": "Test User"
-  }'
-```
+## 🔒 Các Tính Năng Bảo Mật Chính
 
-### Test đăng nhập
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "test@example.com",
-    "password": "Test123"
-  }'
-```
+| Tính Năng | Mô Tả | Status |
+|-----------|-------|--------|
+| **Password Hashing** | bcryptjs (10 rounds, ~150ms) | ✅ |
+| **JWT Authentication** | Token 7 ngày, httpOnly cookies | ✅ |
+| **Account Lockout** | 10 lần sai → khóa 10 phút | ✅ |
+| **CAPTCHA** | Google reCAPTCHA v2 + Fallback | ✅ |
+| **Rate Limiting** | 100/15min (general), 5/15min (login) | ✅ |
+| **CSRF Protection** | Double-submit token | ✅ |
+| **Input Validation** | express-validator + sanitization | ✅ |
+| **XSS Protection** | helmet.js + xss-clean | ✅ |
+| **NoSQL Injection** | express-mongo-sanitize | ✅ |
+| **Secure Headers** | helmet.js (CSP, HSTS, etc.) | ✅ |
+| **Audit Logging** | Ghi lại tất cả hoạt động | ✅ |
 
-## Troubleshooting
+---
 
-### ❌ MongoDB Connection Error: ECONNREFUSED
+## 📚 Công Nghệ Stack
 
-**Vấn đề:** `connect ECONNREFUSED 127.0.0.1:27017`
+**Backend:** Node.js, Express.js, MongoDB, EJS  
+**Bảo Mật:** bcryptjs, jsonwebtoken, helmet, express-rate-limit  
+**Validation:** express-validator, hpp, xss-clean  
+**Database:** MongoDB 7.0+  
 
-**Giải pháp:**
+---
 
-1. **Kiểm tra MongoDB service:**
-   ```bash
-   # Windows
-   Get-Service MongoDB
-   
-   # Mac
-   brew services list | grep mongodb
-   
-   # Linux
-   sudo systemctl status mongod
-   ```
+## 📞 Liên Hệ & Support
 
-2. **Start MongoDB:**
-   ```bash
-   # Windows (nếu dùng Docker)
-   docker start mongodb
-   
-   # Mac
-   brew services start mongodb-community
-   
-   # Linux
-   sudo systemctl start mongod
-   ```
+**Repository:** [github.com/tmduc2k4/security](https://github.com/tmduc2k4/security)  
+**Issues:** Báo cáo lỗi qua GitHub Issues  
+**Author:** Trương Minh Đức
 
-3. **Dùng MongoDB Atlas (Cloud):**
-   - Đổi `MONGODB_URI` trong `.env` sang connection string từ MongoDB Atlas
-   - Không cần MongoDB local
+---
 
-4. **Dùng Docker:**
-   ```bash
-   docker run -d -p 27017:27017 --name mongodb mongo:latest
-   ```
-
-### ❌ Port 3000 đã được sử dụng
-
-```bash
-# Windows
-Get-Process -Name node | Stop-Process -Force
-
-# Linux/Mac
-lsof -ti:3000 | xargs kill -9
-
-# Hoặc dùng port khác
-PORT=3001 npm start
-```
-
-### ❌ JWT Secret không được set
-Đảm bảo file `.env` có:
-```env
-JWT_SECRET=your-secret-key-here
-```
-
-### ❌ npm install failed
-```bash
-# Xóa package-lock.json và node_modules
-rm -r node_modules package-lock.json
-
-# Cài lại
-npm install --legacy-peer-deps
-```
-
-### ❌ CSRF token errors trên production
-Đảm bảo:
-1. Session secret được set trong `.env`
-2. Dùng HTTPS (secure cookies)
-3. Cookie domain match với domain thực tế
-
-## Tài liệu tham khảo
-- [Express.js Documentation](https://expressjs.com/)
-- [JWT.io](https://jwt.io/)
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
-
-## License
-ISC
-
-## Author
-GitHub: [@tmduc2k4](https://github.com/tmduc2k4) 
+## 📄 License
+ISC 
