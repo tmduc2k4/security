@@ -189,13 +189,7 @@
       <h2>🔐 Đăng nhập</h2>
       <p class="subtitle">Truy cập tài khoản của bạn</p>
       
-      <% if (error) { %>
-        <div class="error-message">
-          <%= error %>
-        </div>
-      <% } %>
-
-      <!-- Locked Account Display -->
+      <!-- Locked Account Display (Priority: Show first) -->
       <% if (failedAttempts && failedAttempts >= 10) { %>
         <div style="background: #fee2e2; border: 2px solid #dc2626; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
           <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
@@ -289,7 +283,15 @@
           
           window.addEventListener('load', startCountdown);
         </script>
-      <% } else if (failedAttempts && failedAttempts > 0) { %>
+      <% } else { %>
+        <!-- Normal login state -->
+        <% if (error) { %>
+          <div class="error-message">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <% if (failedAttempts && failedAttempts > 0) { %>
         <!-- Warning for attempts < 10 -->
         <div class="warning-message">
           <% if (failedAttempts >= 5) { %>
