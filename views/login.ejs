@@ -111,40 +111,11 @@
       border-left: 4px solid #f59e0b;
       font-weight: 500;
       line-height: 1.6;
-      animation: shake 0.5s ease-in-out;
     }
 
     .warning-message strong {
       color: #d97706;
       font-weight: 700;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    .captcha-container {
-      margin: 1.5rem 0;
-      padding: 1rem;
-      background: #f0f4ff;
-      border-radius: 0.5rem;
-      border-left: 4px solid #3b82f6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .captcha-container p {
-      color: #1e40af;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .g-recaptcha {
-      margin: 0 auto;
     }
 
     @keyframes fadeIn {
@@ -158,133 +129,46 @@
       }
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.7;
-      }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
     }
 
-    .locked-account-timer {
-      animation: pulse 1s ease-in-out infinite;
+    .btn-primary:hover {
+      background: #2563eb;
     }
 
-    .locked-account-section {
-      animation: fadeIn 0.5s ease-in-out;
+    .btn-lg {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
   <div class="auth-page">
     <div class="auth-card">
-      <h2>🔐 Đăng nhập</h2>
+      <h2>Đăng nhập</h2>
       <p class="subtitle">Truy cập tài khoản của bạn</p>
       
-      <!-- Locked Account Display (Priority: Show first) -->
       <% if (failedAttempts && failedAttempts >= 10) { %>
-        <div style="background: #fee2e2; border: 2px solid #dc2626; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
-          <h3 style="color: #991b1b; margin: 0 0 1rem 0; font-size: 1.5rem;">Tài khoản bị khóa</h3>
-          
-          <p style="color: #7f1d1d; margin: 0.5rem 0; font-weight: 500;">
-            Bạn đã nhập sai mật khẩu <strong>10 lần</strong>
-          </p>
-          
-          <div style="background: white; border: 2px dashed #dc2626; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
-            <p style="color: #7f1d1d; margin: 0.5rem 0; font-size: 0.9rem;">Tài khoản sẽ mở khóa sau:</p>
-            <div style="font-size: 2rem; font-weight: bold; color: #dc2626; margin: 0.5rem 0;">
-              <span id="countdownTimer">10:00</span>
-            </div>
-            <p style="color: #7f1d1d; margin: 0.5rem 0; font-size: 0.85rem;">phút: giây</p>
+        <div class="error-message">
+          <div style="font-size: 2rem; margin-bottom: 1rem;">
+            <strong>TÀI KHOẢN BỊ KHÓA</strong>
           </div>
-          
-          <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 1rem; border-radius: 0.25rem; margin: 1rem 0; text-align: left;">
-            <p style="color: #7f1d1d; margin: 0; font-size: 0.9rem; line-height: 1.5;">
-              <strong>🔐 Lý do khóa:</strong> Bảo vệ tài khoản của bạn khỏi truy cập trái phép<br>
-              <strong>⏱️ Thời gian:</strong> 10 phút kể từ lần đăng nhập sai thứ 10<br>
-              <strong>💡 Gợi ý:</strong> Hãy chắc chắn rằng bạn nhớ mật khẩu đúng
-            </p>
-          </div>
-
-          <a href="/forgot-password" style="display: inline-block; background: #3b82f6; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 500; margin-top: 1rem;">
-            ❓ Quên mật khẩu?
-          </a>
+          <p>Bạn đã nhập sai mật khẩu 10 lần. Tài khoản sẽ mở khóa sau 10 phút.</p>
+          <p><a href="/forgot-password" style="color: #3b82f6;">❓ Quên mật khẩu?</a></p>
         </div>
-
-        <!-- Hidden locked form - không cho phép submit -->
-        <form style="opacity: 0.5; pointer-events: none;">
-          <div class="form-group">
-            <label for="username">👤 Tên đăng nhập</label>
-            <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập" disabled>
-          </div>
-          <div class="form-group">
-            <label for="password">🔑 Mật khẩu</label>
-            <input type="password" id="password" name="password" placeholder="Mật khẩu" disabled>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-primary btn-lg" disabled style="cursor: not-allowed;">
-              Đăng nhập (Tài khoản bị khóa)
-            </button>
-          </div>
-        </form>
-
-        <script>
-          // Countdown timer for locked account
-          function startCountdown() {
-            const lockDuration = 10 * 60; // 10 phút tính bằng giây
-            let timeLeft = lockDuration;
-            
-            const updateTimer = () => {
-              const minutes = Math.floor(timeLeft / 60);
-              const seconds = timeLeft % 60;
-              const display = 
-                String(minutes).padStart(2, '0') + ':' + 
-                String(seconds).padStart(2, '0');
-              
-              const timerElement = document.getElementById('countdownTimer');
-              if (timerElement) {
-                timerElement.innerText = display;
-              }
-              
-              if (timeLeft <= 0) {
-                // Tài khoản đã mở khóa
-                const lockedSection = document.querySelector('[style*="fee2e2"]');
-                if (lockedSection) {
-                  lockedSection.innerHTML = `
-                    <div style="text-align: center; padding: 2rem;">
-                      <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                      <h3 style="color: #059669; margin: 0 0 1rem 0;">Tài khoản đã mở khóa</h3>
-                      <p style="color: #047857;">Bạn có thể đăng nhập lại bây giờ</p>
-                      <button onclick="location.reload()" style="background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; margin-top: 1rem;">
-                        ↻ Tải lại trang
-                      </button>
-                    </div>
-                  `;
-                }
-              }
-              
-              timeLeft--;
-              if (timeLeft > 0) {
-                setTimeout(updateTimer, 1000);
-              }
-            };
-            
-            updateTimer();
-          }
-          
-          window.addEventListener('load', startCountdown);
-        </script>
       <% } else { %>
-        <!-- Normal login state -->
         <% if (error) { %>
           <div class="error-message">
             <%= error %>
@@ -292,57 +176,40 @@
         <% } %>
 
         <% if (failedAttempts && failedAttempts > 0) { %>
-        <!-- Warning for attempts < 10 -->
         <div class="warning-message">
           <% if (failedAttempts >= 5) { %>
-            ⚠️ <strong>Cảnh báo - CAPTCHA yêu cầu!</strong><br>
+            Cảnh báo - CAPTCHA yêu cầu!<br>
             Bạn đã nhập sai <strong><%= failedAttempts %> lần</strong><br>
-            Còn <strong><%= 10 - failedAttempts %> lần</strong> để thử trước khi tài khoản bị khóa 10 phút
+            Còn <strong><%= 10 - failedAttempts %> lần</strong> để thử
           <% } else { %>
-            ⚠️ <strong>Cảnh báo:</strong> Bạn đã nhập sai <strong><%= failedAttempts %> lần</strong><br>
-            Còn <strong><%= 10 - failedAttempts %> lần</strong> để thử<br>
-            Tối đa 10 lần nhập sai, sau đó tài khoản sẽ bị khóa 10 phút
+            Cảnh báo: Bạn đã nhập sai <strong><%= failedAttempts %> lần</strong><br>
+            Còn <strong><%= 10 - failedAttempts %> lần</strong> để thử
           <% } %>
         </div>
-      <% } %>
+        <% } %>
 
-      <!-- Login Form -->
-      <% if (!require2FA) { %>
+        <% if (!require2FA) { %>
         <form action="/login" method="POST" id="loginForm">
           <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
           <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>">
           
           <div class="form-group">
-            <label for="username">👤 Tên đăng nhập</label>
+            <label for="username">Tên đăng nhập</label>
             <input type="text" id="username" name="username" required 
-                   placeholder="Nhập tên đăng nhập của bạn"
+                   placeholder="Nhập tên đăng nhập"
                    value="<%= username || '' %>"
                    autofocus>
           </div>
 
           <div class="form-group">
-            <label for="password">🔑 Mật khẩu</label>
+            <label for="password">Mật khẩu</label>
             <input type="password" id="password" name="password" required 
                    placeholder="Mật khẩu">
           </div>
 
           <% if (requireCaptcha) { %>
-            <div style="margin: 1.5rem 0; padding: 1rem; background: #f0f4ff; border-radius: 0.5rem; border-left: 4px solid #3b82f6;">
-              <p style="color: #1e40af; font-weight: 600; margin-bottom: 1rem;">🤖 Xác thực:</p>
-              
-              <!-- ReCAPTCHA -->
-              <div id="recaptchaContainer">
-                <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
-              </div>
-              
-              <!-- Fallback: Simple CAPTCHA nếu ReCAPTCHA không load -->
-              <div id="fallbackCaptcha" style="display:none; text-align: center;">
-                <p style="color: #1e40af; font-weight: 500; margin-bottom: 1rem;">
-                  Nhập 2 chữ số sau để xác thực:
-                </p>
-                <div style="background: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 2rem; font-weight: bold; letter-spacing: 0.5rem; color: #3b82f6;" id="captchaCode"></div>
-                <input type="text" id="captchaInput" placeholder="Nhập mã xác thực" maxlength="2" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; text-align: center; font-size: 1.2rem;" />
-              </div>
+            <div style="margin: 1.5rem 0; padding: 1rem; background: #f0f4ff; border-radius: 0.5rem;">
+              <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
             </div>
           <% } %>
 
@@ -353,12 +220,11 @@
           </div>
 
           <div class="form-footer">
-            <p><a href="/forgot-password">❓ Quên mật khẩu?</a></p>
-            <p>Chưa có tài khoản? <a href="/register">📝 Đăng ký ngay</a></p>
+            <p><a href="/forgot-password">Quên mật khẩu?</a></p>
+            <p>Chưa có tài khoản? <a href="/register">Đăng ký ngay</a></p>
           </div>
         </form>
-      <% } else { %>
-        <!-- 2FA Form -->
+        <% } else { %>
         <form action="/login" method="POST" id="2faForm">
           <input type="hidden" name="redirect" value="<%= redirect || '/profile' %>">
           <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>">
@@ -366,7 +232,7 @@
           <input type="hidden" name="email" value="<%= email || '' %>">
           
           <div class="form-group">
-            <label for="twoFactorToken">🔐 Mã xác thực 2FA</label>
+            <label for="twoFactorToken">Mã xác thực 2FA</label>
             <input type="text" id="twoFactorToken" name="twoFactorToken" required 
                    placeholder="Nhập mã 6 chữ số"
                    maxlength="6"
@@ -379,95 +245,35 @@
           </div>
 
           <div class="form-footer">
-            <p><a href="/login">← Quay lại đăng nhập</a></p>
+            <p><a href="/login">Quay lại đăng nhập</a></p>
           </div>
         </form>
+        <% } %>
       <% } %>
     </div>
   </div>
 
   <script>
-    // Hiển thị popup alert khi tải trang nếu có failed attempts
-    // eslint-disable-next-line no-undef
-    const failedAttempts = <%-JSON.stringify(failedAttempts || 0)%>;
+    var failedAttempts = <%= JSON.stringify(failedAttempts || 0) %>;
     
     window.addEventListener('load', function() {
       if (failedAttempts && failedAttempts > 0) {
         if (failedAttempts >= 10) {
-          alert('🔒 TÀI KHOẢN BỊ KHÓA!\n\n' +
-                'Bạn đã nhập sai mật khẩu 10 lần.\n' +
-                'Tài khoản sẽ mở khóa sau 10 phút.\n\n' +
-                'Vui lòng thử lại sau.');
-        } else if (failedAttempts >= 5) {
-          alert('⚠️ CẢNH BÁO!\n\n' +
-                'Bạn đã nhập sai mật khẩu ' + failedAttempts + ' lần.\n' +
-                'Còn ' + (10 - failedAttempts) + ' lần để thử.\n\n' +
-                'Nếu nhập sai 10 lần, tài khoản sẽ bị khóa 10 phút!\n' +
-                'Vui lòng hoàn thành CAPTCHA để tiếp tục.');
-        } else {
-          alert('⚠️ CẢNH BÁO!\n\n' +
-                'Bạn đã nhập sai mật khẩu ' + failedAttempts + ' lần.\n' +
-                'Còn ' + (10 - failedAttempts) + ' lần để thử.\n\n' +
-                'Tối đa 10 lần nhập sai, sau đó tài khoản sẽ bị khóa 10 phút!');
+          alert('TÀI KHOẢN BỊ KHÓA!\n\nBạn đã nhập sai mật khẩu 10 lần.\nTài khoản sẽ mở khóa sau 10 phút.');
         }
       }
     });
 
-    const form = document.getElementById('loginForm');
+    var form = document.getElementById('loginForm');
     if (form) {
-      // Khởi tạo fallback CAPTCHA nếu ReCAPTCHA không load
-      initializeFallbackCaptcha();
-      
       form.addEventListener('submit', function(e) {
-        // Kiểm tra ReCAPTCHA
         if (window.grecaptcha) {
-          const response = grecaptcha.getResponse();
-          if (!response) {
-            // Thử fallback CAPTCHA
-            const fallbackInput = document.getElementById('captchaInput');
-            if (fallbackInput && fallbackInput.style.display !== 'none') {
-              const captchaCode = document.getElementById('captchaCode').innerText;
-              if (fallbackInput.value !== captchaCode) {
-                e.preventDefault();
-                alert('Mã xác thực không đúng!');
-                return false;
-              }
-            } else {
-              e.preventDefault();
-              alert('Vui lòng hoàn thành xác thực CAPTCHA');
-              return false;
-            }
-          }
+          var response = grecaptcha.getResponse();
           if (response) {
             document.getElementById('g-recaptcha-response').value = response;
           }
         }
       });
-    }
-
-    // Fallback CAPTCHA nếu ReCAPTCHA không load
-    function initializeFallbackCaptcha() {
-      setTimeout(function() {
-        const recaptchaContainer = document.getElementById('recaptchaContainer');
-        const fallbackCaptcha = document.getElementById('fallbackCaptcha');
-        
-        // Nếu ReCAPTCHA không render (không có iframe), dùng fallback
-        if (recaptchaContainer && !recaptchaContainer.querySelector('iframe')) {
-          recaptchaContainer.style.display = 'none';
-          fallbackCaptcha.style.display = 'block';
-          
-          // Tạo mã CAPTCHA random (2 chữ số)
-          const captchaCode = String(Math.floor(Math.random() * 100)).padStart(2, '0');
-          document.getElementById('captchaCode').innerText = captchaCode;
-          
-          // Lưu vào hidden field
-          const hiddenInput = document.createElement('input');
-          hiddenInput.type = 'hidden';
-          hiddenInput.name = 'captcha_answer';
-          hiddenInput.value = captchaCode;
-          document.getElementById('loginForm').appendChild(hiddenInput);
-        }
-      }, 2000); // Chờ 2 giây để ReCAPTCHA load
     }
   </script>
 </body>
