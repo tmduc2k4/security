@@ -157,6 +157,30 @@
         transform: translateY(0);
       }
     }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
+
+    .locked-account-timer {
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    .locked-account-section {
+      animation: fadeIn 0.5s ease-in-out;
+    }
   </style>
 </head>
 <body>
@@ -171,20 +195,111 @@
         </div>
       <% } %>
 
-      <% if (failedAttempts && failedAttempts > 0) { %>
+      <!-- Locked Account Display -->
+      <% if (failedAttempts && failedAttempts >= 10) { %>
+        <div style="background: #fee2e2; border: 2px solid #dc2626; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+          <h3 style="color: #991b1b; margin: 0 0 1rem 0; font-size: 1.5rem;">Tài khoản bị khóa</h3>
+          
+          <p style="color: #7f1d1d; margin: 0.5rem 0; font-weight: 500;">
+            Bạn đã nhập sai mật khẩu <strong>10 lần</strong>
+          </p>
+          
+          <div style="background: white; border: 2px dashed #dc2626; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
+            <p style="color: #7f1d1d; margin: 0.5rem 0; font-size: 0.9rem;">Tài khoản sẽ mở khóa sau:</p>
+            <div style="font-size: 2rem; font-weight: bold; color: #dc2626; margin: 0.5rem 0;">
+              <span id="countdownTimer">10:00</span>
+            </div>
+            <p style="color: #7f1d1d; margin: 0.5rem 0; font-size: 0.85rem;">phút: giây</p>
+          </div>
+          
+          <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 1rem; border-radius: 0.25rem; margin: 1rem 0; text-align: left;">
+            <p style="color: #7f1d1d; margin: 0; font-size: 0.9rem; line-height: 1.5;">
+              <strong>🔐 Lý do khóa:</strong> Bảo vệ tài khoản của bạn khỏi truy cập trái phép<br>
+              <strong>⏱️ Thời gian:</strong> 10 phút kể từ lần đăng nhập sai thứ 10<br>
+              <strong>💡 Gợi ý:</strong> Hãy chắc chắn rằng bạn nhớ mật khẩu đúng
+            </p>
+          </div>
+
+          <a href="/forgot-password" style="display: inline-block; background: #3b82f6; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: 500; margin-top: 1rem;">
+            ❓ Quên mật khẩu?
+          </a>
+        </div>
+
+        <!-- Hidden locked form - không cho phép submit -->
+        <form style="opacity: 0.5; pointer-events: none;">
+          <div class="form-group">
+            <label for="username">👤 Tên đăng nhập</label>
+            <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập" disabled>
+          </div>
+          <div class="form-group">
+            <label for="password">🔑 Mật khẩu</label>
+            <input type="password" id="password" name="password" placeholder="Mật khẩu" disabled>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary btn-lg" disabled style="cursor: not-allowed;">
+              Đăng nhập (Tài khoản bị khóa)
+            </button>
+          </div>
+        </form>
+
+        <script>
+          // Countdown timer for locked account
+          function startCountdown() {
+            const lockDuration = 10 * 60; // 10 phút tính bằng giây
+            let timeLeft = lockDuration;
+            
+            const updateTimer = () => {
+              const minutes = Math.floor(timeLeft / 60);
+              const seconds = timeLeft % 60;
+              const display = 
+                String(minutes).padStart(2, '0') + ':' + 
+                String(seconds).padStart(2, '0');
+              
+              const timerElement = document.getElementById('countdownTimer');
+              if (timerElement) {
+                timerElement.innerText = display;
+              }
+              
+              if (timeLeft <= 0) {
+                // Tài khoản đã mở khóa
+                const lockedSection = document.querySelector('[style*="fee2e2"]');
+                if (lockedSection) {
+                  lockedSection.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                      <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                      <h3 style="color: #059669; margin: 0 0 1rem 0;">Tài khoản đã mở khóa</h3>
+                      <p style="color: #047857;">Bạn có thể đăng nhập lại bây giờ</p>
+                      <button onclick="location.reload()" style="background: #10b981; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 500; margin-top: 1rem;">
+                        ↻ Tải lại trang
+                      </button>
+                    </div>
+                  `;
+                }
+              }
+              
+              timeLeft--;
+              if (timeLeft > 0) {
+                setTimeout(updateTimer, 1000);
+              }
+            };
+            
+            updateTimer();
+          }
+          
+          window.addEventListener('load', startCountdown);
+        </script>
+      <% } else if (failedAttempts && failedAttempts > 0) { %>
+        <!-- Warning for attempts < 10 -->
         <div class="warning-message">
-          <% if (failedAttempts >= 10) { %>
-            🔒 <strong>Tài khoản bị khóa!</strong><br>
-            Bạn đã nhập sai mật khẩu <strong>10 lần</strong>.<br>
-            Tài khoản sẽ mở khóa sau 10 phút.
+          <% if (failedAttempts >= 5) { %>
+            ⚠️ <strong>Cảnh báo - CAPTCHA yêu cầu!</strong><br>
+            Bạn đã nhập sai <strong><%= failedAttempts %> lần</strong><br>
+            Còn <strong><%= 10 - failedAttempts %> lần</strong> để thử trước khi tài khoản bị khóa 10 phút
           <% } else { %>
             ⚠️ <strong>Cảnh báo:</strong> Bạn đã nhập sai <strong><%= failedAttempts %> lần</strong><br>
-            Còn <strong><%= 10 - failedAttempts %></strong> lần để thử<br>
-            <% if (failedAttempts >= 5) { %>
-              Vui lòng hoàn thành xác thực CAPTCHA để tiếp tục
-            <% } else { %>
-              Tối đa 10 lần nhập sai, sau đó tài khoản sẽ bị khóa 10 phút
-            <% } %>
+            Còn <strong><%= 10 - failedAttempts %> lần</strong> để thử<br>
+            Tối đa 10 lần nhập sai, sau đó tài khoản sẽ bị khóa 10 phút
           <% } %>
         </div>
       <% } %>

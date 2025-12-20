@@ -143,7 +143,8 @@ const login = async (req, res) => {
         csrfToken: req.session?.csrfToken || '',
         captchaQuestion: req.session.captchaQuestion || '',
         requireCaptcha: false,
-        failedAttempts: 0
+        failedAttempts: user.failedLoginAttempts,
+        accountLockedUntil: user.accountLockedUntil
       });
     }
 
