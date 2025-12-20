@@ -59,24 +59,6 @@ app.use(xss()); // Prevent XSS attacks
 app.use(mongoSanitize()); // Prevent NoSQL injection
 app.use(cors({ origin: process.env.ALLOWED_ORIGINS || '*' })); // CORS protection
 
-// Smart rate limiting middleware - applies different limiters based on route
-const smartRateLimiter = (req, res, next) => {
-  // Auth routes get strict limiting (5 req/15 min)
-  if (req.path === '/login' || req.path === '/register') {
-    return strictLimiter(req, res, next);
-  }
-  // API routes get general limiting (100 req/15 min)
-  else if (req.path.startsWith('/api/')) {
-    return generalLimiter(req, res, next);
-  }
-  // All other routes get general limiting
-  else {
-    return generalLimiter(req, res, next);
-  }
-};
-
-app.use(smartRateLimiter); // Apply smart rate limiter early
-
 // Body parsing middleware
 app.use(express.json({ limit: '10kb' })); // Limit payload size
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
@@ -115,6 +97,24 @@ app.use(generateCSRFToken); // Generate CSRF token
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Smart rate limiting middleware - applies different limiters based on route
+const smartRateLimiter = (req, res, next) => {
+  // Auth routes get strict limiting
+  if (req.path === '/login' || req.path === '/register') {
+    return strictLimiter(req, res, next);
+  }
+  // API routes get general limiting
+  else if (req.path.startsWith('/api/')) {
+    return generalLimiter(req, res, next);
+  }
+  // All other routes
+  else {
+    return generalLimiter(req, res, next);
+  }
+};
+
+app.use(smartRateLimiter);
 
 // Dữ liệu mẫu về laptop
 const laptops = [

@@ -218,13 +218,15 @@
                 <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
               </div>
               
-              <!-- Fallback: Simple CAPTCHA nếu ReCAPTCHA không load -->
+              <!-- Fallback: Math CAPTCHA nếu ReCAPTCHA không load -->
               <div id="fallbackCaptcha" style="display:none; text-align: center;">
                 <p style="color: #1e40af; font-weight: 500; margin-bottom: 1rem;">
-                  Nhập 2 chữ số sau để xác thực:
+                  Giải phương trình để xác thực:
                 </p>
-                <div style="background: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 2rem; font-weight: bold; letter-spacing: 0.5rem; color: #3b82f6;" id="captchaCode"></div>
-                <input type="text" id="captchaInput" placeholder="Nhập mã xác thực" maxlength="2" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; text-align: center; font-size: 1.2rem;" />
+                <div style="background: white; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="captchaQuestion">
+                  <%= captchaQuestion || '5 + 3 = ?' %>
+                </div>
+                <input type="text" id="captchaInput" name="captcha_answer" placeholder="Nhập đáp án" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; text-align: center; font-size: 1.2rem;" />
               </div>
             </div>
           <% } %>
@@ -302,27 +304,33 @@
       initializeFallbackCaptcha();
       
       form.addEventListener('submit', function(e) {
-        // Kiểm tra ReCAPTCHA
-        if (window.grecaptcha) {
-          const response = grecaptcha.getResponse();
-          if (!response) {
-            // Thử fallback CAPTCHA
-            const fallbackInput = document.getElementById('captchaInput');
-            if (fallbackInput && fallbackInput.style.display !== 'none') {
-              const captchaCode = document.getElementById('captchaCode').innerText;
-              if (fallbackInput.value !== captchaCode) {
+        // Check if CAPTCHA is required (either ReCAPTCHA or fallback)
+        const requiresCaptchaUI = document.getElementById('recaptchaContainer') || document.getElementById('fallbackCaptcha');
+        
+        if (requiresCaptchaUI && (requiresCaptchaUI.querySelector('iframe') || document.getElementById('fallbackCaptcha').style.display !== 'none')) {
+          // ReCAPTCHA or Fallback CAPTCHA is shown - need to validate
+          if (window.grecaptcha) {
+            const response = grecaptcha.getResponse();
+            if (!response) {
+              // ReCAPTCHA not completed - check fallback
+              const fallbackInput = document.getElementById('captchaInput');
+              if (fallbackInput && fallbackInput.style.display !== 'none') {
+                // Fallback is visible - input is required
+                if (!fallbackInput.value) {
+                  e.preventDefault();
+                  alert('Vui lòng nhập đáp án của phương trình');
+                  return false;
+                }
+                // Server will validate the answer
+              } else {
                 e.preventDefault();
-                alert('Mã xác thực không đúng!');
+                alert('Vui lòng hoàn thành xác thực CAPTCHA');
                 return false;
               }
             } else {
-              e.preventDefault();
-              alert('Vui lòng hoàn thành xác thực CAPTCHA');
-              return false;
+              // ReCAPTCHA completed - set the response
+              document.getElementById('g-recaptcha-response').value = response;
             }
-          }
-          if (response) {
-            document.getElementById('g-recaptcha-response').value = response;
           }
         }
       });
@@ -339,16 +347,13 @@
           recaptchaContainer.style.display = 'none';
           fallbackCaptcha.style.display = 'block';
           
-          // Tạo mã CAPTCHA random (2 chữ số)
-          const captchaCode = String(Math.floor(Math.random() * 100)).padStart(2, '0');
-          document.getElementById('captchaCode').innerText = captchaCode;
-          
-          // Lưu vào hidden field
-          const hiddenInput = document.createElement('input');
-          hiddenInput.type = 'hidden';
-          hiddenInput.name = 'captcha_answer';
-          hiddenInput.value = captchaCode;
-          document.getElementById('loginForm').appendChild(hiddenInput);
+          // The CAPTCHA question is already set from server-side
+          // Just need to enable input field and mark it as required
+          const captchaInput = document.getElementById('captchaInput');
+          if (captchaInput) {
+            captchaInput.required = true;
+            captchaInput.focus();
+          }
         }
       }, 2000); // Chờ 2 giây để ReCAPTCHA load
     }

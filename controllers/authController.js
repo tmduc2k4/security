@@ -64,6 +64,33 @@ const register = async (req, res) => {
 // Hiển thị trang đăng nhập
 const showLoginPage = (req, res) => {
   const redirect = req.query.redirect || '/profile';
+  
+  // Generate fallback CAPTCHA for session (for demonstration purposes)
+  // In production, generate this only when CAPTCHA is required
+  // to prevent pre-computation attacks
+  const generateFallbackCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10);
+    const num2 = Math.floor(Math.random() * 10);
+    const operations = ['+', '-'];
+    const op = operations[Math.floor(Math.random() * operations.length)];
+    
+    let answer;
+    if (op === '+') {
+      answer = (num1 + num2).toString();
+    } else {
+      answer = (num1 - num2).toString();
+    }
+    
+    return {
+      question: `${num1} ${op} ${num2} = ?`,
+      answer: answer
+    };
+  };
+  
+  const captcha = generateFallbackCaptcha();
+  req.session.captchaQuestion = captcha.question;
+  req.session.captchaAnswer = captcha.answer;
+  
   res.render('login', { 
     error: null, 
     redirect,
@@ -71,7 +98,8 @@ const showLoginPage = (req, res) => {
     requireCaptcha: false,
     failedAttempts: 0,
     username: '',
-    csrfToken: req.session?.csrfToken || ''
+    csrfToken: req.session?.csrfToken || '',
+    captchaQuestion: captcha.question
   });
 };
 
@@ -142,9 +170,9 @@ const login = async (req, res) => {
 
     // ✅ NEW: Kiểm tra CAPTCHA requirement TRƯỚC validate password
     if (user.requiresCaptcha && user.failedLoginAttempts >= 5) {
-      const { 'g-recaptcha-response': captchaResponse } = req.body;
+      const { 'g-recaptcha-response': captchaResponse, captcha_answer: fallbackAnswer } = req.body;
       
-      if (!captchaResponse) {
+      if (!captchaResponse && !fallbackAnswer) {
         return res.status(400).render('login', {
           error: `Đã nhập sai ${user.failedLoginAttempts} lần. Vui lòng hoàn thành xác thực CAPTCHA.`,
           redirect: req.body.redirect || '/profile',
@@ -156,15 +184,43 @@ const login = async (req, res) => {
         });
       }
 
-      // Verify CAPTCHA token
-      try {
-        const { verifyCaptcha } = require('../middleware/captchaValidator');
-        const result = await verifyCaptcha(captchaResponse);
+      // Verify CAPTCHA token (ReCAPTCHA)
+      if (captchaResponse) {
+        try {
+          const { verifyCaptcha } = require('../middleware/captchaValidator');
+          const result = await verifyCaptcha(captchaResponse);
+          
+          // In production, check: result.success && result.score > 0.5
+          if (process.env.NODE_ENV === 'production' && !result.success) {
+            return res.status(400).render('login', {
+              error: 'Xác thực CAPTCHA thất bại. Vui lòng thử lại.',
+              redirect: req.body.redirect || '/profile',
+              require2FA: false,
+              requireCaptcha: true,
+              failedAttempts: user.failedLoginAttempts,
+              username: username || '',
+              csrfToken: req.session?.csrfToken || ''
+            });
+          }
+        } catch (captchaError) {
+          console.error('CAPTCHA verification error:', captchaError);
+          if (process.env.NODE_ENV === 'production') {
+            return res.status(500).json({ error: 'Lỗi xác thực CAPTCHA' });
+          }
+          // In development, allow to continue
+        }
+      }
+
+      // Verify fallback CAPTCHA (simple math CAPTCHA)
+      if (fallbackAnswer && !captchaResponse) {
+        const sessionCaptcha = req.session.captchaAnswer;
         
-        // In production, check: result.success && result.score > 0.5
-        if (process.env.NODE_ENV === 'production' && !result.success) {
+        if (!sessionCaptcha || fallbackAnswer !== sessionCaptcha) {
+          // Clear the session CAPTCHA to prevent reuse
+          delete req.session.captchaAnswer;
+          
           return res.status(400).render('login', {
-            error: 'Xác thực CAPTCHA thất bại. Vui lòng thử lại.',
+            error: `Mã xác thực không chính xác. Còn ${10 - user.failedLoginAttempts} lần để thử.`,
             redirect: req.body.redirect || '/profile',
             require2FA: false,
             requireCaptcha: true,
@@ -173,12 +229,9 @@ const login = async (req, res) => {
             csrfToken: req.session?.csrfToken || ''
           });
         }
-      } catch (captchaError) {
-        console.error('CAPTCHA verification error:', captchaError);
-        if (process.env.NODE_ENV === 'production') {
-          return res.status(500).json({ error: 'Lỗi xác thực CAPTCHA' });
-        }
-        // In development, allow to continue
+        
+        // Valid fallback CAPTCHA - clear it from session
+        delete req.session.captchaAnswer;
       }
     }
 
