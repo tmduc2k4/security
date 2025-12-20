@@ -64,33 +64,6 @@ const register = async (req, res) => {
 // Hiển thị trang đăng nhập
 const showLoginPage = (req, res) => {
   const redirect = req.query.redirect || '/profile';
-  
-  // Generate fallback CAPTCHA for session (for demonstration purposes)
-  // In production, generate this only when CAPTCHA is required
-  // to prevent pre-computation attacks
-  const generateFallbackCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10);
-    const num2 = Math.floor(Math.random() * 10);
-    const operations = ['+', '-'];
-    const op = operations[Math.floor(Math.random() * operations.length)];
-    
-    let answer;
-    if (op === '+') {
-      answer = (num1 + num2).toString();
-    } else {
-      answer = (num1 - num2).toString();
-    }
-    
-    return {
-      question: `${num1} ${op} ${num2} = ?`,
-      answer: answer
-    };
-  };
-  
-  const captcha = generateFallbackCaptcha();
-  req.session.captchaQuestion = captcha.question;
-  req.session.captchaAnswer = captcha.answer;
-  
   res.render('login', { 
     error: null, 
     redirect,
@@ -98,8 +71,7 @@ const showLoginPage = (req, res) => {
     requireCaptcha: false,
     failedAttempts: 0,
     username: '',
-    csrfToken: req.session?.csrfToken || '',
-    captchaQuestion: captcha.question
+    csrfToken: req.session?.csrfToken || ''
   });
 };
 
@@ -114,7 +86,10 @@ const login = async (req, res) => {
         redirect: req.body.redirect || '/profile',
         require2FA: false,
         username: req.body.username || '',
-        csrfToken: req.session?.csrfToken || ''
+        csrfToken: req.session?.csrfToken || '',
+        captchaQuestion: req.session.captchaQuestion || '',
+        requireCaptcha: false,
+        failedAttempts: 0
       });
     }
 
@@ -139,6 +114,7 @@ const login = async (req, res) => {
         require2FA: false,
         username: username || '',
         csrfToken: req.session?.csrfToken || '',
+        captchaQuestion: req.session.captchaQuestion || '',
         requireCaptcha: false,
         failedAttempts: 0
       });
@@ -164,7 +140,10 @@ const login = async (req, res) => {
         redirect: req.body.redirect || '/profile',
         require2FA: false,
         username: username || '',
-        csrfToken: req.session?.csrfToken || ''
+        csrfToken: req.session?.csrfToken || '',
+        captchaQuestion: req.session.captchaQuestion || '',
+        requireCaptcha: false,
+        failedAttempts: 0
       });
     }
 
@@ -180,7 +159,8 @@ const login = async (req, res) => {
           requireCaptcha: true,
           failedAttempts: user.failedLoginAttempts,
           username: username || '',
-          csrfToken: req.session?.csrfToken || ''
+          csrfToken: req.session?.csrfToken || '',
+          captchaQuestion: req.session.captchaQuestion || ''
         });
       }
 
@@ -199,7 +179,8 @@ const login = async (req, res) => {
               requireCaptcha: true,
               failedAttempts: user.failedLoginAttempts,
               username: username || '',
-              csrfToken: req.session?.csrfToken || ''
+              csrfToken: req.session?.csrfToken || '',
+              captchaQuestion: req.session.captchaQuestion || ''
             });
           }
         } catch (captchaError) {
@@ -211,7 +192,7 @@ const login = async (req, res) => {
         }
       }
 
-      // Verify fallback CAPTCHA (simple math CAPTCHA)
+      // Verify fallback CAPTCHA (math CAPTCHA)
       if (fallbackAnswer && !captchaResponse) {
         const sessionCaptcha = req.session.captchaAnswer;
         
@@ -226,7 +207,8 @@ const login = async (req, res) => {
             requireCaptcha: true,
             failedAttempts: user.failedLoginAttempts,
             username: username || '',
-            csrfToken: req.session?.csrfToken || ''
+            csrfToken: req.session?.csrfToken || '',
+            captchaQuestion: req.session.captchaQuestion || ''
           });
         }
         
@@ -273,7 +255,8 @@ const login = async (req, res) => {
         requireCaptcha: showCaptcha,
         failedAttempts: user.failedLoginAttempts,
         username: username || '',
-        csrfToken: req.session?.csrfToken || ''
+        csrfToken: req.session?.csrfToken || '',
+        captchaQuestion: req.session.captchaQuestion || ''
       });
     }
 
@@ -287,7 +270,10 @@ const login = async (req, res) => {
           require2FA: true,
           userId: user._id,
           email: user.email,
-          csrfToken: req.session?.csrfToken || ''
+          csrfToken: req.session?.csrfToken || '',
+          captchaQuestion: req.session.captchaQuestion || '',
+          requireCaptcha: false,
+          failedAttempts: 0
         });
       }
 
@@ -307,7 +293,10 @@ const login = async (req, res) => {
           require2FA: true,
           userId: user._id,
           email: user.email,
-          csrfToken: req.session?.csrfToken || ''
+          csrfToken: req.session?.csrfToken || '',
+          captchaQuestion: req.session.captchaQuestion || '',
+          requireCaptcha: false,
+          failedAttempts: 0
         });
       }
     }

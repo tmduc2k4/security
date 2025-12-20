@@ -5,9 +5,7 @@
 
 const https = require('https');
 
-// ⚠️ IMPORTANT: Use .env for production secret key
-// Get your keys at: https://www.google.com/recaptcha/admin
-const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY || '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'; // Demo key (development only)
+const SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'; // Demo key
 
 /**
  * Verify CAPTCHA response
