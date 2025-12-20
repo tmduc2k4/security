@@ -259,6 +259,8 @@
       <% } %>
 
       <form action="/register" method="POST" id="registerForm">
+        <input type="hidden" name="_csrf" value="<%= csrfToken || '' %>">
+        
         <div class="form-group">
           <label>
             <span>👤</span>

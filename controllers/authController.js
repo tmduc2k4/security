@@ -5,7 +5,10 @@ const auditService = require('../services/auditService');
 
 // Hiển thị trang đăng ký
 const showRegisterPage = (req, res) => {
-  res.render('register', { error: null });
+  res.render('register', { 
+    error: null,
+    csrfToken: req.session?.csrfToken || ''
+  });
 };
 
 // Xử lý đăng ký
@@ -15,7 +18,10 @@ const register = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).render('register', { 
-        error: errors.array()[0].msg 
+        error: errors.array()[0].msg,
+        username: req.body.username || '',
+        email: req.body.email || '',
+        csrfToken: req.session?.csrfToken || ''
       });
     }
 
@@ -47,7 +53,10 @@ const register = async (req, res) => {
   } catch (error) {
     console.error('Register error:', error);
     res.status(400).render('register', { 
-      error: error.message || 'Đăng ký thất bại, vui lòng thử lại' 
+      error: error.message || 'Đăng ký thất bại, vui lòng thử lại',
+      username: req.body.username || '',
+      email: req.body.email || '',
+      csrfToken: req.session?.csrfToken || ''
     });
   }
 };
