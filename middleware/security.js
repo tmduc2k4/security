@@ -21,6 +21,19 @@ const strictLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: process.env.STRICT_RATE_LIMIT_MAX || 5,
   message: 'Quá nhiều lần thử, vui lòng thử lại sau 15 phút',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// General rate limit for non-sensitive routes
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.RATE_LIMIT_MAX || 100,
+  message: 'Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút',
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
 });
 
 // Cấu hình Helmet - WAF cơ bản
@@ -151,6 +164,7 @@ const pathTraversalProtection = (req, res, next) => {
 module.exports = {
   limiter,
   strictLimiter,
+  generalLimiter,
   helmetConfig,
   hpp,
   xss,

@@ -7,8 +7,8 @@ const axios = require('axios');
 
 // Configuration
 const SERVERS = [
-  { name: 'Local', url: 'http://localhost:3000', active: false },
-  { name: 'Production', url: 'https://tmd1907.id.vn', active: true }
+  { name: 'Local', url: 'http://localhost:3000', active: true },
+  { name: 'Production', url: 'https://tmd1907.id.vn', active: false }
 ];
 
 const TEST_SCENARIOS = [

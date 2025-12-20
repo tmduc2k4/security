@@ -12,6 +12,7 @@ const connectDB = require('./config/database');
 const {
   limiter,
   strictLimiter,
+  generalLimiter,
   helmetConfig,
   hpp,
   xss,
@@ -51,11 +52,30 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Security Middleware - Apply BEFORE other middleware
 app.use(helmetConfig); // WAF - Web Application Firewall
-app.use(limiter); // Rate limiting
+// NOTE: Global limiter removed - using specific limiters on routes instead
+// app.use(limiter); // Rate limiting - REMOVED (using route-specific limiters)
 app.use(hpp()); // Prevent HTTP Parameter Pollution
 app.use(xss()); // Prevent XSS attacks
 app.use(mongoSanitize()); // Prevent NoSQL injection
 app.use(cors({ origin: process.env.ALLOWED_ORIGINS || '*' })); // CORS protection
+
+// Smart rate limiting middleware - applies different limiters based on route
+const smartRateLimiter = (req, res, next) => {
+  // Auth routes get strict limiting (5 req/15 min)
+  if (req.path === '/login' || req.path === '/register') {
+    return strictLimiter(req, res, next);
+  }
+  // API routes get general limiting (100 req/15 min)
+  else if (req.path.startsWith('/api/')) {
+    return generalLimiter(req, res, next);
+  }
+  // All other routes get general limiting
+  else {
+    return generalLimiter(req, res, next);
+  }
+};
+
+app.use(smartRateLimiter); // Apply smart rate limiter early
 
 // Body parsing middleware
 app.use(express.json({ limit: '10kb' })); // Limit payload size
