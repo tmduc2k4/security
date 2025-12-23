@@ -212,6 +212,8 @@ app.get('/forgot-password', passwordController.showForgotPasswordPage);
 app.post('/forgot-password', passwordController.forgotPassword);
 app.get('/reset-password', passwordController.showResetPasswordPage);
 app.post('/reset-password', passwordController.resetPassword);
+app.get('/change-password', requireAuth, passwordController.showChangePasswordPage);
+app.post('/change-password', requireAuth, passwordController.changePassword);
 
 // 2FA Routes
 app.get('/2fa/setup', requireAuth, twoFactorController.show2FASetupPage);

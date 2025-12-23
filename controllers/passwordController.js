@@ -211,5 +211,106 @@ module.exports = {
   showForgotPasswordPage,
   forgotPassword,
   showResetPasswordPage,
-  resetPassword
+  resetPassword,
+  showChangePasswordPage,
+  changePassword
+};
+
+// Hiển thị trang đổi mật khẩu
+const showChangePasswordPage = (req, res) => {
+  res.render('change-password', {
+    error: null,
+    message: null,
+    currentUser: req.user
+  });
+};
+
+// Xử lý đổi mật khẩu
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).render('change-password', {
+        error: 'Vui lòng điền tất cả trường',
+        message: null,
+        currentUser: req.user
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).render('change-password', {
+        error: 'Xác nhận mật khẩu không khớp',
+        message: null,
+        currentUser: req.user
+      });
+    }
+
+    if (newPassword === currentPassword) {
+      return res.status(400).render('change-password', {
+        error: 'Mật khẩu mới phải khác mật khẩu cũ',
+        message: null,
+        currentUser: req.user
+      });
+    }
+
+    // Validate password strength
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{12,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).render('change-password', {
+        error: 'Mật khẩu phải có ít nhất 12 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt',
+        message: null,
+        currentUser: req.user
+      });
+    }
+
+    // Lấy user từ database
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).render('change-password', {
+        error: 'Không tìm thấy người dùng',
+        message: null,
+        currentUser: req.user
+      });
+    }
+
+    // Kiểm tra mật khẩu hiện tại
+    const isPasswordCorrect = await user.matchPassword(currentPassword);
+    if (!isPasswordCorrect) {
+      return res.status(400).render('change-password', {
+        error: 'Mật khẩu hiện tại không chính xác',
+        message: null,
+        currentUser: req.user
+      });
+    }
+
+    // Kiểm tra password không nằm trong lịch sử
+    const isInHistory = await user.isPasswordInHistory(newPassword);
+    if (isInHistory) {
+      return res.status(400).render('change-password', {
+        error: 'Không được sử dụng mật khẩu đã dùng gần đây.',
+        message: null,
+        currentUser: req.user
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res.render('change-password', {
+      error: null,
+      message: '✅ Mật khẩu đã được thay đổi thành công!',
+      success: true,
+      currentUser: req.user
+    });
+
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).render('change-password', {
+      error: 'Có lỗi xảy ra. Vui lòng thử lại.',
+      message: null,
+      currentUser: req.user
+    });
+  }
 };
