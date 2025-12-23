@@ -266,7 +266,7 @@ const changePassword = async (req, res) => {
     }
 
     // Kiểm tra mật khẩu hiện tại
-    const isPasswordCorrect = await user.matchPassword(currentPassword);
+    const isPasswordCorrect = await user.comparePassword(currentPassword);
     if (!isPasswordCorrect) {
       return res.status(400).render('change-password', {
         error: 'Mật khẩu hiện tại không chính xác',
