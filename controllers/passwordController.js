@@ -207,15 +207,6 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = {
-  showForgotPasswordPage,
-  forgotPassword,
-  showResetPasswordPage,
-  resetPassword,
-  showChangePasswordPage,
-  changePassword
-};
-
 // Hiển thị trang đổi mật khẩu
 const showChangePasswordPage = (req, res) => {
   res.render('change-password', {
@@ -313,4 +304,13 @@ const changePassword = async (req, res) => {
       currentUser: req.user
     });
   }
+};
+
+module.exports = {
+  showForgotPasswordPage,
+  forgotPassword,
+  showResetPasswordPage,
+  resetPassword,
+  showChangePasswordPage,
+  changePassword
 };
